@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.suo
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (not required for the game itself, kept for tooling)
+node_modules/
+dist/
+
+# Local env
+.env

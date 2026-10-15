@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MOBA Manager 3D - ARAM Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #07090e;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        /* Portrait Container for Desktop & Mobile */
+        #app-shell {
+            width: 100%;
+            height: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #0d1117;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
+            border-left: 1px solid #1e293b;
+            border-right: 1px solid #1e293b;
+        }
+        /* Custom Scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Full-Screen 3D Viewport Container */
+        #viewport-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #16222f 0%, #0b1017 100%);
+            overflow: hidden;
+            touch-action: none;
+            z-index: 1;
+        }
+        #three-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        /* Floating 2D Labels inside 3D view */
+        #labels-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .unit-label {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.12s ease;
+        }
+        /* Slide-Up Command Sheet Transition */
+        #command-sheet {
+            transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        }
+        .sheet-hidden {
+            transform: translateY(115%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .sheet-visible {
+            transform: translateY(0%);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* Tactical Orders Active Pulse */
+        .order-btn-active {
+            box-shadow: 0 0 12px currentColor;
+            transform: translateY(-1px);
+        }
+        .squad-card-selected {
+            border-color: #06b6d4 !important;
+            box-shadow: 0 0 14px rgba(6, 182, 212, 0.45), inset 0 0 8px rgba(6, 182, 212, 0.2);
+            background-color: #162436 !important;
+            transform: translateY(-2px);
+        }
+        /* Custom Vertical Zoom Slider */
+        input[type=range].zoom-slider {
+            -webkit-appearance: slider-vertical;
+            writing-mode: bt-lr;
+            width: 6px;
+            height: 88px;
+            background: transparent;
+            accent-color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-shell">
+
+    <!-- ==================== SCREEN 1: SELECT GAME MODE ==================== -->
+    <div id="screen-mode" class="flex flex-col justify-between h-full p-5 bg-[#0d1117] z-30">
+        <div class="mt-8 text-center">
+            <div class="inline-block px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold tracking-widest uppercase mb-2">
+                3D Tactical Esports Sim
+            </div>
+            <h1 class="text-2xl font-black tracking-[0.18em] text-amber-400 uppercase">SELECT GAME MODE</h1>
+            <p class="text-xs text-slate-400 mt-1">Choose your battlefield</p>
+        </div>
+
+        <div class="flex flex-col gap-4 my-auto">
+            <!-- ARAM Card -->
+            <div onclick="goToSquadScreen()" class="cursor-pointer rounded-2xl bg-[#161d2a] border-2 border-[#ea580c] p-6 text-center shadow-lg shadow-orange-950/30 active:scale-[0.98] transition-all">
+                <div class="flex items-center justify-center gap-2 text-2xl font-black text-[#ea580c] tracking-wider">
+                    <span>⚔️</span>
+                    <span>ARAM</span>
+                </div>
+                <div class="text-sm font-semibold text-slate-200 mt-1">All Random, All Mid</div>
+                <div class="text-[11px] text-slate-400 mt-1">5v5 — Single 3D Lane — First to Destroy Nexus Wins</div>
+                <div class="mt-4 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#ea580c]/20 text-[#fb923c] text-xs font-bold">
+                    <span>Choose Squad (5 Pre-Selected) →</span>
+                </div>
+            </div>
+
+            <!-- Instant Quick Play Button (5 Generic Ready Champions) -->
+            <button onclick="quickStartMatch()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#ea580c] to-[#d97706] text-white font-extrabold text-sm tracking-wide shadow-lg shadow-orange-900/40 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <span>⚡</span>
+                <span>QUICK PLAY DEMO (5 ΕΤΟΙΜΟΙ ΧΑΡΑΚΤΗΡΕΣ)</span>
+            </button>
+
+            <!-- Classic 3-Lane Locked Card -->
+            <div class="rounded-2xl bg-[#121722] border border-slate-800 p-5 text-center opacity-60">
+                <div class="flex items-center justify-center gap-2 text-base font-bold text-slate-400">
+                    <span>🔒</span>
+                    <span>Classic 3-Lane</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1">Coming in a future update</div>
+            </div>
+        </div>
+
+        <div class="text-center text-[11px] text-slate-500 pb-2">
+            Portrait Mobile Edition • Three.js 3D Engine • No Audio
+        </div>
+    </div>
+
+    <!-- ==================== SCREEN 2: SELECT YOUR SQUAD ==================== -->
+    <div id="screen-squad" class="hidden flex-col h-full p-4 bg-[#0d1117] z-30">
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-black tracking-[0.12em] text-amber-400 uppercase">SELECT YOUR SQUAD</h1>
+                <p id="squad-subtitle" class="text-xs text-slate-400">5 champions ready (tap to customize)</p>
+            </div>
+            <button onclick="selectDefaultFive()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold text-amber-400 border border-slate-700">
+                Balanced 5
+            </button>
+        </div>
+
+        <!-- Selected Pills Tray -->
+        <div id="selected-pills-tray" class="mt-2.5 min-h-[44px] p-2 rounded-xl bg-[#141b26] border border-slate-800 flex flex-wrap gap-1.5 items-center">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- 12 Champion Grid -->
+        <div id="champions-grid" class="grid grid-cols-3 gap-2.5 my-3 flex-1 overflow-y-auto no-scrollbar pr-0.5">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="flex gap-2.5 pt-1">
+            <button onclick="goToModeScreen()" class="w-1/3 py-3.5 rounded-xl bg-[#18202c] text-slate-300 font-bold text-xs tracking-wider uppercase border border-slate-800 active:scale-95 transition">
+                ← BACK
+            </button>
+            <button id="btn-start-match" onclick="startMatchFromSquad()" class="w-2/3 py-3.5 rounded-xl bg-[#ea580c] text-white font-black text-xs tracking-wider uppercase shadow-lg shadow-orange-950/50 active:scale-95 transition">
+                ▶ START GAME
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== SCREEN 3: FULL-SCREEN 3D GAMEPLAY & LAYERED UI ==================== -->
+    <div id="screen-game" class="hidden relative h-full w-full bg-[#0d1117] overflow-hidden">
+
+        <!-- 100% FULL-SCREEN 3D VIEWPORT -->
+        <div id="viewport-container">
+            <canvas id="three-canvas"></canvas>
+            <!-- Context-Sensitive Floating 2D Labels & Micro HP Bars -->
+            <div id="labels-layer"></div>
+        </div>
+
+        <!-- TOP FLOATING SLIM HUD BAR -->
+        <div class="absolute top-2.5 left-2.5 right-2.5 flex flex-col gap-1.5 pointer-events-none z-20">
+            <div class="flex items-center justify-between">
+                <!-- Score, Nexus & Timer Pill -->
+                <div class="pointer-events-auto flex items-center gap-2 bg-[#0d1117]/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800/90 shadow-lg text-[11px] font-bold">
+                    <div class="flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                        <span id="hud-blue-kills" class="text-cyan-400 font-black">0</span>
+                    </div>
+                    <span class="text-slate-600 text-[10px]">VS</span>
+                    <div class="flex items-center gap-1">
+                        <span id="hud-red-kills" class="text-rose-400 font-black">0</span>
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    </div>
+                    <span class="text-slate-700">|</span>
+                    <span id="hud-timer" class="text-amber-400 font-mono text-[11px]">00:00</span>
+                    <span class="text-slate-700">|</span>
+                    <span class="text-[10px] text-cyan-300">🟦<span id="hud-blue-nexus">100%</span></span>
+                    <span class="text-[10px] text-rose-300">🟥<span id="hud-red-nexus">100%</span></span>
+                </div>
+
+                <!-- Right Utility Buttons: Team Macro, Speed, Squad Menu -->
+                <div class="pointer-events-auto flex items-center gap-1">
+                    <button onclick="toggleMacroPopover()" id="btn-macro-toggle" class="px-2.5 py-1.5 rounded-xl bg-[#0d1117]/85 backdrop-blur-md border border-amber-500/40 text-[10px] font-extrabold text-amber-300 shadow-lg active:scale-95">
+                        ⚡ Team
+                    </button>
+                    <button id="btn-speed" onclick="cycleGameSpeed()" class="px-2.5 py-1.5 rounded-xl bg-[#0d1117]/85 backdrop-blur-md border border-slate-700/80 text-[10px] font-extrabold text-slate-200 shadow-lg active:scale-95">
+                        1x
+                    </button>
+                    <button onclick="goToSquadScreen()" class="px-2 py-1.5 rounded-xl bg-[#0d1117]/85 backdrop-blur-md border border-slate-700/80 text-[10px] font-bold text-slate-300 shadow-lg active:scale-95">
+                        ⚙️
+                    </button>
+                </div>
+            </div>
+
+            <!-- Collapsible Team Macro Popover Bar -->
+            <div id="macro-popover" class="hidden pointer-events-auto self-end bg-[#0f1724]/95 backdrop-blur-md border border-slate-700 rounded-xl p-1.5 shadow-xl flex items-center gap-1">
+                <span class="text-[9px] font-extrabold text-slate-400 px-1">ALL SQUAD:</span>
+                <button onclick="setTeamOrder('FARM'); toggleMacroPopover(false);" class="px-2 py-1 rounded-lg bg-emerald-950/90 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold active:scale-95">Farm</button>
+                <button onclick="setTeamOrder('PUSH'); toggleMacroPopover(false);" class="px-2 py-1 rounded-lg bg-orange-950/90 border border-orange-600/50 text-orange-300 text-[10px] font-bold active:scale-95">Push</button>
+                <button onclick="setTeamOrder('FIGHT'); toggleMacroPopover(false);" class="px-2 py-1 rounded-lg bg-rose-950/90 border border-rose-600/50 text-rose-300 text-[10px] font-bold active:scale-95">Fight</button>
+                <button onclick="setTeamOrder('RETREAT'); toggleMacroPopover(false);" class="px-2 py-1 rounded-lg bg-slate-800 border border-slate-600 text-slate-200 text-[10px] font-bold active:scale-95">Retreat</button>
+            </div>
+        </div>
+
+        <!-- RIGHT EDGE FLOATING CAMERA & DEEP ZOOM CONTROLS -->
+        <div class="absolute right-2.5 top-16 flex flex-col items-center gap-1.5 z-20 pointer-events-auto">
+            <!-- Camera Preset Pills -->
+            <div class="flex flex-col gap-1 bg-[#0d1117]/85 backdrop-blur-md p-1 rounded-xl border border-slate-800/90 shadow-lg">
+                <button id="cam-preset-2" onclick="setCameraPreset(2)" title="Close-up Battle Zoom" class="px-2 py-1.5 rounded-lg text-[9px] font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 active:scale-95 transition">
+                    🔍 Μάχη
+                </button>
+                <button id="cam-preset-1" onclick="setCameraPreset(1)" title="Follow Selected Hero" class="px-2 py-1.5 rounded-lg text-[9px] font-bold text-slate-300 hover:bg-slate-800 active:scale-95 transition">
+                    🎯 Παίκτης
+                </button>
+                <button id="cam-preset-0" onclick="setCameraPreset(0)" title="Wide Lane Map" class="px-2 py-1.5 rounded-lg text-[9px] font-bold text-slate-300 hover:bg-slate-800 active:scale-95 transition">
+                    🗺️ Χάρτης
+                </button>
+            </div>
+
+            <!-- Zoom In / Slider / Zoom Out -->
+            <div class="flex flex-col items-center gap-1 bg-[#0d1117]/85 backdrop-blur-md py-2 px-1.5 rounded-xl border border-slate-800/90 shadow-lg">
+                <button onclick="adjustZoom(0.28)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 font-black text-sm flex items-center justify-center active:scale-90">+</button>
+                <input id="zoom-range-input" type="range" min="0.55" max="2.60" step="0.05" value="1.35"
+                    oninput="setZoomFromSlider(this.value)" class="zoom-slider my-1 cursor-pointer" />
+                <button onclick="adjustZoom(-0.28)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 font-black text-sm flex items-center justify-center active:scale-90">−</button>
+                <span id="zoom-label" class="text-[8px] font-mono text-slate-400">1.4x</span>
+            </div>
+        </div>
+
+        <!-- BOTTOM LAYER: SLIDE-UP HERO COMMAND SHEET + 5-HERO SQUAD DOCK -->
+        <div class="absolute bottom-0 left-0 right-0 flex flex-col z-20 pointer-events-none">
+
+            <!-- SLIDE-UP TABBED COMMAND SHEET (Only visible when a player is selected!) -->
+            <div id="command-sheet" class="sheet-hidden mx-2 mb-1.5 rounded-2xl bg-[#0f1623]/95 backdrop-blur-xl border border-slate-700/80 shadow-2xl p-3 flex flex-col gap-2.5">
+
+                <!-- Sheet Header: Selected Hero Identity, Quick Core Stats & Close Button -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span id="sel-name" class="text-sm font-black text-white tracking-wide">Wildfire</span>
+                        <span id="sel-role" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-400">Marksman</span>
+                        <span id="sel-level" class="text-[11px] font-extrabold text-slate-400 font-mono">Lv.1</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-extrabold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
+                            💰 <span id="sel-gold">500G</span>
+                        </span>
+                        <button onclick="closeCommandSheet()" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold flex items-center justify-center active:scale-90">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3 Mode Tabs inside Sheet -->
+                <div class="grid grid-cols-3 gap-1 bg-[#090d14] p-1 rounded-xl border border-slate-800/80">
+                    <button id="tab-btn-tactics" onclick="switchSheetTab('tactics')" class="py-1.5 rounded-lg text-[10px] font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition">
+                        ⚔️ Τακτική
+                    </button>
+                    <button id="tab-btn-support" onclick="switchSheetTab('support')" class="py-1.5 rounded-lg text-[10px] font-extrabold text-slate-400 border border-transparent transition">
+                        🛡️ Support
+                    </button>
+                    <button id="tab-btn-shop" onclick="switchSheetTab('shop')" class="py-1.5 rounded-lg text-[10px] font-extrabold text-slate-400 border border-transparent transition">
+                        🛒 Shop & Stats
+                    </button>
+                </div>
+
+                <!-- TAB 1: TACTICS (Stances & Target Focus) -->
+                <div id="tab-panel-tactics" class="flex flex-col gap-2">
+                    <div class="grid grid-cols-6 gap-1.5">
+                        <button id="order-FARM" onclick="setChampionOrder('FARM')" class="py-2 rounded-xl bg-[#122620] border border-emerald-600/60 text-emerald-400 text-[10px] font-extrabold transition">Farm</button>
+                        <button id="order-PUSH" onclick="setChampionOrder('PUSH')" class="py-2 rounded-xl bg-[#2a1912] border border-orange-600/60 text-orange-400 text-[10px] font-extrabold transition">Push</button>
+                        <button id="order-DEFEND" onclick="setChampionOrder('DEFEND')" class="py-2 rounded-xl bg-[#122033] border border-sky-600/60 text-sky-400 text-[10px] font-extrabold transition">Defend</button>
+                        <button id="order-GANK" onclick="setChampionOrder('GANK')" class="py-2 rounded-xl bg-[#231433] border border-purple-600/60 text-purple-400 text-[10px] font-extrabold transition">Gank</button>
+                        <button id="order-FIGHT" onclick="setChampionOrder('FIGHT')" class="py-2 rounded-xl bg-[#2c1418] border border-rose-600/60 text-rose-400 text-[10px] font-extrabold transition">Fight</button>
+                        <button id="order-RETREAT" onclick="setChampionOrder('RETREAT')" class="py-2 rounded-xl bg-[#1c222d] border border-slate-500/60 text-slate-300 text-[10px] font-extrabold transition">Retreat</button>
+                    </div>
+                    <!-- Target Priority Selector -->
+                    <div class="flex items-center justify-between bg-[#090d14] px-2.5 py-1.5 rounded-xl border border-slate-800/80">
+                        <span class="text-[10px] font-bold text-slate-400">🎯 Προτεραιότητα Στόχου:</span>
+                        <div class="flex gap-1">
+                            <button onclick="setTargetPriority(0)" id="prio-0" class="px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">Lowest HP</button>
+                            <button onclick="setTargetPriority(1)" id="prio-1" class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400">Carry</button>
+                            <button onclick="setTargetPriority(2)" id="prio-2" class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400">Nearest</button>
+                            <button onclick="setTargetPriority(3)" id="prio-3" class="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400">Turret</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SUPPORT ESCORT / HEAL ASSIGNMENT -->
+                <div id="tab-panel-support" class="hidden flex-col gap-2">
+                    <div class="text-[10px] text-slate-300 flex items-center justify-between">
+                        <span>Διάλεξε ποιον σύμμαχο θα ακολουθεί & κάνει Heal/Shield το <strong class="text-emerald-400">Support</strong>:</span>
+                    </div>
+                    <div id="support-targets-row" class="grid grid-cols-5 gap-1.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: ITEM SHOP & COMPACT STATS -->
+                <div id="tab-panel-shop" class="hidden flex-col gap-2">
+                    <!-- Compact Stats Strip + Equipped Slots -->
+                    <div class="flex items-center justify-between bg-[#090d14] px-2.5 py-1.5 rounded-xl border border-slate-800/80 text-[10px]">
+                        <div class="flex items-center gap-2 font-mono">
+                            <span class="text-emerald-400 font-bold">HP <span id="sel-hp">1350</span></span>
+                            <span class="text-orange-400 font-bold">AD <span id="sel-ad">58</span></span>
+                            <span class="text-purple-400 font-bold">AP <span id="sel-ap">0</span></span>
+                            <span class="text-sky-400 font-bold">ARM <span id="sel-armor">24</span></span>
+                            <span class="text-amber-400 font-bold">AS <span id="sel-as">0.9</span></span>
+                            <span class="text-rose-400 font-bold">LS <span id="sel-ls">0%</span></span>
+                        </div>
+                        <div id="sel-items-row" class="flex items-center gap-1"></div>
+                    </div>
+
+                    <!-- 1-Tap Horizontal Shop Cards -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">Tap Item to Buy Immediately:</span>
+                        <span id="shop-feedback" class="text-[10px] text-emerald-400 font-bold opacity-0 transition-opacity">Purchased!</span>
+                    </div>
+                    <div id="item-shop-row" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ALWAYS-VISIBLE COMPACT 5-HERO SQUAD DOCK -->
+            <div class="pointer-events-auto bg-[#0b1018]/95 backdrop-blur-xl border-t border-slate-800/90 px-2 py-2">
+                <div id="squad-cards-row" class="grid grid-cols-5 gap-1.5">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== VICTORY / DEFEAT MODAL ==================== -->
+    <div id="modal-gameover" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex flex-col items-center justify-center p-6 text-center">
+        <div id="gameover-badge" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-3 border-2">
+            🏆
+        </div>
+        <h2 id="gameover-title" class="text-3xl font-black tracking-widest uppercase text-amber-400">VICTORY</h2>
+        <p id="gameover-desc" class="text-xs text-slate-300 mt-1 mb-5">The enemy Nexus has been shattered!</p>
+
+        <div id="gameover-stats" class="w-full rounded-xl bg-[#141b26] border border-slate-800 p-3 mb-5 text-left text-xs space-y-1.5">
+            <!-- Populated at end of game -->
+        </div>
+
+        <div class="flex gap-3 w-full">
+            <button onclick="goToSquadScreen()" class="flex-1 py-3 rounded-xl bg-slate-800 text-slate-200 font-bold text-xs uppercase border border-slate-700">
+                Change Squad
+            </button>
+            <button onclick="restartCurrentMatch()" class="flex-1 py-3 rounded-xl bg-[#ea580c] text-white font-black text-xs uppercase shadow-lg shadow-orange-950/50">
+                Play Again
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/* ============================================================================
+   1. GAME DATA: 12 CHAMPIONS & ITEM SHOP (MATCHING SCREENSHOTS)
+   ============================================================================ */
+const ROLE_COLORS = {
+    Marksman: { hex: '#eab308', bg: 'rgba(234, 179, 8, 0.18)', border: '#eab308', letter: 'M', threeColor: 0xfacc15 },
+    Mage:     { hex: '#a855f7', bg: 'rgba(168, 85, 247, 0.18)', border: '#a855f7', letter: 'M', threeColor: 0xc084fc },
+    Tank:     { hex: '#22c55e', bg: 'rgba(34, 197, 94, 0.18)',  border: '#22c55e', letter: 'T', threeColor: 0x4ade80 },
+    Assassin: { hex: '#ef4444', bg: 'rgba(239, 68, 68, 0.18)',  border: '#ef4444', letter: 'A', threeColor: 0xf87171 },
+    Support:  { hex: '#10b981', bg: 'rgba(16, 185, 129, 0.18)', border: '#10b981', letter: 'S', threeColor: 0x34d399 },
+    Fighter:  { hex: '#f97316', bg: 'rgba(249, 115, 22, 0.18)', border: '#f97316', letter: 'F', threeColor: 0xfb923c }
+};
+
+const CHAMPION_POOL = [
+    { id: 'aetherblade',  name: 'Aetherblade',  role: 'Marksman', hp: 1400, ad: 62, ap: 0,  armor: 22, as: 0.90, range: 9.5,  speed: 4.3 },
+    { id: 'wildfire',     name: 'Wildfire',     role: 'Marksman', hp: 1350, ad: 58, ap: 10, armor: 20, as: 0.95, range: 9.2,  speed: 4.4 },
+    { id: 'voidcaller',   name: 'Voidcaller',   role: 'Mage',     hp: 1200, ad: 25, ap: 68, armor: 18, as: 0.75, range: 8.8,  speed: 4.1 },
+    { id: 'frostweaver',  name: 'Frostweaver',  role: 'Mage',     hp: 1150, ad: 20, ap: 74, armor: 18, as: 0.75, range: 9.0,  speed: 4.1 },
+    { id: 'ironheart',    name: 'Ironheart',    role: 'Tank',     hp: 1900, ad: 50, ap: 0,  armor: 42, as: 0.65, range: 2.8,  speed: 4.0 },
+    { id: 'stonewall',    name: 'Stonewall',    role: 'Tank',     hp: 2000, ad: 48, ap: 0,  armor: 46, as: 0.62, range: 2.8,  speed: 3.9 },
+    { id: 'shadowstep',   name: 'Shadowstep',   role: 'Assassin', hp: 1250, ad: 68, ap: 0,  armor: 24, as: 0.95, range: 3.0,  speed: 4.9 },
+    { id: 'nightshade',   name: 'Nightshade',   role: 'Assassin', hp: 1200, ad: 72, ap: 0,  armor: 22, as: 0.98, range: 3.0,  speed: 5.0 },
+    { id: 'tidecaller',   name: 'Tidecaller',   role: 'Support',  hp: 1300, ad: 30, ap: 45, armor: 26, as: 0.75, range: 7.8,  speed: 4.3 },
+    { id: 'stormbringer', name: 'Stormbringer', role: 'Support',  hp: 1350, ad: 35, ap: 40, armor: 28, as: 0.78, range: 7.5,  speed: 4.3 },
+    { id: 'stormreaver',  name: 'Stormreaver',  role: 'Fighter',  hp: 1600, ad: 58, ap: 0,  armor: 34, as: 0.82, range: 3.2,  speed: 4.5 },
+    { id: 'duskblade',    name: 'Duskblade',    role: 'Fighter',  hp: 1550, ad: 60, ap: 0,  armor: 32, as: 0.85, range: 3.2,  speed: 4.6 }
+];
+
+const SHOP_ITEMS = [
+    { id: 'eternity', name: 'Eternity Blade',    letter: 'E', color: '#ea580c', cost: 500, stats: { ad: 35, as: 0.15 }, desc: '+35 AD, +15% AS' },
+    { id: 'souldrink',name: 'Soul Drinker',      letter: 'S', color: '#ea580c', cost: 450, stats: { ad: 28, ls: 15 },   desc: '+28 AD, +15% LS' },
+    { id: 'botrk',    name: 'Blade of Lost King',letter: 'B', color: '#f59e0b', cost: 500, stats: { ad: 24, as: 0.30, ls: 10 }, desc: '+24 AD, +30% AS' },
+    { id: 'rabadon',  name: "Rabadon's Crown",   letter: 'R', color: '#9333ea', cost: 500, stats: { ap: 65 },           desc: '+65 Ability Power' },
+    { id: 'bulwark',  name: 'Titan Bulwark',     letter: 'T', color: '#16a34a', cost: 450, stats: { hp: 450, armor: 25 },desc: '+450 HP, +25 Armor' },
+    { id: 'aegis',    name: 'Aegis of Light',    letter: 'A', color: '#06b6d4', cost: 400, stats: { hp: 250, ap: 35, armor: 15 }, desc: '+250 HP, +35 AP' }
+];
+
+// Default 5 balanced ready champions (1 Marksman, 1 Tank, 1 Mage, 1 Assassin, 1 Support)
+let selectedSquadIds = ['wildfire', 'ironheart', 'frostweaver', 'shadowstep', 'tidecaller'];
+
+/* ============================================================================
+   2. UI NAVIGATION & SQUAD SELECTION SCREEN
+   ============================================================================ */
+function goToModeScreen() {
+    isGameRunning = false;
+    document.getElementById('screen-mode').classList.remove('hidden');
+    document.getElementById('screen-mode').classList.add('flex');
+    document.getElementById('screen-squad').classList.add('hidden');
+    document.getElementById('screen-squad').classList.remove('flex');
+    document.getElementById('screen-game').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('flex');
+}
+
+function goToSquadScreen() {
+    isGameRunning = false;
+    document.getElementById('modal-gameover').classList.add('hidden');
+    document.getElementById('screen-mode').classList.add('hidden');
+    document.getElementById('screen-mode').classList.remove('flex');
+    document.getElementById('screen-game').classList.add('hidden');
+    document.getElementById('screen-game').classList.remove('flex');
+    document.getElementById('screen-squad').classList.remove('hidden');
+    document.getElementById('screen-squad').classList.add('flex');
+    renderSquadSelectionGrid();
+}
+
+function selectDefaultFive() {
+    selectedSquadIds = ['wildfire', 'ironheart', 'frostweaver', 'shadowstep', 'tidecaller'];
+    renderSquadSelectionGrid();
+}
+
+function toggleChampionPick(champId) {
+    const idx = selectedSquadIds.indexOf(champId);
+    if (idx > -1) {
+        selectedSquadIds.splice(idx, 1);
+    } else {
+        if (selectedSquadIds.length < 5) {
+            selectedSquadIds.push(champId);
+        }
+    }
+    renderSquadSelectionGrid();
+}
+
+function renderSquadSelectionGrid() {
+    const remaining = 5 - selectedSquadIds.length;
+    const sub = document.getElementById('squad-subtitle');
+    sub.textContent = remaining === 0
+        ? 'Pick 0 champions (tap to select/deselect)'
+        : `Pick ${remaining} more champion${remaining > 1 ? 's' : ''} (tap to select/deselect)`;
+
+    // Render top tray pills
+    const tray = document.getElementById('selected-pills-tray');
+    if (selectedSquadIds.length === 0) {
+        tray.innerHTML = `<span class="text-xs text-slate-500 italic px-1">Tap champions below to build your team...</span>`;
+    } else {
+        tray.innerHTML = selectedSquadIds.map(id => {
+            const c = CHAMPION_POOL.find(x => x.id === id);
+            const rc = ROLE_COLORS[c.role];
+            return `
+                <button onclick="toggleChampionPick('${c.id}')"
+                    style="background:${rc.bg}; border-color:${rc.border}; color:${rc.hex}"
+                    class="px-2.5 py-1 rounded-lg border text-[11px] font-bold flex items-center gap-1 active:scale-95">
+                    <span>${c.name}</span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    // Render 12 champion cards
+    const grid = document.getElementById('champions-grid');
+    grid.innerHTML = CHAMPION_POOL.map(c => {
+        const isSel = selectedSquadIds.includes(c.id);
+        const rc = ROLE_COLORS[c.role];
+        const borderStyle = isSel ? `border: 2px solid ${rc.border}; background: ${rc.bg};` : `border: 1px solid #1e293b; background: #141b26;`;
+        return `
+            <div onclick="toggleChampionPick('${c.id}')" style="${borderStyle}"
+                class="cursor-pointer rounded-2xl p-3 flex flex-col items-center justify-center text-center transition-all active:scale-95">
+                <div style="background:${rc.bg}; color:${rc.hex}; border: 1px solid ${rc.border}44"
+                    class="w-10 h-10 rounded-full flex items-center justify-center font-black text-base mb-2">
+                    ${rc.letter}
+                </div>
+                <div class="text-xs font-extrabold text-white leading-tight">${c.name}</div>
+                <div style="color:${rc.hex}" class="text-[10px] font-bold mt-0.5">${c.role}</div>
+                <div class="text-[9px] text-slate-400 mt-1.5 font-mono">HP ${c.hp} | AD ${c.ad}</div>
+            </div>
+        `;
+    }).join('');
+
+    // Update Start button state
+    const startBtn = document.getElementById('btn-start-match');
+    if (selectedSquadIds.length === 5) {
+        startBtn.disabled = false;
+        startBtn.className = "w-2/3 py-3.5 rounded-xl bg-[#ea580c] text-white font-black text-xs tracking-wider uppercase shadow-lg shadow-orange-950/50 active:scale-95 transition";
+        startBtn.textContent = "▶ START GAME";
+    } else {
+        startBtn.disabled = true;
+        startBtn.className = "w-2/3 py-3.5 rounded-xl bg-slate-800 text-slate-500 font-black text-xs tracking-wider uppercase cursor-not-allowed";
+        startBtn.textContent = `SELECT ${remaining} MORE`;
+    }
+}
+
+function quickStartMatch() {
+    selectDefaultFive();
+    startMatchFromSquad();
+}
+
+function startMatchFromSquad() {
+    if (selectedSquadIds.length !== 5) return;
+    document.getElementById('screen-mode').classList.add('hidden');
+    document.getElementById('screen-mode').classList.remove('flex');
+    document.getElementById('screen-squad').classList.add('hidden');
+    document.getElementById('screen-squad').classList.remove('flex');
+    document.getElementById('screen-game').classList.remove('hidden');
+    document.getElementById('screen-game').classList.add('flex');
+
+    initThreeSceneIfNeeded();
+    handleResize();
+    setupNewMatch();
+}
+
+function restartCurrentMatch() {
+    document.getElementById('modal-gameover').classList.add('hidden');
+    setupNewMatch();
+}
+
+/* ============================================================================
+   3. THREE.JS 3D SCENE & DIAGONAL ARAM BRIDGE SETUP
+   ============================================================================ */
+let scene, camera, renderer;
+let isThreeInitialized = false;
+let worldGroup, unitsGroup, projectilesGroup, effectsGroup;
+
+// Diagonal Lane Coordinate Helper:
+// Normalized progress `s` goes from 0.0 (Blue Base Bottom-Left) to 1.0 (Red Base Top-Right)
+// In 3D world space: (-28, 0, 28) to (+28, 0, -28)
+const LANE_HALF_LEN = 28;
+function lanePosFromS(s, lateralOffset = 0) {
+    // Main axis dir: (+1, -1) normalized is (0.7071, -0.7071)
+    // Perpendicular axis: (+0.7071, +0.7071)
+    const clampedS = Math.max(0.02, Math.min(0.98, s));
+    const baseX = -LANE_HALF_LEN + clampedS * (LANE_HALF_LEN * 2);
+    const baseZ =  LANE_HALF_LEN - clampedS * (LANE_HALF_LEN * 2);
+    return {
+        x: baseX + lateralOffset * 0.7071,
+        z: baseZ + lateralOffset * 0.7071
+    };
+}
+
+// Camera & Deep Zoom state
+// cameraMode: 0 = Wide Map Overview, 1 = Follow Selected Hero, 2 = Close-Up Battle Cam
+let cameraMode = 2;
+let camPanOffset = { x: 0, z: 0 };
+// camZoom: 0.55 (wide map) up to 2.60 (ultra close-up 3D combat view)
+let camZoom = 1.45;
+let activeSheetTab = 'tactics';
+
+function initThreeSceneIfNeeded() {
+    if (isThreeInitialized) return;
+    isThreeInitialized = true;
+
+    const canvas = document.getElementById('three-canvas');
+    const container = document.getElementById('viewport-container');
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x111a24);
+    scene.fog = new THREE.FogExp2(0x111a24, 0.0085);
+
+    camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 1, 300);
+
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x94a3b8, 0.85);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xfffbeb, 0.95);
+    dirLight.position.set(25, 55, 30);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
+
+    const bluePoint = new THREE.PointLight(0x06b6d4, 1.2, 35);
+    bluePoint.position.set(-25, 6, 25);
+    scene.add(bluePoint);
+
+    const redPoint = new THREE.PointLight(0xf43f5e, 1.2, 35);
+    redPoint.position.set(25, 6, -25);
+    scene.add(redPoint);
+
+    worldGroup = new THREE.Group();
+    unitsGroup = new THREE.Group();
+    projectilesGroup = new THREE.Group();
+    effectsGroup = new THREE.Group();
+
+    scene.add(worldGroup);
+    scene.add(unitsGroup);
+    scene.add(projectilesGroup);
+    scene.add(effectsGroup);
+
+    buildAramBridgeEnvironment();
+    setupViewportTouchControls(canvas);
+    window.addEventListener('resize', handleResize);
+}
+
+function buildAramBridgeEnvironment() {
+    // Diagonal Bridge Length: from (-28,0,28) to (28,0,-28) -> length = sqrt(56^2 + 56^2) ≈ 79.2
+    const bridgeLength = 82;
+    const bridgeWidth = 11.5;
+
+    const bridgeGroup = new THREE.Group();
+    // Rotate -45 degrees around Y so X-axis aligns with (-28,28) -> (28,-28)
+    bridgeGroup.rotation.y = Math.PI / 4;
+
+    // Main Bridge Deck
+    const deckGeo = new THREE.BoxGeometry(bridgeLength, 2.2, bridgeWidth);
+    const deckMat = new THREE.MeshStandardMaterial({ color: 0x263832, roughness: 0.85, metalness: 0.1 });
+    const deckMesh = new THREE.Mesh(deckGeo, deckMat);
+    deckMesh.position.y = -1.1;
+    deckMesh.receiveShadow = true;
+    bridgeGroup.add(deckMesh);
+
+    // Center Lane Trim Path
+    const roadGeo = new THREE.PlaneGeometry(bridgeLength - 6, bridgeWidth - 2.4);
+    const roadMat = new THREE.MeshStandardMaterial({ color: 0x2d443b, roughness: 0.9 });
+    const roadMesh = new THREE.Mesh(roadGeo, roadMat);
+    roadMesh.rotation.x = -Math.PI / 2;
+    roadMesh.position.y = 0.02;
+    bridgeGroup.add(roadMesh);
+
+    // Glowing Side Rails (matching the brown/amber borders in screenshot 4)
+    const railGeo = new THREE.BoxGeometry(bridgeLength - 4, 0.55, 0.55);
+    const railMat = new THREE.MeshStandardMaterial({ color: 0x5c2d24, roughness: 0.6 });
+    const leftRail = new THREE.Mesh(railGeo, railMat);
+    leftRail.position.set(0, 0.28, -bridgeWidth / 2 + 0.3);
+    bridgeGroup.add(leftRail);
+
+    const rightRail = new THREE.Mesh(railGeo, railMat);
+    rightRail.position.set(0, 0.28, bridgeWidth / 2 - 0.3);
+    bridgeGroup.add(rightRail);
+
+    // Center Mid Line Marker
+    const midLineGeo = new THREE.PlaneGeometry(0.4, bridgeWidth - 2);
+    const midLineMat = new THREE.MeshBasicMaterial({ color: 0x475569, transparent: true, opacity: 0.45 });
+    const midLine = new THREE.Mesh(midLineGeo, midLineMat);
+    midLine.rotation.x = -Math.PI / 2;
+    midLine.position.y = 0.04;
+    bridgeGroup.add(midLine);
+
+    // Health Relics / Bush Zones on sides of mid bridge
+    [-8, 8].forEach(xPos => {
+        const padGeo = new THREE.CylinderGeometry(1.1, 1.1, 0.15, 16);
+        const padMat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.35 });
+        const pad = new THREE.Mesh(padGeo, padMat);
+        pad.position.set(xPos, 0.08, -bridgeWidth / 2 + 1.4);
+        bridgeGroup.add(pad);
+    });
+
+    worldGroup.add(bridgeGroup);
+}
+
+/* ============================================================================
+   4. 3D GENERIC CHARACTER & STRUCTURE MESH BUILDERS (NO ANIMATIONS)
+   ============================================================================ */
+function createStructureMesh(team, type) {
+    const group = new THREE.Group();
+    const isBlue = team === 'blue';
+    const mainColor = isBlue ? 0x0ea5e9 : 0xef4444;
+    const glowColor = isBlue ? 0x38bdf8 : 0xf87171;
+
+    if (type === 'nexus') {
+        // Pedestal
+        const baseGeo = new THREE.CylinderGeometry(2.6, 3.1, 0.8, 8);
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.6 });
+        const base = new THREE.Mesh(baseGeo, baseMat);
+        base.position.y = 0.4;
+        group.add(base);
+
+        // Glowing Team Ring
+        const ringGeo = new THREE.RingGeometry(2.7, 3.1, 24);
+        const ringMat = new THREE.MeshBasicMaterial({ color: mainColor, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = 0.06;
+        group.add(ring);
+
+        // Floating Rotating Crystal Diamond (Matches diamond icon in screenshot 4)
+        const crystalGeo = new THREE.OctahedronGeometry(1.65, 0);
+        const crystalMat = new THREE.MeshStandardMaterial({
+            color: mainColor,
+            emissive: glowColor,
+            emissiveIntensity: 0.45,
+            roughness: 0.2,
+            metalness: 0.3
+        });
+        const crystal = new THREE.Mesh(crystalGeo, crystalMat);
+        crystal.position.y = 2.6;
+        crystal.scale.set(1, 1.35, 1);
+        group.add(crystal);
+        group.userData.crystal = crystal;
+    } else if (type === 'turret') {
+        // Turret Base Block
+        const towerGeo = new THREE.BoxGeometry(2.1, 3.2, 2.1);
+        const towerMat = new THREE.MeshStandardMaterial({
+            color: isBlue ? 0x1e3a5f : 0x4c1d24,
+            roughness: 0.5
+        });
+        const tower = new THREE.Mesh(towerGeo, towerMat);
+        tower.position.y = 1.6;
+        group.add(tower);
+
+        // Turret Top Crystal
+        const topGeo = new THREE.OctahedronGeometry(0.95, 0);
+        const topMat = new THREE.MeshStandardMaterial({
+            color: mainColor,
+            emissive: glowColor,
+            emissiveIntensity: 0.5
+        });
+        const topCrystal = new THREE.Mesh(topGeo, topMat);
+        topCrystal.position.y = 3.9;
+        group.add(topCrystal);
+        group.userData.crystal = topCrystal;
+
+        // Subtle Range Circle on Ground
+        const rangeGeo = new THREE.RingGeometry(10.8, 11.0, 36);
+        const rangeMat = new THREE.MeshBasicMaterial({
+            color: mainColor,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.22
+        });
+        const rangeRing = new THREE.Mesh(rangeGeo, rangeMat);
+        rangeRing.rotation.x = -Math.PI / 2;
+        rangeRing.position.y = 0.05;
+        group.add(rangeRing);
+    }
+
+    return group;
+}
+
+function createChampionMesh(champData, team) {
+    const group = new THREE.Group();
+    const isBlue = team === 'blue';
+    const teamColor = isBlue ? 0x0ea5e9 : 0xef4444;
+    const roleInfo = ROLE_COLORS[champData.role];
+    const roleColor = roleInfo.threeColor;
+
+    // 1. Team Base Ring
+    const ringGeo = new THREE.RingGeometry(1.05, 1.32, 24);
+    const ringMat = new THREE.MeshBasicMaterial({ color: teamColor, side: THREE.DoubleSide });
+    const baseRing = new THREE.Mesh(ringGeo, ringMat);
+    baseRing.rotation.x = -Math.PI / 2;
+    baseRing.position.y = 0.06;
+    group.add(baseRing);
+
+    // 2. Selection Highlight Ring (Hidden unless selected)
+    const selGeo = new THREE.RingGeometry(1.42, 1.72, 28);
+    const selMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
+    const selRing = new THREE.Mesh(selGeo, selMat);
+    selRing.rotation.x = -Math.PI / 2;
+    selRing.position.y = 0.08;
+    selRing.visible = false;
+    group.add(selRing);
+    group.userData.selRing = selRing;
+
+    // 3. Support Shield Bubble (Visible when shielded/healed by support)
+    const shieldGeo = new THREE.SphereGeometry(1.45, 16, 12);
+    const shieldMat = new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.0, wireframe: true });
+    const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
+    shieldMesh.position.y = 1.2;
+    group.add(shieldMesh);
+    group.userData.shieldMesh = shieldMesh;
+
+    // 4. Generic Low-Poly Role Body (Static, clean silhouette per role)
+    const bodyGroup = new THREE.Group();
+    const armorMat = new THREE.MeshStandardMaterial({ color: isBlue ? 0x1e3a8a : 0x7f1d1d, roughness: 0.5 });
+    const roleMat  = new THREE.MeshStandardMaterial({ color: roleColor, emissive: roleColor, emissiveIntensity: 0.2, roughness: 0.4 });
+    const headMat  = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 });
+
+    if (champData.role === 'Tank') {
+        // Heavy bulky block torso + wide shoulders + large front shield
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.5, 0.9), armorMat);
+        torso.position.y = 0.95;
+        bodyGroup.add(torso);
+
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.65, 0.65), headMat);
+        head.position.y = 1.95;
+        bodyGroup.add(head);
+
+        // Front Shield
+        const shield = new THREE.Mesh(new THREE.BoxGeometry(1.35, 1.35, 0.2), roleMat);
+        shield.position.set(0, 1.0, 0.65);
+        bodyGroup.add(shield);
+    } else if (champData.role === 'Mage') {
+        // Cone robe + floating crystal staff + arcane ring
+        const robe = new THREE.Mesh(new THREE.ConeGeometry(0.85, 1.75, 8), armorMat);
+        robe.position.y = 0.9;
+        bodyGroup.add(robe);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 12, 12), headMat);
+        head.position.y = 1.95;
+        bodyGroup.add(head);
+
+        const staff = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.2), new THREE.MeshStandardMaterial({ color: 0x94a3b8 }));
+        staff.position.set(0.65, 1.1, 0.3);
+        bodyGroup.add(staff);
+
+        const orb = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), roleMat);
+        orb.position.set(0.65, 2.35, 0.3);
+        bodyGroup.add(orb);
+    } else if (champData.role === 'Marksman') {
+        // Sleek cylinder body + long rifle/bow pointing forward
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.58, 1.45, 10), armorMat);
+        torso.position.y = 0.85;
+        bodyGroup.add(torso);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.36, 12, 12), headMat);
+        head.position.y = 1.85;
+        bodyGroup.add(head);
+
+        // Long Gun / Crossbow barrel pointing +Z
+        const gun = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.22, 1.45), roleMat);
+        gun.position.set(0.45, 1.15, 0.55);
+        bodyGroup.add(gun);
+    } else if (champData.role === 'Assassin') {
+        // Lean diamond torso + dual daggers on left and right
+        const torso = new THREE.Mesh(new THREE.ConeGeometry(0.65, 1.5, 6), armorMat);
+        torso.position.y = 0.85;
+        bodyGroup.add(torso);
+
+        const head = new THREE.Mesh(new THREE.OctahedronGeometry(0.38, 0), headMat);
+        head.position.y = 1.85;
+        bodyGroup.add(head);
+
+        const daggerGeo = new THREE.BoxGeometry(0.14, 0.14, 1.05);
+        const leftDagger = new THREE.Mesh(daggerGeo, roleMat);
+        leftDagger.position.set(-0.6, 0.95, 0.45);
+        bodyGroup.add(leftDagger);
+
+        const rightDagger = new THREE.Mesh(daggerGeo, roleMat);
+        rightDagger.position.set(0.6, 0.95, 0.45);
+        bodyGroup.add(rightDagger);
+    } else if (champData.role === 'Support') {
+        // Graceful cylinder + floating golden/emerald halo above head
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.72, 1.5, 12), armorMat);
+        torso.position.y = 0.85;
+        bodyGroup.add(torso);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.36, 12, 12), headMat);
+        head.position.y = 1.85;
+        bodyGroup.add(head);
+
+        const halo = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.07, 8, 20), roleMat);
+        halo.rotation.x = Math.PI / 2;
+        halo.position.y = 2.45;
+        bodyGroup.add(halo);
+    } else {
+        // Fighter: Bruiser torso + greatsword
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.95, 1.45, 0.7), armorMat);
+        torso.position.y = 0.85;
+        bodyGroup.add(torso);
+
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 12, 12), headMat);
+        head.position.y = 1.85;
+        bodyGroup.add(head);
+
+        const sword = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.6, 0.12), roleMat);
+        sword.position.set(0.65, 1.35, 0.4);
+        sword.rotation.x = Math.PI / 6;
+        bodyGroup.add(sword);
+    }
+
+    group.add(bodyGroup);
+    group.userData.bodyGroup = bodyGroup;
+    return group;
+}
+
+function createMinionMesh(team) {
+    const isBlue = team === 'blue';
+    const group = new THREE.Group();
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.62, 0.75, 0.62),
+        new THREE.MeshStandardMaterial({ color: isBlue ? 0x38bdf8 : 0xf87171, roughness: 0.6 })
+    );
+    body.position.y = 0.4;
+    group.add(body);
+    return group;
+}
+
+/* ============================================================================
+   5. MATCH STATE & REAL-TIME MOBA MANAGER SIMULATION
+   ============================================================================ */
+let isGameRunning = false;
+let gameSpeed = 1; // 1, 2, or 0 (Paused)
+let matchTimeSeconds = 0;
+let minionWaveTimer = 0;
+
+let blueKills = 0;
+let redKills = 0;
+
+let blueChampions = [];
+let redChampions = [];
+let structures = [];
+let minions = [];
+let projectiles = [];
+let visualBeams = [];
+
+// -1 means no hero is currently open in the Command Sheet (100% clean 3D view & no big floating tags)
+let selectedChampIndex = -1;
+let supportTargetIndex = 0; // Index of ally that Blue Support escorts/heals (default 0 = Marksman)
+const TARGET_PRIORITIES = ['LOWEST_HP', 'CARRY', 'NEAREST', 'TURRET'];
+let currentPriorityIndex = 0;
+
+function clearThreeGroup(grp) {
+    if (!grp) return;
+    while (grp.children.length > 0) {
+        grp.remove(grp.children[0]);
+    }
+}
+
+function setupNewMatch() {
+    clearThreeGroup(unitsGroup);
+    clearThreeGroup(projectilesGroup);
+    clearThreeGroup(effectsGroup);
+    document.getElementById('labels-layer').innerHTML = '';
+
+    matchTimeSeconds = 0;
+    minionWaveTimer = 12; // Spawn first wave right away
+    blueKills = 0;
+    redKills = 0;
+    selectedChampIndex = -1;
+    supportTargetIndex = 0;
+    camPanOffset = { x: 0, z: 0 };
+
+    blueChampions = [];
+    redChampions = [];
+    structures = [];
+    minions = [];
+    projectiles = [];
+    visualBeams = [];
+
+    // 1. Create Structures along diagonal lane (s from 0.0 to 1.0)
+    // Blue Nexus (s = 0.06), Blue Turret (s = 0.24)
+    // Red Turret (s = 0.76), Red Nexus (s = 0.94)
+    const structDefs = [
+        { id: 'blue_nexus',  name: 'Blue Nexus',  team: 'blue', type: 'nexus',  s: 0.06, hp: 3200, maxHp: 3200, ad: 0,   range: 0 },
+        { id: 'blue_turret', name: 'Blue Turret', team: 'blue', type: 'turret', s: 0.25, hp: 2200, maxHp: 2200, ad: 135, range: 11.0 },
+        { id: 'red_turret',  name: 'Red Turret',  team: 'red',  type: 'turret', s: 0.75, hp: 2200, maxHp: 2200, ad: 135, range: 11.0 },
+        { id: 'red_nexus',   name: 'Red Nexus',   team: 'red',  type: 'nexus',  s: 0.94, hp: 3200, maxHp: 3200, ad: 0,   range: 0 }
+    ];
+
+    structDefs.forEach(sd => {
+        const pos = lanePosFromS(sd.s, 0);
+        const mesh = createStructureMesh(sd.team, sd.type);
+        mesh.position.set(pos.x, 0, pos.z);
+        unitsGroup.add(mesh);
+
+        const labelEl = createUnitLabelElement(sd.name, sd.team, true);
+        structures.push({
+            ...sd,
+            x: pos.x,
+            z: pos.z,
+            mesh,
+            labelEl,
+            attackCooldown: 0,
+            dead: false
+        });
+    });
+
+    // 2. Spawn Blue Team (Player's 5 Selected Champions)
+    const lateralSlots = [-2.6, -1.3, 0, 1.3, 2.6];
+    selectedSquadIds.forEach((id, idx) => {
+        const base = CHAMPION_POOL.find(c => c.id === id);
+        const champ = createChampionInstance(base, 'blue', idx, 0.12 + idx * 0.012, lateralSlots[idx]);
+        blueChampions.push(champ);
+    });
+
+    // 3. Spawn Red Team (5 AI Champions from remaining pool or balanced)
+    const unpicked = CHAMPION_POOL.filter(c => !selectedSquadIds.includes(c.id));
+    for (let i = 0; i < 5; i++) {
+        const base = unpicked[i % unpicked.length];
+        const champ = createChampionInstance(base, 'red', i, 0.88 - i * 0.012, lateralSlots[i]);
+        // Red AI default stances based on role
+        champ.order = base.role === 'Assassin' ? 'GANK' : (base.role === 'Tank' ? 'PUSH' : 'FARM');
+        redChampions.push(champ);
+    }
+
+    renderSupportTargetsBar();
+    renderItemShop();
+    setCameraPreset(2); // Start in dynamic Close-Up Battle view
+    closeCommandSheet(); // Start with unobstructed 3D battlefield view
+    updateManagerDashboardUI();
+
+    isGameRunning = true;
+}
+
+function createChampionInstance(base, team, slotIndex, startS, lateralOffset) {
+    const pos = lanePosFromS(startS, lateralOffset);
+    const mesh = createChampionMesh(base, team);
+    mesh.position.set(pos.x, 0, pos.z);
+    unitsGroup.add(mesh);
+
+    const labelEl = createUnitLabelElement(base.name, team, false, base.role);
+
+    return {
+        uid: `${team}_${base.id}_${slotIndex}`,
+        id: base.id,
+        name: base.name,
+        role: base.role,
+        team,
+        slotIndex,
+        level: 1,
+        xp: 0,
+        gold: 500,
+        kills: 0,
+        deaths: 0,
+        assists: 0,
+        maxHp: base.hp,
+        hp: base.hp,
+        ad: base.ad,
+        ap: base.ap,
+        armor: base.armor,
+        as: base.as,
+        ls: 0,
+        range: base.range,
+        speed: base.speed,
+        s: startS,
+        lateral: lateralOffset,
+        x: pos.x,
+        z: pos.z,
+        order: 'PUSH', // Default tactical order so action starts immediately
+        stateText: 'MOVING_TO_LANE',
+        targetPriority: 'LOWEST_HP',
+        items: [],
+        attackCooldown: 0,
+        supportCooldown: 0,
+        shieldTimer: 0,
+        dead: false,
+        respawnTimer: 0,
+        mesh,
+        labelEl
+    };
+}
+
+function createUnitLabelElement(name, team, isStructure, role = '') {
+    const layer = document.getElementById('labels-layer');
+    const div = document.createElement('div');
+    div.className = 'unit-label';
+
+    const barColor = team === 'blue' ? 'bg-cyan-400' : 'bg-rose-500';
+    if (isStructure) {
+        div.innerHTML = `
+            <div class="w-10 h-1 bg-slate-950/80 rounded-full overflow-hidden border border-slate-700/60">
+                <div class="hp-fill h-full ${barColor}" style="width:100%"></div>
+            </div>
+        `;
+    } else {
+        // Full detail tag is hidden unless this hero is currently selected!
+        // Unselected heroes only show a tiny 7x1px micro health bar so the 3D scene stays completely clean.
+        div.innerHTML = `
+            <div class="detail-tag hidden flex-col items-center mb-1">
+                <div class="flex items-center gap-1 bg-slate-950/95 px-2 py-0.5 rounded-md text-[10px] font-extrabold border border-cyan-400/80 shadow-lg whitespace-nowrap">
+                    <span class="lvl-badge text-amber-400">Lv.1</span>
+                    <span class="text-white">${name}</span>
+                    <span class="stance-badge text-[9px] px-1 rounded bg-cyan-500/20 text-cyan-300">PUSH</span>
+                </div>
+            </div>
+            <div class="escort-tag hidden mb-0.5 bg-emerald-950/90 border border-emerald-400/70 px-1.5 py-0.2 rounded text-[8px] font-extrabold text-emerald-300 whitespace-nowrap">
+                🛡️ Protected
+            </div>
+            <div class="micro-bar w-7 h-1 bg-slate-950/75 rounded-full overflow-hidden">
+                <div class="hp-fill h-full ${barColor}" style="width:100%"></div>
+            </div>
+        `;
+    }
+    layer.appendChild(div);
+    return div;
+}
+
+/* ============================================================================
+   6. MINION WAVE SPAWNER & COMBAT ENGINE
+   ============================================================================ */
+function spawnMinionWave() {
+    const offsets = [-1.4, 0, 1.4];
+    offsets.forEach((lat, idx) => {
+        // Blue Minion
+        const bPos = lanePosFromS(0.11, lat);
+        const bMesh = createMinionMesh('blue');
+        bMesh.position.set(bPos.x, 0, bPos.z);
+        unitsGroup.add(bMesh);
+        minions.push({
+            team: 'blue',
+            hp: 340,
+            maxHp: 340,
+            ad: 24,
+            range: 2.5,
+            speed: 3.4,
+            s: 0.11 - idx * 0.01,
+            lateral: lat,
+            x: bPos.x,
+            z: bPos.z,
+            attackCooldown: 0,
+            dead: false,
+            mesh: bMesh
+        });
+
+        // Red Minion
+        const rPos = lanePosFromS(0.89, lat);
+        const rMesh = createMinionMesh('red');
+        rMesh.position.set(rPos.x, 0, rPos.z);
+        unitsGroup.add(rMesh);
+        minions.push({
+            team: 'red',
+            hp: 340,
+            maxHp: 340,
+            ad: 24,
+            range: 2.5,
+            speed: 3.4,
+            s: 0.89 + idx * 0.01,
+            lateral: lat,
+            x: rPos.x,
+            z: rPos.z,
+            attackCooldown: 0,
+            dead: false,
+            mesh: rMesh
+        });
+    });
+}
+
+function distXZ(a, b) {
+    const dx = a.x - b.x;
+    const dz = a.z - b.z;
+    return Math.sqrt(dx * dx + dz * dz);
+}
+
+function updateSimulation(dt) {
+    if (!isGameRunning || gameSpeed === 0) return;
+    const simDt = dt * gameSpeed;
+    matchTimeSeconds += simDt;
+
+    // Passive gold & XP tick
+    const allChamps = [...blueChampions, ...redChampions];
+    allChamps.forEach(c => {
+        c.gold += simDt * 4.5;
+        addChampionXp(c, simDt * 3.5);
+    });
+
+    // Red AI simple auto-buy items when they have gold
+    redChampions.forEach(rc => {
+        if (rc.gold >= 500 && rc.items.length < 6) {
+            const item = SHOP_ITEMS[Math.floor(Math.random() * SHOP_ITEMS.length)];
+            applyItemToChampion(rc, item);
+        }
+    });
+
+    // Minion wave timer
+    minionWaveTimer += simDt;
+    if (minionWaveTimer >= 14) {
+        minionWaveTimer = 0;
+        spawnMinionWave();
+    }
+
+    // Rotate Nexus & Turret crystals
+    structures.forEach(st => {
+        if (!st.dead && st.mesh.userData.crystal) {
+            st.mesh.userData.crystal.rotation.y += simDt * 1.5;
+        }
+    });
+
+    // Update Turrets Combat
+    structures.forEach(st => {
+        if (st.dead || st.type !== 'turret') return;
+        st.attackCooldown = Math.max(0, st.attackCooldown - simDt);
+        if (st.attackCooldown <= 0) {
+            const enemies = getAttackableTargets(st.team, st, st.range, true);
+            if (enemies.length > 0) {
+                const target = enemies[0];
+                spawnProjectile(st, target, st.ad, st.team === 'blue' ? 0x38bdf8 : 0xf87171, 20);
+                st.attackCooldown = 1.15;
+            }
+        }
+    });
+
+    // Update Minions
+    minions.forEach(m => {
+        if (m.dead) return;
+        m.attackCooldown = Math.max(0, m.attackCooldown - simDt);
+        const enemies = getAttackableTargets(m.team, m, 6.5, true);
+        if (enemies.length > 0) {
+            const target = enemies[0];
+            const d = distXZ(m, target);
+            if (d <= m.range) {
+                if (m.attackCooldown <= 0) {
+                    dealDamage(m, target, m.ad);
+                    m.attackCooldown = 1.1;
+                }
+            } else {
+                moveTowardsPoint(m, target.x, target.z, m.speed * simDt);
+            }
+        } else {
+            // March down lane
+            const dir = m.team === 'blue' ? 1 : -1;
+            m.s = Math.max(0.06, Math.min(0.94, m.s + dir * 0.032 * simDt));
+            const p = lanePosFromS(m.s, m.lateral);
+            m.x = p.x;
+            m.z = p.z;
+            m.mesh.position.set(m.x, 0, m.z);
+        }
+    });
+
+    // Update Champions (Tactical Manager AI)
+    allChamps.forEach(c => updateChampionAI(c, simDt));
+
+    // Update Projectiles
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+        const p = projectiles[i];
+        if (!p.target || p.target.dead) {
+            projectilesGroup.remove(p.mesh);
+            projectiles.splice(i, 1);
+            continue;
+        }
+        const dx = p.target.x - p.mesh.position.x;
+        const dy = 1.2 - p.mesh.position.y;
+        const dz = p.target.z - p.mesh.position.z;
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        const step = p.speed * simDt;
+        if (dist <= step + 0.35) {
+            dealDamage(p.source, p.target, p.damage);
+            projectilesGroup.remove(p.mesh);
+            projectiles.splice(i, 1);
+        } else {
+            p.mesh.position.x += (dx / dist) * step;
+            p.mesh.position.y += (dy / dist) * step;
+            p.mesh.position.z += (dz / dist) * step;
+        }
+    }
+
+    // Update Visual Support Beams
+    for (let i = visualBeams.length - 1; i >= 0; i--) {
+        const b = visualBeams[i];
+        b.life -= simDt;
+        if (b.life <= 0) {
+            effectsGroup.remove(b.mesh);
+            visualBeams.splice(i, 1);
+        }
+    }
+
+    // Cleanup dead minions
+    for (let i = minions.length - 1; i >= 0; i--) {
+        if (minions[i].dead) {
+            unitsGroup.remove(minions[i].mesh);
+            minions.splice(i, 1);
+        }
+    }
+}
+
+function updateChampionAI(c, dt) {
+    // Handle Death & Respawn
+    if (c.dead) {
+        c.respawnTimer -= dt;
+        c.stateText = `DEAD (${Math.ceil(c.respawnTimer)}s)`;
+        c.mesh.visible = false;
+        if (c.respawnTimer <= 0) {
+            c.dead = false;
+            c.hp = c.maxHp;
+            c.s = c.team === 'blue' ? 0.08 : 0.92;
+            const pos = lanePosFromS(c.s, c.lateral);
+            c.x = pos.x;
+            c.z = pos.z;
+            c.mesh.position.set(c.x, 0, c.z);
+            c.mesh.visible = true;
+            c.stateText = 'MOVING_TO_LANE';
+        }
+        return;
+    }
+
+    c.attackCooldown = Math.max(0, c.attackCooldown - dt);
+    c.supportCooldown = Math.max(0, c.supportCooldown - dt);
+
+    // Shield visual decay
+    if (c.shieldTimer > 0) {
+        c.shieldTimer -= dt;
+        c.mesh.userData.shieldMesh.material.opacity = 0.38;
+        c.mesh.userData.shieldMesh.rotation.y += dt * 2.5;
+    } else {
+        c.mesh.userData.shieldMesh.material.opacity = 0.0;
+    }
+
+    const isBlue = c.team === 'blue';
+    const homeS = isBlue ? 0.07 : 0.93;
+    const turretS = isBlue ? 0.24 : 0.76;
+
+    // Fountain Regeneration when near home Nexus
+    if (Math.abs(c.s - homeS) < 0.08 && c.hp < c.maxHp) {
+        c.hp = Math.min(c.maxHp, c.hp + c.maxHp * 0.16 * dt);
+    }
+
+    // 1. RETREAT STANCE (or Red AI critically low HP)
+    const shouldAutoRetreat = c.team === 'red' && (c.hp / c.maxHp < 0.22);
+    if (c.order === 'RETREAT' || shouldAutoRetreat) {
+        c.stateText = 'RETREATING';
+        const retreatPos = lanePosFromS(homeS, c.lateral);
+        if (distXZ(c, retreatPos) > 1.2) {
+            moveTowardsPoint(c, retreatPos.x, retreatPos.z, c.speed * 1.15 * dt);
+        } else if (c.hp >= c.maxHp * 0.95 && c.team === 'red') {
+            c.order = 'PUSH';
+        }
+        return;
+    }
+
+    // 2. SPECIAL SUPPORT MECHANIC (Escort & Heal/Shield Assigned Ally!)
+    if (c.role === 'Support') {
+        const allies = isBlue ? blueChampions : redChampions;
+        let escortTarget = isBlue ? allies[supportTargetIndex] : allies[0];
+        if (!escortTarget || escortTarget.dead || escortTarget === c) {
+            // Fallback to lowest HP living ally
+            const livingAllies = allies.filter(a => !a.dead && a !== c);
+            if (livingAllies.length > 0) {
+                livingAllies.sort((a, b) => (a.hp / a.maxHp) - (b.hp / b.maxHp));
+                escortTarget = livingAllies[0];
+            }
+        }
+
+        if (escortTarget && !escortTarget.dead) {
+            // Cast Support Heal & Shield beam every few seconds
+            if (c.supportCooldown <= 0 && (escortTarget.hp < escortTarget.maxHp * 0.92 || distXZ(c, escortTarget) < 9)) {
+                const healAmount = 95 + c.ap * 1.4;
+                escortTarget.hp = Math.min(escortTarget.maxHp, escortTarget.hp + healAmount);
+                escortTarget.shieldTimer = 2.8;
+                spawnSupportBeam(c, escortTarget);
+                c.supportCooldown = 3.8;
+            }
+
+            // If Support is in FARM, DEFEND, or PUSH, stay near the assigned Escort Ally!
+            if (c.order !== 'GANK') {
+                const followS = Math.max(0.08, Math.min(0.92, escortTarget.s + (isBlue ? -0.035 : 0.035)));
+                const followPos = lanePosFromS(followS, escortTarget.lateral + 1.1);
+                if (distXZ(c, followPos) > 2.4) {
+                    c.stateText = `SUPPORTING_${escortTarget.name.toUpperCase()}`;
+                    moveTowardsPoint(c, followPos.x, followPos.z, c.speed * dt);
+                }
+            }
+        }
+    }
+
+    // 3. DEFEND STANCE: Hold near allied turret (or Nexus if turret fell)
+    if (c.order === 'DEFEND') {
+        const allyTurret = structures.find(s => s.team === c.team && s.type === 'turret' && !s.dead);
+        const holdS = allyTurret ? turretS : (isBlue ? 0.12 : 0.88);
+        const holdPos = lanePosFromS(holdS, c.lateral);
+        const enemiesNear = getAttackableTargets(c.team, c, c.range + 3.0, false);
+
+        if (enemiesNear.length > 0) {
+            c.stateText = 'DEFENDING';
+            engageTarget(c, enemiesNear[0], dt);
+        } else if (distXZ(c, holdPos) > 1.8) {
+            c.stateText = 'HOLDING_TOWER';
+            moveTowardsPoint(c, holdPos.x, holdPos.z, c.speed * dt);
+        } else {
+            c.stateText = 'DEFENDING';
+        }
+        return;
+    }
+
+    // 4. TARGET ACQUISITION BASED ON STANCE & MANAGER PRIORITY
+    const searchRadius = c.order === 'FARM' ? c.range + 3.5 : 14.5;
+    const candidates = getAttackableTargets(c.team, c, searchRadius, false);
+
+    if (candidates.length > 0) {
+        const chosen = selectTargetByStance(c, candidates);
+        if (chosen) {
+            c.stateText = c.order === 'FARM' ? 'FARMING' : (c.order === 'GANK' ? 'DIVING_CARRY' : 'FIGHTING');
+            engageTarget(c, chosen, dt);
+            return;
+        }
+    }
+
+    // 5. ADVANCE ALONG LANE IF NO TARGET IN RANGE
+    c.stateText = 'MOVING_TO_LANE';
+    const frontLineS = getSafeFrontlineS(c);
+    const destPos = lanePosFromS(frontLineS, c.lateral);
+    if (distXZ(c, destPos) > 1.1) {
+        moveTowardsPoint(c, destPos.x, destPos.z, c.speed * dt);
+    }
+}
+
+function getSafeFrontlineS(c) {
+    const isBlue = c.team === 'blue';
+    const enemyTurret = structures.find(s => s.team !== c.team && s.type === 'turret' && !s.dead);
+
+    if (c.order === 'FARM') {
+        // Stay slightly safer near the middle or behind allied minions
+        if (enemyTurret) {
+            return isBlue ? Math.min(0.60, enemyTurret.s - 0.14) : Math.max(0.40, enemyTurret.s + 0.14);
+        }
+        return isBlue ? 0.78 : 0.22;
+    }
+    // PUSH, FIGHT, GANK march all the way to enemy objectives
+    if (enemyTurret) {
+        return isBlue ? enemyTurret.s - 0.06 : enemyTurret.s + 0.06;
+    }
+    return isBlue ? 0.89 : 0.11;
+}
+
+function getAttackableTargets(myTeam, unit, radius, prioritizeMinionsFirst = false) {
+    const enemyChamps = (myTeam === 'blue' ? redChampions : blueChampions).filter(e => !e.dead && distXZ(unit, e) <= radius);
+    const enemyMinions = minions.filter(m => !m.dead && m.team !== myTeam && distXZ(unit, m) <= radius);
+    const enemyStructs = structures.filter(s => !s.dead && s.team !== myTeam && distXZ(unit, s) <= radius);
+
+    // Protect Nexus if Turret is still alive
+    const enemyTurretAlive = structures.some(s => !s.dead && s.team !== myTeam && s.type === 'turret');
+    const validStructs = enemyStructs.filter(s => !(s.type === 'nexus' && enemyTurretAlive));
+
+    if (prioritizeMinionsFirst) {
+        return [...enemyMinions, ...enemyChamps, ...validStructs];
+    }
+    return [...enemyChamps, ...enemyMinions, ...validStructs];
+}
+
+function selectTargetByStance(c, candidates) {
+    const enemyChamps = candidates.filter(x => x.role);
+    const enemyMinions = candidates.filter(x => !x.role && !x.type);
+    const enemyStructs = candidates.filter(x => x.type);
+
+    // Stance overrides
+    if (c.order === 'FARM' && enemyMinions.length > 0) {
+        enemyMinions.sort((a, b) => a.hp - b.hp);
+        return enemyMinions[0];
+    }
+    if (c.order === 'PUSH' && enemyStructs.length > 0 && enemyMinions.length === 0) {
+        return enemyStructs[0];
+    }
+    if (c.order === 'GANK' && enemyChamps.length > 0) {
+        // Prioritize enemy Marksman/Mage or lowest HP
+        enemyChamps.sort((a, b) => {
+            const aCarry = (a.role === 'Marksman' || a.role === 'Mage') ? 0 : 1;
+            const bCarry = (b.role === 'Marksman' || b.role === 'Mage') ? 0 : 1;
+            if (aCarry !== bCarry) return aCarry - bCarry;
+            return a.hp - b.hp;
+        });
+        return enemyChamps[0];
+    }
+
+    // Apply Manager Focus Priority for Champion targets
+    const prio = TARGET_PRIORITIES[currentPriorityIndex];
+    if (prio === 'TURRET' && enemyStructs.length > 0) return enemyStructs[0];
+
+    if (enemyChamps.length > 0 && (c.order === 'FIGHT' || c.order === 'GANK' || enemyMinions.length === 0)) {
+        if (prio === 'LOWEST_HP') {
+            enemyChamps.sort((a, b) => a.hp - b.hp);
+        } else if (prio === 'CARRY') {
+            enemyChamps.sort((a, b) => ((a.role === 'Marksman' || a.role === 'Mage') ? -1 : 1));
+        } else {
+            enemyChamps.sort((a, b) => distXZ(c, a) - distXZ(c, b));
+        }
+        return enemyChamps[0];
+    }
+
+    candidates.sort((a, b) => distXZ(c, a) - distXZ(c, b));
+    return candidates[0];
+}
+
+function engageTarget(c, target, dt) {
+    const d = distXZ(c, target);
+    // Face target
+    if (c.mesh.userData.bodyGroup) {
+        c.mesh.userData.bodyGroup.lookAt(target.x - c.x, 0, target.z - c.z);
+    }
+
+    if (d <= c.range) {
+        if (c.attackCooldown <= 0) {
+            const totalDmg = c.ad + c.ap * 0.85;
+            if (c.range > 4.5) {
+                const projColor = ROLE_COLORS[c.role]?.threeColor || 0xffffff;
+                spawnProjectile(c, target, totalDmg, projColor, 22);
+            } else {
+                dealDamage(c, target, totalDmg);
+            }
+            c.attackCooldown = 1.0 / Math.max(0.4, c.as);
+        }
+    } else {
+        moveTowardsPoint(c, target.x, target.z, c.speed * dt);
+    }
+}
+
+function moveTowardsPoint(unit, tx, tz, maxStep) {
+    const dx = tx - unit.x;
+    const dz = tz - unit.z;
+    const dist = Math.sqrt(dx * dx + dz * dz);
+    if (dist <= 0.05) return;
+
+    const step = Math.min(dist, maxStep);
+    unit.x += (dx / dist) * step;
+    unit.z += (dz / dist) * step;
+
+    // Recompute normalized lane progress `s`
+    const sX = (unit.x + LANE_HALF_LEN) / (LANE_HALF_LEN * 2);
+    const sZ = (LANE_HALF_LEN - unit.z) / (LANE_HALF_LEN * 2);
+    unit.s = Math.max(0.03, Math.min(0.97, (sX + sZ) * 0.5));
+
+    unit.mesh.position.set(unit.x, 0, unit.z);
+    if (unit.mesh.userData.bodyGroup) {
+        unit.mesh.userData.bodyGroup.rotation.y = Math.atan2(dx, dz);
+    }
+}
+
+function spawnProjectile(source, target, damage, colorHex, speed) {
+    const geo = new THREE.SphereGeometry(0.26, 8, 8);
+    const mat = new THREE.MeshBasicMaterial({ color: colorHex });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(source.x, 1.35, source.z);
+    projectilesGroup.add(mesh);
+    projectiles.push({ source, target, damage, speed, mesh });
+}
+
+function spawnSupportBeam(sup, ally) {
+    const points = [
+        new THREE.Vector3(sup.x, 1.5, sup.z),
+        new THREE.Vector3(ally.x, 1.4, ally.z)
+    ];
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    const mat = new THREE.LineBasicMaterial({ color: 0x34d399, linewidth: 3 });
+    const line = new THREE.Line(geo, mat);
+    effectsGroup.add(line);
+    visualBeams.push({ mesh: line, life: 0.45 });
+}
+
+function dealDamage(attacker, target, rawDamage) {
+    if (!target || target.dead) return;
+
+    // Armor mitigation
+    const armor = target.armor || 15;
+    const mult = 100 / (100 + armor);
+    const shieldReduction = target.shieldTimer > 0 ? 0.68 : 1.0;
+    const finalDmg = Math.max(8, rawDamage * mult * shieldReduction);
+
+    target.hp -= finalDmg;
+
+    // Lifesteal for attacker
+    if (attacker && attacker.ls && attacker.hp > 0 && !attacker.dead) {
+        attacker.hp = Math.min(attacker.maxHp, attacker.hp + finalDmg * (attacker.ls / 100));
+    }
+
+    if (target.hp <= 0) {
+        target.hp = 0;
+        target.dead = true;
+
+        if (target.role) {
+            // Champion killed!
+            target.deaths++;
+            target.respawnTimer = 6 + Math.floor(target.level * 0.8);
+
+            if (attacker && attacker.role) {
+                attacker.kills++;
+                attacker.gold += 300;
+                addChampionXp(attacker, 140);
+            }
+
+            // Award assists to nearby allies
+            const killerTeam = target.team === 'blue' ? redChampions : blueChampions;
+            killerTeam.forEach(ally => {
+                if (ally !== attacker && !ally.dead && distXZ(ally, target) < 14) {
+                    ally.assists++;
+                    ally.gold += 110;
+                    addChampionXp(ally, 70);
+                }
+            });
+
+            if (target.team === 'red') blueKills++;
+            else redKills++;
+
+        } else if (target.type) {
+            // Structure destroyed!
+            target.mesh.visible = false;
+            target.labelEl.style.display = 'none';
+            const killerTeam = target.team === 'blue' ? redChampions : blueChampions;
+            killerTeam.forEach(ally => { ally.gold += 250; });
+
+            if (target.type === 'nexus') {
+                triggerGameOver(target.team === 'red');
+            }
+        } else {
+            // Minion killed!
+            if (attacker && attacker.role) {
+                attacker.gold += 48;
+                addChampionXp(attacker, 35);
+            }
+        }
+    }
+}
+
+function addChampionXp(c, amount) {
+    if (c.level >= 18) return;
+    c.xp += amount;
+    const needed = c.level * 110;
+    if (c.xp >= needed) {
+        c.xp -= needed;
+        c.level++;
+        c.maxHp += 85;
+        c.hp = Math.min(c.maxHp, c.hp + 85);
+        c.ad += 4;
+        c.armor += 2;
+    }
+}
+
+function triggerGameOver(isVictory) {
+    isGameRunning = false;
+    const modal = document.getElementById('modal-gameover');
+    const badge = document.getElementById('gameover-badge');
+    const title = document.getElementById('gameover-title');
+    const desc  = document.getElementById('gameover-desc');
+    const stats = document.getElementById('gameover-stats');
+
+    modal.classList.remove('hidden');
+    if (isVictory) {
+        badge.textContent = '🏆';
+        badge.className = 'w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-3 border-2 border-amber-400 bg-amber-500/20';
+        title.textContent = 'VICTORY';
+        title.className = 'text-3xl font-black tracking-widest uppercase text-amber-400';
+        desc.textContent = 'Your tactical management shattered the Red Nexus!';
+    } else {
+        badge.textContent = '💀';
+        badge.className = 'w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-3 border-2 border-rose-500 bg-rose-500/20';
+        title.textContent = 'DEFEAT';
+        title.className = 'text-3xl font-black tracking-widest uppercase text-rose-500';
+        desc.textContent = 'The Blue Nexus has fallen. Adjust your stances and try again!';
+    }
+
+    stats.innerHTML = blueChampions.map(c => `
+        <div class="flex items-center justify-between border-b border-slate-800/70 pb-1">
+            <span class="font-bold text-white">${c.name} <span class="text-[10px] text-slate-400">(${c.role})</span></span>
+            <span class="font-mono text-amber-400">${c.kills}/${c.deaths}/${c.assists} • Lv.${c.level}</span>
+        </div>
+    `).join('');
+}
+
+/* ============================================================================
+   7. MANAGER UI CONTROLS (SQUAD SELECTION, STANCES, SUPPORT TARGET, SHOP)
+   ============================================================================ */
+function selectChampion(index) {
+    // Tapping the already-selected hero toggles the Command Sheet closed for unobstructed viewing!
+    if (selectedChampIndex === index) {
+        closeCommandSheet();
+        return;
+    }
+    selectedChampIndex = index;
+    blueChampions.forEach((c, i) => {
+        if (c.mesh && c.mesh.userData.selRing) {
+            c.mesh.userData.selRing.visible = (i === index);
+        }
+    });
+
+    const sheet = document.getElementById('command-sheet');
+    sheet.classList.remove('sheet-hidden');
+    sheet.classList.add('sheet-visible');
+
+    // If user selected a Support hero, still keep current tab or allow quick access
+    updateManagerDashboardUI();
+}
+
+function closeCommandSheet() {
+    selectedChampIndex = -1;
+    blueChampions.forEach(c => {
+        if (c.mesh && c.mesh.userData.selRing) {
+            c.mesh.userData.selRing.visible = false;
+        }
+    });
+    const sheet = document.getElementById('command-sheet');
+    if (sheet) {
+        sheet.classList.remove('sheet-visible');
+        sheet.classList.add('sheet-hidden');
+    }
+    updateManagerDashboardUI();
+}
+
+function switchSheetTab(tabName) {
+    activeSheetTab = tabName;
+    ['tactics', 'support', 'shop'].forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        const panel = document.getElementById(`tab-panel-${t}`);
+        if (t === tabName) {
+            btn.className = 'py-1.5 rounded-lg text-[10px] font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 transition';
+            panel.classList.remove('hidden');
+            panel.classList.add('flex');
+        } else {
+            btn.className = 'py-1.5 rounded-lg text-[10px] font-extrabold text-slate-400 border border-transparent transition';
+            panel.classList.add('hidden');
+            panel.classList.remove('flex');
+        }
+    });
+}
+
+function toggleMacroPopover(forceState) {
+    const pop = document.getElementById('macro-popover');
+    if (typeof forceState === 'boolean') {
+        pop.classList.toggle('hidden', !forceState);
+    } else {
+        pop.classList.toggle('hidden');
+    }
+}
+
+function setChampionOrder(orderName) {
+    const c = blueChampions[selectedChampIndex];
+    if (!c) return;
+    c.order = orderName;
+    updateManagerDashboardUI();
+}
+
+function setTeamOrder(orderName) {
+    blueChampions.forEach(c => { c.order = orderName; });
+    updateManagerDashboardUI();
+}
+
+function setSupportEscortTarget(allyIndex) {
+    supportTargetIndex = allyIndex;
+    renderSupportTargetsBar();
+    updateManagerDashboardUI();
+}
+
+function setTargetPriority(prioIdx) {
+    currentPriorityIndex = prioIdx;
+    for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`prio-${i}`);
+        if (!btn) continue;
+        if (i === prioIdx) {
+            btn.className = 'px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        } else {
+            btn.className = 'px-2 py-0.5 rounded text-[9px] font-bold bg-slate-800 text-slate-400 border border-transparent';
+        }
+    }
+}
+
+function renderSupportTargetsBar() {
+    const container = document.getElementById('support-targets-row');
+    container.innerHTML = blueChampions.map((ally, idx) => {
+        const isTarget = idx === supportTargetIndex;
+        const activeCls = isTarget
+            ? 'bg-emerald-950/90 border-emerald-400 text-emerald-300 shadow-sm shadow-emerald-900'
+            : 'bg-[#090d14] border-slate-800 text-slate-400';
+        return `
+            <button onclick="setSupportEscortTarget(${idx})"
+                class="py-2 px-1 rounded-xl border text-[10px] font-extrabold truncate transition active:scale-95 ${activeCls}">
+                ${isTarget ? '🛡️ ' : ''}${ally.name}
+            </button>
+        `;
+    }).join('');
+}
+
+function renderItemShop() {
+    const row = document.getElementById('item-shop-row');
+    row.innerHTML = SHOP_ITEMS.map(item => `
+        <div onclick="buyItem('${item.id}')"
+            class="cursor-pointer min-w-[96px] rounded-xl bg-[#090d14] border border-slate-800 hover:border-amber-500/60 p-1.5 flex flex-col items-center text-center transition active:scale-95">
+            <div class="flex items-center gap-1.5 w-full justify-center">
+                <div style="background:${item.color}" class="w-5 h-5 rounded-md flex items-center justify-center font-black text-white text-[10px] shadow">
+                    ${item.letter}
+                </div>
+                <span class="text-[10px] font-extrabold text-amber-400">${item.cost}G</span>
+            </div>
+            <div class="text-[9px] font-bold text-slate-200 truncate w-full mt-1">${item.name}</div>
+            <div class="text-[8px] text-slate-400 truncate w-full">${item.desc}</div>
+        </div>
+    `).join('');
+}
+
+function buyItem(itemId) {
+    const c = blueChampions[selectedChampIndex];
+    const item = SHOP_ITEMS.find(x => x.id === itemId);
+    if (!c || !item) return;
+
+    const fb = document.getElementById('shop-feedback');
+    if (c.items.length >= 6) {
+        fb.textContent = 'Full (6/6)';
+        fb.className = 'text-[10px] text-rose-400 font-bold opacity-100 transition-opacity';
+    } else if (c.gold < item.cost) {
+        fb.textContent = `Need ${item.cost}G!`;
+        fb.className = 'text-[10px] text-rose-400 font-bold opacity-100 transition-opacity';
+    } else {
+        applyItemToChampion(c, item);
+        fb.textContent = `+ ${item.name}!`;
+        fb.className = 'text-[10px] text-emerald-400 font-bold opacity-100 transition-opacity';
+        updateManagerDashboardUI();
+    }
+    setTimeout(() => { fb.style.opacity = '0'; }, 1400);
+}
+
+function applyItemToChampion(c, item) {
+    c.gold -= item.cost;
+    c.items.push(item);
+    if (item.stats.hp) { c.maxHp += item.stats.hp; c.hp += item.stats.hp; }
+    if (item.stats.ad) c.ad += item.stats.ad;
+    if (item.stats.ap) c.ap += item.stats.ap;
+    if (item.stats.armor) c.armor += item.stats.armor;
+    if (item.stats.as) c.as = +(c.as + item.stats.as).toFixed(2);
+    if (item.stats.ls) c.ls += item.stats.ls;
+}
+
+function updateManagerDashboardUI() {
+    if (blueChampions.length === 0) return;
+
+    // 1. Update Top HUD Score & Timer
+    document.getElementById('hud-blue-kills').textContent = blueKills;
+    document.getElementById('hud-red-kills').textContent = redKills;
+    const mins = String(Math.floor(matchTimeSeconds / 60)).padStart(2, '0');
+    const secs = String(Math.floor(matchTimeSeconds % 60)).padStart(2, '0');
+    document.getElementById('hud-timer').textContent = `${mins}:${secs}`;
+
+    const bNex = structures.find(s => s.id === 'blue_nexus');
+    const rNex = structures.find(s => s.id === 'red_nexus');
+    if (bNex) document.getElementById('hud-blue-nexus').textContent = `${Math.ceil((bNex.hp / bNex.maxHp) * 100)}%`;
+    if (rNex) document.getElementById('hud-red-nexus').textContent = `${Math.ceil((rNex.hp / rNex.maxHp) * 100)}%`;
+
+    // 2. Render Compact 5-Hero Bottom Dock
+    const squadRow = document.getElementById('squad-cards-row');
+    squadRow.innerHTML = blueChampions.map((c, idx) => {
+        const isSel = idx === selectedChampIndex;
+        const isEscorted = idx === supportTargetIndex;
+        const rc = ROLE_COLORS[c.role];
+        const hpPct = Math.max(0, Math.min(100, (c.hp / c.maxHp) * 100));
+        const hpColor = c.dead ? 'bg-slate-600' : (hpPct > 50 ? 'bg-emerald-400' : (hpPct > 25 ? 'bg-amber-400' : 'bg-rose-500'));
+        return `
+            <div onclick="selectChampion(${idx})"
+                class="cursor-pointer rounded-xl bg-[#131b28] border border-slate-800/90 p-1.5 flex flex-col items-center text-center transition-all active:scale-95 ${isSel ? 'squad-card-selected' : ''}">
+                <div class="flex items-center justify-between w-full px-0.5">
+                    <span style="color:${rc.hex}" class="text-[9px] font-black">${rc.letter}</span>
+                    <span class="text-[8px] font-mono text-amber-400 font-bold">${Math.floor(c.gold)}G</span>
+                </div>
+                <div class="text-[10px] font-extrabold text-white truncate w-full mt-0.5">
+                    ${isEscorted ? '🛡️' : ''}${c.name}
+                </div>
+                <div class="w-full h-1 bg-slate-900 rounded-full overflow-hidden my-1">
+                    <div class="${hpColor} h-full transition-all" style="width:${hpPct}%"></div>
+                </div>
+                <div class="flex items-center justify-between w-full px-0.5">
+                    <span class="text-[7px] font-extrabold text-cyan-300 uppercase">${c.dead ? 'DEAD' : c.order}</span>
+                    <span class="text-[8px] text-slate-400 font-mono">${c.kills}/${c.deaths}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // 3. Update Selected Champion Command Sheet (if open)
+    if (selectedChampIndex < 0 || !blueChampions[selectedChampIndex]) return;
+    const sel = blueChampions[selectedChampIndex];
+    const rc = ROLE_COLORS[sel.role];
+
+    document.getElementById('sel-name').textContent = sel.name;
+    const roleEl = document.getElementById('sel-role');
+    roleEl.textContent = sel.role;
+    roleEl.style.color = rc.hex;
+    roleEl.style.backgroundColor = rc.bg;
+
+    document.getElementById('sel-level').textContent = `Lv.${sel.level}`;
+    document.getElementById('sel-hp').textContent = `${Math.ceil(sel.hp)}`;
+    document.getElementById('sel-ad').textContent = sel.ad;
+    document.getElementById('sel-ap').textContent = sel.ap;
+    document.getElementById('sel-armor').textContent = sel.armor;
+    document.getElementById('sel-as').textContent = sel.as.toFixed(2);
+    document.getElementById('sel-ls').textContent = `${sel.ls}%`;
+    document.getElementById('sel-gold').textContent = `${Math.floor(sel.gold)}G`;
+
+    // Equipped Item Mini Badges
+    const itemsContainer = document.getElementById('sel-items-row');
+    let slotsHtml = '';
+    for (let i = 0; i < 4; i++) {
+        const it = sel.items[i];
+        if (it) {
+            slotsHtml += `<div style="background:${it.color}" class="w-4 h-4 rounded text-[9px] font-black text-white flex items-center justify-center">${it.letter}</div>`;
+        } else {
+            slotsHtml += `<div class="w-4 h-4 rounded bg-slate-900 border border-slate-800"></div>`;
+        }
+    }
+    itemsContainer.innerHTML = slotsHtml;
+
+    // Highlight Active Order Button
+    ['FARM', 'PUSH', 'DEFEND', 'GANK', 'FIGHT', 'RETREAT'].forEach(ord => {
+        const btn = document.getElementById(`order-${ord}`);
+        if (sel.order === ord) {
+            btn.classList.add('order-btn-active', 'ring-1', 'ring-white');
+        } else {
+            btn.classList.remove('order-btn-active', 'ring-1', 'ring-white');
+        }
+    });
+}
+
+/* ============================================================================
+   8. DEEP ZOOM CAMERA & CONTEXT-SENSITIVE FLOATING LABELS
+   ============================================================================ */
+function setCameraPreset(mode) {
+    cameraMode = mode;
+    camPanOffset = { x: 0, z: 0 };
+
+    if (mode === 2) {
+        // Close-up Action Cam on battle frontline
+        setZoomValue(1.95);
+    } else if (mode === 1) {
+        // Follow Selected Hero (or frontline hero)
+        setZoomValue(1.75);
+    } else {
+        // Wide Overview of the ARAM bridge
+        setZoomValue(0.80);
+    }
+
+    [0, 1, 2].forEach(m => {
+        const btn = document.getElementById(`cam-preset-${m}`);
+        if (!btn) return;
+        if (m === mode) {
+            btn.className = 'px-2 py-1.5 rounded-lg text-[9px] font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 active:scale-95 transition';
+        } else {
+            btn.className = 'px-2 py-1.5 rounded-lg text-[9px] font-bold text-slate-300 hover:bg-slate-800 active:scale-95 transition';
+        }
+    });
+}
+
+function adjustZoom(delta) {
+    setZoomValue(camZoom + delta);
+}
+
+function setZoomFromSlider(val) {
+    setZoomValue(parseFloat(val));
+}
+
+function setZoomValue(newZoom) {
+    camZoom = Math.max(0.55, Math.min(2.60, newZoom));
+    const slider = document.getElementById('zoom-range-input');
+    if (slider) slider.value = camZoom;
+    const lbl = document.getElementById('zoom-label');
+    if (lbl) lbl.textContent = `${camZoom.toFixed(1)}x`;
+}
+
+function cycleGameSpeed() {
+    if (gameSpeed === 1) gameSpeed = 2;
+    else if (gameSpeed === 2) gameSpeed = 0;
+    else gameSpeed = 1;
+    document.getElementById('btn-speed').textContent = gameSpeed === 0 ? '⏸' : `${gameSpeed}x`;
+}
+
+function getBattleCenterPoint() {
+    // Computes the active frontline clash point between living champions
+    const living = [...blueChampions, ...redChampions].filter(c => !c.dead);
+    if (living.length === 0) return { x: 0, z: 0 };
+    let sumX = 0, sumZ = 0;
+    living.forEach(c => { sumX += c.x; sumZ += c.z; });
+    return { x: sumX / living.length, z: sumZ / living.length };
+}
+
+function updateCameraPosition() {
+    if (!camera) return;
+
+    // Distance factor inversely proportional to camZoom (higher camZoom = much closer to 3D models)
+    // At camZoom = 2.6, distScale ≈ 0.24 (very close 3D combat view!)
+    // At camZoom = 0.6, distScale ≈ 1.45 (full map overview)
+    const distScale = 1.0 / Math.pow(camZoom, 1.15);
+
+    let focusX = camPanOffset.x;
+    let focusZ = camPanOffset.z;
+
+    if (cameraMode === 1) {
+        const hero = blueChampions[selectedChampIndex >= 0 ? selectedChampIndex : 0];
+        if (hero && !hero.dead) {
+            focusX = hero.x + camPanOffset.x;
+            focusZ = hero.z + camPanOffset.z;
+        }
+    } else if (cameraMode === 2) {
+        // If user selected a hero, focus near them; otherwise track the battle clash point
+        if (selectedChampIndex >= 0 && blueChampions[selectedChampIndex] && !blueChampions[selectedChampIndex].dead) {
+            focusX = blueChampions[selectedChampIndex].x + camPanOffset.x;
+            focusZ = blueChampions[selectedChampIndex].z + camPanOffset.z;
+        } else {
+            const clash = getBattleCenterPoint();
+            focusX = clash.x + camPanOffset.x;
+            focusZ = clash.z + camPanOffset.z;
+        }
+    }
+
+    // Dynamic angle: as you zoom in closer, lower the camera height faster so you view heroes at an immersive 3D angle
+    const heightY = Math.max(7.5, 48 * distScale);
+    const offsetHorizontal = Math.max(8.5, 28 * distScale);
+
+    const desiredPos = new THREE.Vector3(
+        focusX + offsetHorizontal * 0.65,
+        heightY,
+        focusZ + offsetHorizontal * 0.95
+    );
+
+    camera.position.lerp(desiredPos, 0.12);
+    camera.lookAt(focusX, 0.9, focusZ);
+}
+
+function updateFloatingLabels() {
+    const container = document.getElementById('viewport-container');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    const tempV = new THREE.Vector3();
+
+    const allLabeled = [...structures, ...blueChampions, ...redChampions];
+    allLabeled.forEach(u => {
+        if (!u.labelEl) return;
+        if (u.dead) {
+            u.labelEl.style.opacity = '0';
+            return;
+        }
+
+        tempV.set(u.x, u.type ? 4.2 : 2.65, u.z);
+        tempV.project(camera);
+
+        // Hide if behind camera
+        if (tempV.z > 1) {
+            u.labelEl.style.opacity = '0';
+            return;
+        }
+
+        u.labelEl.style.opacity = '1';
+        const x = (tempV.x * 0.5 + 0.5) * width;
+        const y = (-(tempV.y * 0.5) + 0.5) * height;
+
+        u.labelEl.style.left = `${x}px`;
+        u.labelEl.style.top = `${y}px`;
+
+        const hpFill = u.labelEl.querySelector('.hp-fill');
+        if (hpFill) {
+            hpFill.style.width = `${Math.max(0, Math.min(100, (u.hp / u.maxHp) * 100))}%`;
+        }
+
+        // CONTEXT-SENSITIVE LABELS:
+        // Only show the full text nameplate above the currently selected Blue Hero!
+        if (u.role) {
+            const isSelectedHero = (u.team === 'blue' && selectedChampIndex >= 0 && blueChampions[selectedChampIndex] === u);
+            const detailTag = u.labelEl.querySelector('.detail-tag');
+            if (detailTag) {
+                if (isSelectedHero) {
+                    detailTag.classList.remove('hidden');
+                    detailTag.classList.add('flex');
+                    const lvlBadge = detailTag.querySelector('.lvl-badge');
+                    if (lvlBadge) lvlBadge.textContent = `Lv.${u.level}`;
+                    const stanceBadge = detailTag.querySelector('.stance-badge');
+                    if (stanceBadge) stanceBadge.textContent = u.order;
+                } else {
+                    detailTag.classList.add('hidden');
+                    detailTag.classList.remove('flex');
+                }
+            }
+
+            // Show tiny "Protected" badge ONLY when configuring Support or selecting a hero
+            const escortTag = u.labelEl.querySelector('.escort-tag');
+            if (escortTag) {
+                const isEscortedAlly = (u.team === 'blue' && blueChampions[supportTargetIndex] === u);
+                const showEscort = isEscortedAlly && (selectedChampIndex >= 0 && activeSheetTab === 'support');
+                escortTag.classList.toggle('hidden', !showEscort);
+            }
+        }
+    });
+}
+
+function setupViewportTouchControls(canvas) {
+    let isDragging = false;
+    let dragDistance = 0;
+    let prevX = 0, prevY = 0;
+    let initialPinchDist = null;
+    let initialZoom = camZoom;
+
+    const raycaster = new THREE.Raycaster();
+    const pointerNDC = new THREE.Vector2();
+
+    canvas.addEventListener('pointerdown', e => {
+        isDragging = true;
+        dragDistance = 0;
+        prevX = e.clientX;
+        prevY = e.clientY;
+    });
+
+    window.addEventListener('pointermove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevX;
+        const dy = e.clientY - prevY;
+        dragDistance += Math.abs(dx) + Math.abs(dy);
+        prevX = e.clientX;
+        prevY = e.clientY;
+
+        // Pan speed scales nicely with zoom level
+        const panFactor = 0.065 / Math.sqrt(camZoom);
+        camPanOffset.x = Math.max(-28, Math.min(28, camPanOffset.x - dx * panFactor));
+        camPanOffset.z = Math.max(-28, Math.min(28, camPanOffset.z - dy * panFactor));
+    });
+
+    window.addEventListener('pointerup', e => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        // If it was a clean tap (not a drag) on the 3D viewport:
+        // Check if player tapped a 3D Blue Hero to select them, or tapped empty ground to close the sheet!
+        if (dragDistance < 8 && e.target === canvas) {
+            const rect = canvas.getBoundingClientRect();
+            pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(pointerNDC, camera);
+
+            let hitIndex = -1;
+            blueChampions.forEach((c, idx) => {
+                if (c.dead) return;
+                const intersects = raycaster.intersectObject(c.mesh, true);
+                if (intersects.length > 0) hitIndex = idx;
+            });
+
+            if (hitIndex >= 0) {
+                selectChampion(hitIndex);
+            } else {
+                // Tapping empty space on the 3D map closes the Command Sheet and hides labels!
+                closeCommandSheet();
+                toggleMacroPopover(false);
+            }
+        }
+    });
+
+    // 2-Finger Pinch-to-Zoom on Mobile Touchscreens
+    canvas.addEventListener('touchstart', e => {
+        if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            initialPinchDist = Math.hypot(dx, dy);
+            initialZoom = camZoom;
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', e => {
+        if (e.touches.length === 2 && initialPinchDist) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const dist = Math.hypot(dx, dy);
+            const scale = dist / initialPinchDist;
+            setZoomValue(initialZoom * scale);
+        }
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', () => {
+        initialPinchDist = null;
+    });
+
+    // Mouse Wheel Zoom on Desktop
+    canvas.addEventListener('wheel', e => {
+        e.preventDefault();
+        setZoomValue(camZoom - e.deltaY * 0.0018);
+    }, { passive: false });
+}
+
+function handleResize() {
+    if (!renderer || !camera) return;
+    const container = document.getElementById('viewport-container');
+    if (container.clientWidth === 0 || container.clientHeight === 0) return;
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+}
+
+/* ============================================================================
+   9. MAIN ANIMATION & GAME LOOP
+   ============================================================================ */
+let lastFrameTime = performance.now();
+let uiRefreshAccumulator = 0;
+
+function animateLoop(now) {
+    requestAnimationFrame(animateLoop);
+
+    const dt = Math.min(0.1, (now - lastFrameTime) / 1000);
+    lastFrameTime = now;
+
+    if (isGameRunning && isThreeInitialized) {
+        updateSimulation(dt);
+        updateCameraPosition();
+        renderer.render(scene, camera);
+        updateFloatingLabels();
+
+        uiRefreshAccumulator += dt;
+        if (uiRefreshAccumulator >= 0.2) {
+            uiRefreshAccumulator = 0;
+            updateManagerDashboardUI();
+        }
+    }
+}
+
+window.onload = function () {
+    renderSquadSelectionGrid();
+    lastFrameTime = performance.now();
+    animateLoop(lastFrameTime);
+};
+</script>
+</body>
+</html>
