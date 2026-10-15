@@ -13,15 +13,16 @@ fullscreen app on **Android** (and desktop) — offline included.
 ## Features
 
 - **3D battlefield** (Three.js) — a single diagonal ARAM bridge with champions, minions, turrets and Nexuses.
-- **Real-time tactical management** — per-hero orders: `Farm / Push / Defend / Gank / Fight / Retreat`, target priority (`Lowest HP / Carry / Nearest / Turret`) and a team-wide macro order.
+- **Real-time tactical management** — per-hero orders: `Farm / Push / Defend / Retreat`, target priority (`Lowest HP / Carry / Nearest / Turret`) and a team-wide macro order.
 - **Ultimates** — each champion has a role-defining ability with a cooldown you trigger manually.
-- **Support escort system** — assign which ally your Support follows and heals/shields.
+- **Support escort system** — select a Support hero and choose which ally they follow, heal and shield (the chooser appears inside Tactics whenever a Support is selected).
 - **In-match item shop** — 8 items, 6 slots, instant purchase.
 - **Meta progression** — account level & XP, Gold, champion mastery, win stats.
 - **Champion roster & unlocks** — 5 free champions, 7 more unlockable with Gold.
 - **3 modes** — `ARAM`, `Blitz` (team deathmatch), `Titan Siege` (hard mode).
 - **Calmer pacing** — the match starts at **0.5x** speed by default (cycle: `0.5x → 1x → 1.5x → Pause`).
-- **Mobile + desktop controls** — tap/drag/pinch on touch, mouse drag + wheel zoom on desktop.
+- **Starts zoomed out** — the camera opens on the wide **Map** view; zoom in with the tabs or pinch/wheel.
+- **Mobile + desktop** — the UI adapts: a phone column on mobile, a wider centered layout with more grid columns on desktop. Tap/drag/pinch on touch, mouse drag + wheel zoom on desktop.
 - **Offline PWA** — service worker caches the app; installable from the browser.
 
 ---
@@ -88,12 +89,19 @@ On desktop Chrome/Edge you can also click the install icon in the address bar.
 ## How to play
 
 - **Select a hero**: tap a champion in the 3D view, or tap a card in the bottom squad dock.
-- **Tactics tab**: choose the hero's stance and target priority, then fire the **Ultimate**.
-- **Support tab**: choose which ally the Support escorts & heals.
+- **Tactics tab**: choose the hero's stance (`Farm / Push / Defend / Retreat`), set target
+  priority, then fire the **Ultimate**. If the selected hero is a **Support**, a panel appears
+  to choose which ally they escort, heal & shield.
 - **Shop tab**: tap items to buy instantly with that hero's gold.
 - **⚡ Team** (top bar): apply one order to the whole squad.
-- **Camera**: `🔍 Fight` (close-up), `🎯 Hero` (follow), `🗺️ Map` (overview). Drag to pan,
-  pinch / wheel / slider to zoom.
+- **Camera**: `🗺️ Map` (wide overview, the default), `🎯 Hero` (follow), `🔍 Fight` (close-up).
+  Drag to pan, pinch / wheel / slider to zoom.
+
+**Order meanings**
+- `Farm` — safely clear minions near mid, stay back.
+- `Push` — advance down the lane, take objectives and fight anything in the way.
+- `Defend` — hold near your own turret and fight enemies that approach.
+- `Retreat` — fall back to base and heal up.
 - **Speed**: the `0.5x` button cycles `0.5x → 1x → 1.5x → Pause`. It starts at **0.5x**.
 
 **Goal:** destroy the enemy **Nexus** (ARAM / Titan Siege) or reach **25 kills** first (Blitz).

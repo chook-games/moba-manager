@@ -69,7 +69,7 @@ export function updateFloatingLabels() {
       const escortTag = u.labelEl.querySelector('.escort-tag');
       if (escortTag) {
         const isEscorted = u.team === 'blue' && state.blueChampions[state.supportTargetIndex] === u;
-        const show = isEscorted && selected && state.activeSheetTab === 'support';
+        const show = isEscorted && !!selected && selected.role === 'Support';
         escortTag.classList.toggle('hidden', !show);
       }
     }

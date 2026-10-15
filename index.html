@@ -165,21 +165,21 @@
       <span class="macro-label">ALL SQUAD:</span>
       <button id="btn-team-farm" class="btn btn-mini team-farm">Farm</button>
       <button id="btn-team-push" class="btn btn-mini team-push">Push</button>
-      <button id="btn-team-fight" class="btn btn-mini team-fight">Fight</button>
+      <button id="btn-team-defend" class="btn btn-mini team-defend">Defend</button>
       <button id="btn-team-retreat" class="btn btn-mini team-retreat">Retreat</button>
     </div>
 
     <div class="cam-controls">
       <div class="cam-presets">
-        <button id="cam-preset-2" class="btn btn-mini cam-btn is-active">🔍 Fight</button>
+        <button id="cam-preset-2" class="btn btn-mini cam-btn">🔍 Fight</button>
         <button id="cam-preset-1" class="btn btn-mini cam-btn">🎯 Hero</button>
-        <button id="cam-preset-0" class="btn btn-mini cam-btn">🗺️ Map</button>
+        <button id="cam-preset-0" class="btn btn-mini cam-btn is-active">🗺️ Map</button>
       </div>
       <div class="zoom-box">
         <button id="btn-zoom-in" class="btn btn-mini zoom-step">+</button>
-        <input id="zoom-range-input" type="range" min="0.55" max="2.60" step="0.05" value="1.45" class="zoom-slider" />
+        <input id="zoom-range-input" type="range" min="0.55" max="2.60" step="0.05" value="0.80" class="zoom-slider" />
         <button id="btn-zoom-out" class="btn btn-mini zoom-step">−</button>
-        <span id="zoom-label" class="zoom-label">1.5x</span>
+        <span id="zoom-label" class="zoom-label">0.8x</span>
       </div>
     </div>
 
@@ -199,7 +199,6 @@
 
         <div class="sheet-tabs">
           <button id="tab-btn-tactics" class="sheet-tab is-active">⚔️ Tactics</button>
-          <button id="tab-btn-support" class="sheet-tab">🛡️ Support</button>
           <button id="tab-btn-shop" class="sheet-tab">🛒 Shop</button>
         </div>
 
@@ -208,8 +207,6 @@
             <button id="order-FARM" class="order order-farm">Farm</button>
             <button id="order-PUSH" class="order order-push">Push</button>
             <button id="order-DEFEND" class="order order-defend">Defend</button>
-            <button id="order-GANK" class="order order-gank">Gank</button>
-            <button id="order-FIGHT" class="order order-fight">Fight</button>
             <button id="order-RETREAT" class="order order-retreat">Retreat</button>
           </div>
           <div class="priority-row">
@@ -221,16 +218,15 @@
               <button id="prio-3" class="prio">Turret</button>
             </div>
           </div>
+          <div id="support-section" class="support-section hidden">
+            <div class="support-hint">Choose which ally the <strong>Support</strong> escorts, heals &amp; shields:</div>
+            <div id="support-targets-row" class="support-row"></div>
+          </div>
           <button id="btn-ultimate" class="ultimate is-ready">
             <span class="ult-tag">ULTIMATE</span>
             <span id="ultimate-label" class="ult-name">Barrage</span>
             <span id="ultimate-cd" class="ult-cd">READY</span>
           </button>
-        </div>
-
-        <div id="tab-panel-support" class="sheet-panel hidden">
-          <div class="support-hint">Choose which ally the <strong>Support</strong> should escort, heal &amp; shield:</div>
-          <div id="support-targets-row" class="support-row"></div>
         </div>
 
         <div id="tab-panel-shop" class="sheet-panel hidden">

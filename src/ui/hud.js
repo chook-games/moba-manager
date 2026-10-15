@@ -80,10 +80,14 @@ function renderSelectedSheet() {
     itemsContainer.innerHTML = html;
   }
 
-  ['FARM', 'PUSH', 'DEFEND', 'GANK', 'FIGHT', 'RETREAT'].forEach((ord) => {
+  ['FARM', 'PUSH', 'DEFEND', 'RETREAT'].forEach((ord) => {
     const btn = document.getElementById(`order-${ord}`);
     if (btn) btn.classList.toggle('is-active', sel.order === ord);
   });
+
+  // Escort chooser is only relevant for a Support hero.
+  const supportSection = document.getElementById('support-section');
+  if (supportSection) supportSection.classList.toggle('hidden', sel.role !== 'Support');
 
   renderUltimateButton(sel);
 }

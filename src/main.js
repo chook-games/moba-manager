@@ -19,7 +19,7 @@ function startMatch() {
   showScreen('screen-game');
   initThreeScene();
   handleResize();
-  setCameraPreset(2);
+  setCameraPreset(0);
   setupNewMatch(state.pendingModeId, getSelectedSquad());
   updateSpeedButton();
 }
@@ -28,7 +28,7 @@ function restartMatch() {
   document.getElementById('modal-gameover')?.classList.add('hidden');
   showScreen('screen-game');
   handleResize();
-  setCameraPreset(2);
+  setCameraPreset(0);
   setupNewMatch(state.currentModeId, getSelectedSquad());
   updateSpeedButton();
 }

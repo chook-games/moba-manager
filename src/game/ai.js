@@ -88,7 +88,7 @@ export function updateChampionAI(c, dt) {
   if (candidates.length > 0) {
     const chosen = selectTargetByStance(c, candidates);
     if (chosen) {
-      c.stateText = c.order === 'FARM' ? 'FARMING' : (c.order === 'GANK' ? 'DIVING_CARRY' : 'FIGHTING');
+      c.stateText = c.order === 'FARM' ? 'FARMING' : 'FIGHTING';
       engageTarget(c, chosen, dt);
       return;
     }
@@ -121,13 +121,11 @@ function updateSupportAI(c, dt, isBlue) {
     c.supportCooldown = 3.8;
   }
 
-  if (c.order !== 'GANK') {
-    const followS = clamp(escort.s + (isBlue ? -0.035 : 0.035), 0.08, 0.92);
-    const followPos = lanePosFromS(followS, escort.lateral + 1.1);
-    if (distXZ(c, followPos) > 2.4) {
-      c.stateText = `SUPPORTING_${escort.name.toUpperCase()}`;
-      moveTowardsPoint(c, followPos.x, followPos.z, c.speed * dt);
-    }
+  const followS = clamp(escort.s + (isBlue ? -0.035 : 0.035), 0.08, 0.92);
+  const followPos = lanePosFromS(followS, escort.lateral + 1.1);
+  if (distXZ(c, followPos) > 2.4) {
+    c.stateText = `SUPPORTING_${escort.name.toUpperCase()}`;
+    moveTowardsPoint(c, followPos.x, followPos.z, c.speed * dt);
   }
 }
 
@@ -168,20 +166,10 @@ export function selectTargetByStance(c, candidates) {
   if (c.order === 'PUSH' && enemyStructs.length > 0 && enemyMinions.length === 0) {
     return enemyStructs[0];
   }
-  if (c.order === 'GANK' && enemyChamps.length > 0) {
-    enemyChamps.sort((a, b) => {
-      const aCarry = (a.role === 'Marksman' || a.role === 'Mage') ? 0 : 1;
-      const bCarry = (b.role === 'Marksman' || b.role === 'Mage') ? 0 : 1;
-      if (aCarry !== bCarry) return aCarry - bCarry;
-      return a.hp - b.hp;
-    });
-    return enemyChamps[0];
-  }
-
   const prio = TARGET_PRIORITIES[state.priorityIndex];
   if (prio === 'TURRET' && enemyStructs.length > 0) return enemyStructs[0];
 
-  if (enemyChamps.length > 0 && (c.order === 'FIGHT' || c.order === 'GANK' || enemyMinions.length === 0)) {
+  if (enemyChamps.length > 0 && (c.order === 'PUSH' || enemyMinions.length === 0)) {
     if (prio === 'LOWEST_HP') enemyChamps.sort((a, b) => a.hp - b.hp);
     else if (prio === 'CARRY') enemyChamps.sort((a, b) => ((a.role === 'Marksman' || a.role === 'Mage') ? -1 : 1));
     else enemyChamps.sort((a, b) => distXZ(c, a) - distXZ(c, b));

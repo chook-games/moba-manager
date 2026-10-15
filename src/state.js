@@ -46,9 +46,9 @@ export const state = {
   activeSheetTab: 'tactics',
 
   // Camera
-  cameraMode: 2,
+  cameraMode: 0,
   camPanOffset: { x: 0, z: 0 },
-  camZoom: 1.45,
+  camZoom: 0.80,
 
   // Meta
   profile: null,

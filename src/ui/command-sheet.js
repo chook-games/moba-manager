@@ -29,7 +29,7 @@ export function closeCommandSheet() {
 
 export function switchSheetTab(tabName) {
   state.activeSheetTab = tabName;
-  ['tactics', 'support', 'shop'].forEach((t) => {
+  ['tactics', 'shop'].forEach((t) => {
     const btn = document.getElementById(`tab-btn-${t}`);
     const panel = document.getElementById(`tab-panel-${t}`);
     if (!btn || !panel) return;
@@ -144,10 +144,9 @@ export function bindCommandSheet() {
   document.getElementById('btn-ultimate')?.addEventListener('click', castSelectedUltimate);
 
   document.getElementById('tab-btn-tactics')?.addEventListener('click', () => switchSheetTab('tactics'));
-  document.getElementById('tab-btn-support')?.addEventListener('click', () => switchSheetTab('support'));
   document.getElementById('tab-btn-shop')?.addEventListener('click', () => switchSheetTab('shop'));
 
-  ['FARM', 'PUSH', 'DEFEND', 'GANK', 'FIGHT', 'RETREAT'].forEach((ord) => {
+  ['FARM', 'PUSH', 'DEFEND', 'RETREAT'].forEach((ord) => {
     document.getElementById(`order-${ord}`)?.addEventListener('click', () => setChampionOrder(ord));
   });
 
@@ -157,7 +156,7 @@ export function bindCommandSheet() {
 
   document.getElementById('btn-team-farm')?.addEventListener('click', () => { setTeamOrder('FARM'); toggleMacro(false); });
   document.getElementById('btn-team-push')?.addEventListener('click', () => { setTeamOrder('PUSH'); toggleMacro(false); });
-  document.getElementById('btn-team-fight')?.addEventListener('click', () => { setTeamOrder('FIGHT'); toggleMacro(false); });
+  document.getElementById('btn-team-defend')?.addEventListener('click', () => { setTeamOrder('DEFEND'); toggleMacro(false); });
   document.getElementById('btn-team-retreat')?.addEventListener('click', () => { setTeamOrder('RETREAT'); toggleMacro(false); });
 
   document.getElementById('btn-macro-toggle')?.addEventListener('click', () => toggleMacro());

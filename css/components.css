@@ -163,7 +163,7 @@
 .macro-label { font-size: 9px; font-weight: 800; color: var(--muted-2); padding: 0 4px; }
 .team-farm { color: var(--green); border-color: rgba(52, 211, 153, 0.5); }
 .team-push { color: #fdba74; border-color: rgba(251, 146, 60, 0.5); }
-.team-fight { color: #fda4af; border-color: rgba(251, 113, 133, 0.5); }
+.team-defend { color: #7dd3fc; border-color: rgba(56, 189, 248, 0.5); }
 .team-retreat { color: var(--muted); }
 
 .cam-controls {
@@ -205,19 +205,17 @@
 .sheet-head-right { display: flex; align-items: center; gap: 8px; }
 .sel-gold { font-size: 12px; font-weight: 800; color: var(--amber); background: rgba(251, 191, 36, 0.1); padding: 3px 8px; border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.2); white-space: nowrap; }
 
-.sheet-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: #090d14; padding: 4px; border-radius: 12px; border: 1px solid var(--line-soft); }
+.sheet-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; background: #090d14; padding: 4px; border-radius: 12px; border: 1px solid var(--line-soft); }
 .sheet-tab { padding: 7px 4px; border-radius: 9px; font-size: 10px; font-weight: 800; background: transparent; border: 1px solid transparent; color: var(--muted); font-family: inherit; cursor: pointer; }
 .sheet-tab.is-active { background: rgba(34, 211, 238, 0.16); color: var(--cyan); border-color: rgba(34, 211, 238, 0.4); }
 
 .sheet-panel { display: flex; flex-direction: column; gap: 8px; }
-.order-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.order-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
 .order { padding: 9px 2px; border-radius: 11px; font-size: 9px; font-weight: 800; font-family: inherit; cursor: pointer; border: 1px solid; background: #0f1620; transition: box-shadow 0.15s ease, transform 0.1s ease; }
 .order:active { transform: scale(0.95); }
 .order-farm { color: var(--green); border-color: rgba(52, 211, 153, 0.55); }
 .order-push { color: #fb923c; border-color: rgba(249, 115, 22, 0.55); }
 .order-defend { color: #38bdf8; border-color: rgba(56, 189, 248, 0.55); }
-.order-gank { color: var(--violet); border-color: rgba(168, 85, 247, 0.55); }
-.order-fight { color: #fb7185; border-color: rgba(244, 63, 94, 0.55); }
 .order-retreat { color: var(--muted); border-color: rgba(100, 116, 139, 0.55); }
 .order.is-active { box-shadow: 0 0 12px currentColor; transform: translateY(-1px); }
 
@@ -238,6 +236,7 @@
 .ult-cd { font-size: 11px; font-family: ui-monospace, monospace; }
 .ultimate.is-cooling .ult-cd { color: var(--muted); }
 
+.support-section { display: flex; flex-direction: column; gap: 6px; background: #090d14; padding: 8px 10px; border-radius: 11px; border: 1px solid var(--line-soft); }
 .support-hint { font-size: 10px; color: var(--muted); line-height: 1.5; }
 .support-hint strong { color: var(--green); }
 .support-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
@@ -331,3 +330,26 @@
 .go-stat-name { font-size: 12px; font-weight: 800; color: #fff; }
 .go-stat-val { font-size: 11px; font-family: ui-monospace, monospace; color: var(--amber); }
 .go-actions { display: flex; gap: 8px; width: 100%; }
+
+/* ============================ DESKTOP / LARGE SCREENS ============================ */
+@media (min-width: 820px) {
+  #app-shell {
+    max-width: 1024px;
+  }
+  /* Center and cap the content of menu screens so it doesn't stretch edge-to-edge. */
+  .screen:not(.game-screen) > * {
+    width: 100%;
+    max-width: 780px;
+    align-self: center;
+  }
+  .champ-grid { grid-template-columns: repeat(4, 1fr); }
+  .command-sheet { max-width: 720px; margin-left: auto; margin-right: auto; }
+  .home-actions { flex-direction: row; flex-wrap: wrap; }
+  .home-actions .btn { flex: 1; min-width: 220px; }
+}
+
+@media (min-width: 1200px) {
+  #app-shell { max-width: 1120px; }
+  .screen:not(.game-screen) > * { max-width: 860px; }
+  .champ-grid { grid-template-columns: repeat(5, 1fr); }
+}

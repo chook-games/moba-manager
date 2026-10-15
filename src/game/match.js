@@ -41,7 +41,7 @@ export function setupNewMatch(modeId, squadIds) {
 
   renderSupportTargetsBar();
   renderItemShop();
-  setCameraPreset(2);
+  setCameraPreset(0);
   closeCommandSheet();
   updateManagerDashboardUI();
   state.isGameRunning = true;
@@ -82,7 +82,7 @@ function buildTeams(mode, squadIds) {
   for (let i = 0; i < 5; i++) {
     const base = unpicked[(i * 3 + 1) % unpicked.length];
     const champ = createChampionInstance(base, 'red', i, 0.88 - i * 0.012, slots[i], mode.redStatMult);
-    champ.order = base.role === 'Assassin' ? 'GANK' : (base.role === 'Tank' ? 'PUSH' : 'FARM');
+    champ.order = base.role === 'Tank' ? 'DEFEND' : (base.role === 'Support' ? 'FARM' : 'PUSH');
     state.redChampions.push(champ);
   }
 }
