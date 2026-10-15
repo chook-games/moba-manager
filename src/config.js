@@ -40,7 +40,7 @@ export const CONFIG = {
   CAM_ZOOM_MIN: 0.55,
   CAM_ZOOM_MAX: 2.6,
   CAM_PAN_LIMIT: 28,
-  TAP_MAX_DRAG: 8,
+  TAP_MAX_DRAG: 12,
 
   // --- UI refresh cadence (seconds) ---
   UI_REFRESH_INTERVAL: 0.2,

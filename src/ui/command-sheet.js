@@ -123,7 +123,8 @@ export function bindCommandSheet() {
   bound = true;
 
   const squadRow = document.getElementById('squad-cards-row');
-  squadRow?.addEventListener('click', (e) => {
+  // pointerdown = instant selection (no 300ms tap delay, no lost taps from re-renders).
+  squadRow?.addEventListener('pointerdown', (e) => {
     const card = e.target.closest('[data-index]');
     if (card) selectChampion(Number(card.dataset.index));
   });

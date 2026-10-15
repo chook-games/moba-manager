@@ -23,27 +23,52 @@ export function updateManagerDashboardUI() {
 function renderSquadDock() {
   const row = document.getElementById('squad-cards-row');
   if (!row) return;
-  row.innerHTML = state.blueChampions.map((c, idx) => {
-    const isSel = idx === state.selectedChampIndex;
-    const isEscorted = idx === state.supportTargetIndex;
-    const rc = ROLE_COLORS[c.role];
+
+  // Build once per match; afterwards only patch the dynamic values. Rebuilding the
+  // innerHTML every refresh made taps get lost (the node was replaced mid-tap).
+  if (row.querySelectorAll('.squad-card').length !== state.blueChampions.length) {
+    row.innerHTML = state.blueChampions.map((c, idx) => {
+      const rc = ROLE_COLORS[c.role];
+      return `
+        <div class="squad-card" data-index="${idx}">
+          <div class="squad-card-top">
+            <span class="role-letter" style="color:${rc.hex}">${rc.letter}</span>
+            <span class="squad-gold"></span>
+          </div>
+          <div class="squad-name"></div>
+          <div class="bar"><div class="bar-fill"></div></div>
+          <div class="squad-card-bottom">
+            <span class="squad-order"></span>
+            <span class="squad-kda"></span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  state.blueChampions.forEach((c, idx) => {
+    const card = row.children[idx];
+    if (!card) return;
+    card.classList.toggle('is-selected', idx === state.selectedChampIndex);
+
+    const gold = card.querySelector('.squad-gold');
+    if (gold) gold.textContent = `${Math.floor(c.gold)}G`;
+
+    const name = card.querySelector('.squad-name');
+    if (name) name.textContent = `${idx === state.supportTargetIndex ? '🛡️' : ''}${c.name}`;
+
     const hpPct = clamp((c.hp / c.maxHp) * 100, 0, 100);
-    const hpColor = c.dead ? 'hp-dead' : (hpPct > 50 ? 'hp-high' : (hpPct > 25 ? 'hp-mid' : 'hp-low'));
-    return `
-      <div class="squad-card ${isSel ? 'is-selected' : ''}" data-index="${idx}">
-        <div class="squad-card-top">
-          <span class="role-letter" style="color:${rc.hex}">${rc.letter}</span>
-          <span class="squad-gold">${Math.floor(c.gold)}G</span>
-        </div>
-        <div class="squad-name">${isEscorted ? '🛡️' : ''}${c.name}</div>
-        <div class="bar"><div class="bar-fill ${hpColor}" style="width:${hpPct}%"></div></div>
-        <div class="squad-card-bottom">
-          <span class="squad-order">${c.dead ? 'DEAD' : c.order}</span>
-          <span class="squad-kda">${c.kills}/${c.deaths}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
+    const fill = card.querySelector('.bar-fill');
+    if (fill) {
+      fill.style.width = `${hpPct}%`;
+      fill.className = `bar-fill ${c.dead ? 'hp-dead' : (hpPct > 50 ? 'hp-high' : (hpPct > 25 ? 'hp-mid' : 'hp-low'))}`;
+    }
+
+    const order = card.querySelector('.squad-order');
+    if (order) order.textContent = c.dead ? 'DEAD' : c.order;
+
+    const kda = card.querySelector('.squad-kda');
+    if (kda) kda.textContent = `${c.kills}/${c.deaths}`;
+  });
 }
 
 function renderSelectedSheet() {

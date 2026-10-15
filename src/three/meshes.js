@@ -94,6 +94,15 @@ export function createChampionMesh(champData, team) {
   group.add(shieldMesh);
   group.userData.shieldMesh = shieldMesh;
 
+  // Large invisible hit volume so tapping a champion is forgiving on touch.
+  const hitMesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.9, 1.9, 3.4, 8),
+    new THREE.MeshBasicMaterial({ visible: false })
+  );
+  hitMesh.position.y = 1.7;
+  group.add(hitMesh);
+  group.userData.hitMesh = hitMesh;
+
   const bodyGroup = new THREE.Group();
   const armorMat = new THREE.MeshStandardMaterial({ color: isBlue ? 0x1e3a8a : 0x7f1d1d, roughness: 0.5 });
   const roleMat = new THREE.MeshStandardMaterial({ color: roleColor, emissive: roleColor, emissiveIntensity: 0.2, roughness: 0.4 });

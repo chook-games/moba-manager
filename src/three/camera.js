@@ -129,10 +129,17 @@ export function setupViewportTouchControls(canvas, handlers = {}) {
       pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointerNDC, state.camera);
 
+      // Pick the closest blue champion under the tap (front-most wins).
       let hitIndex = -1;
+      let bestDist = Infinity;
       state.blueChampions.forEach((c, idx) => {
         if (c.dead) return;
-        if (raycaster.intersectObject(c.mesh, true).length > 0) hitIndex = idx;
+        const target = c.mesh.userData.hitMesh || c.mesh;
+        const hits = raycaster.intersectObject(target, false);
+        if (hits.length > 0 && hits[0].distance < bestDist) {
+          bestDist = hits[0].distance;
+          hitIndex = idx;
+        }
       });
 
       if (hitIndex >= 0) handlers.onSelectHero?.(hitIndex);
