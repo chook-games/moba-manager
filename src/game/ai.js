@@ -48,7 +48,10 @@ export function updateChampionAI(c, dt) {
     if (foeNear) castAbility(c);
   }
 
-  const shouldAutoRetreat = c.team === 'red' && (c.hp / c.maxHp < 0.22);
+  // Both teams fall back to base when badly hurt (player squad included) so they
+  // heal instead of feeding.
+  const retreatAt = c.retreatAt != null ? c.retreatAt : 0.25;
+  const shouldAutoRetreat = (c.order !== 'RETREAT') && (c.hp / c.maxHp < retreatAt);
   if (c.order === 'RETREAT' || shouldAutoRetreat) {
     c.stateText = 'RETREATING';
     const retreatPos = lanePosFromS(homeS, c.lateral);
@@ -82,7 +85,7 @@ export function updateChampionAI(c, dt) {
     return;
   }
 
-  const searchRadius = c.order === 'FARM' ? c.range + 3.5 : 14.5;
+  const searchRadius = c.order === 'FARM' ? c.range + 3.5 : (c.aiSearch || 14.5);
   const candidates = getAttackableTargets(c.team, c, searchRadius, false);
 
   if (candidates.length > 0) {

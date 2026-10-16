@@ -114,7 +114,7 @@ function killUnit(target, attacker) {
   if (target.role) {
     onUnitKilled(target, attacker);
     target.deaths++;
-    target.respawnTimer = 6 + Math.floor(target.level * 0.8);
+    target.respawnTimer = 5 + Math.floor(target.level * 0.6);
     if (attacker && attacker.role) {
       attacker.kills++;
       attacker.gold += CONFIG.KILL_GOLD;

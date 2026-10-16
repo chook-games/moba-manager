@@ -3,6 +3,15 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.12.0] — Balance / fairness pass
+
+### Changed
+- **Easier & fairer:** new games start on **Easy**; older saves get a one-time nudge to Easy.
+- **Your squad now auto-retreats** to base when badly hurt (it used to fight to the death while the
+  enemy fell back — the main reason the player kept getting slaughtered).
+- Red AI tuned per difficulty (engagement range + retreat threshold); **Normal is gentler** too.
+- Turret damage lowered (135 → 100) and death respawn timers shortened.
+
 ## [0.11.0] — Batch 3: Cosmetics & sharing
 
 ### Added

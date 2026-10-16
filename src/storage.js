@@ -4,7 +4,7 @@ import { applyAccountXp, applyMasteryXp, computeRewards } from './data/progressi
 import { getMode } from './data/modes.js';
 import { recordMatch } from './core/missions.js';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 function makeDeviceId() {
   return 'd' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -26,7 +26,7 @@ export function defaultProfile() {
     history: [],
     cosmetics: { unlockedSkins: ['default'], skins: {}, title: 'rookie' },
     daily: { date: null, counters: {}, claimed: [], quests: [], streak: 0, lastLogin: null },
-    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false, analytics: false, difficulty: 'normal' },
+    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false, analytics: false, difficulty: 'easy' },
     lastResult: null,
   };
 }
@@ -62,6 +62,8 @@ function migrate(p) {
   CHAMPION_POOL.forEach((c) => {
     if (c.free && !merged.unlocked.includes(c.id)) merged.unlocked.push(c.id);
   });
+  // One-time nudge: saves older than v3 default to the friendlier difficulty.
+  if (p.version == null || p.version < 3) merged.settings.difficulty = 'easy';
   merged.version = SAVE_VERSION;
   return merged;
 }

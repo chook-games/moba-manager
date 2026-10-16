@@ -85,6 +85,7 @@ check('migration keeps gold', migrated.gold === 1234);
 check('migration re-adds free champs', migrated.unlocked.length === 5);
 check('migration adds settings', !!migrated.settings && typeof migrated.settings.haptic === 'boolean');
 check('migration adds stats', !!migrated.stats && migrated.stats.matches === 0);
+check('v1 save nudge to easy', migrated.settings.difficulty === 'easy');
 
 localStorage.setItem(config.SAVE_KEY, 'not json {');
 const recovered = storage.loadProfile();
@@ -119,8 +120,9 @@ check('achievement cannot double-claim', missions.claimAchievement(mp, 'first_wi
 
 // 4e. Difficulty + stats
 const diffMod = await import('../src/data/difficulty.js');
-check('difficulty default normal', storage.defaultProfile().settings.difficulty === 'normal');
+check('difficulty default easy', storage.defaultProfile().settings.difficulty === 'easy');
 check('difficulty easy < hard', diffMod.getDifficulty('easy').redMult < diffMod.getDifficulty('hard').redMult);
+check('difficulty tunables', diffMod.getDifficulty('easy').redSearch < diffMod.getDifficulty('hard').redSearch && typeof diffMod.BLUE_RETREAT_AT === 'number');
 const statsAgg = await import('../src/core/stats.js');
 const agg = statsAgg.aggregateStats(mp);
 check('stats totals reflect a match', agg.totals.matches >= 1);

@@ -2,7 +2,7 @@ import { state } from '../state.js';
 import { CONFIG } from '../config.js';
 import { CHAMPION_POOL } from '../data/champions.js';
 import { getMode } from '../data/modes.js';
-import { getDifficulty } from '../data/difficulty.js';
+import { getDifficulty, BLUE_RETREAT_AT } from '../data/difficulty.js';
 import { ROLE_SECOND } from '../data/abilities.js';
 import { getSkin } from '../data/cosmetics.js';
 import { lanePosFromS, clamp } from '../utils.js';
@@ -82,7 +82,10 @@ function buildTeams(mode, squadIds) {
 
   squadIds.forEach((id, idx) => {
     const base = CHAMPION_POOL.find((c) => c.id === id) || CHAMPION_POOL[0];
-    state.blueChampions.push(createChampionInstance(base, 'blue', idx, 0.12 + idx * 0.012, slots[idx], 1));
+    const champ = createChampionInstance(base, 'blue', idx, 0.12 + idx * 0.012, slots[idx], 1);
+    champ.retreatAt = BLUE_RETREAT_AT;
+    champ.aiSearch = 14.5;
+    state.blueChampions.push(champ);
   });
 
   const difficulty = getDifficulty(state.profile && state.profile.settings && state.profile.settings.difficulty);
@@ -94,6 +97,8 @@ function buildTeams(mode, squadIds) {
     const base = pool[(i * 3 + 1) % pool.length];
     const champ = createChampionInstance(base, 'red', i, 0.88 - i * 0.012, slots[i], redMult);
     champ.order = base.role === 'Tank' ? 'DEFEND' : (base.role === 'Support' ? 'FARM' : 'PUSH');
+    champ.retreatAt = difficulty.redRetreat;
+    champ.aiSearch = difficulty.redSearch;
     state.redChampions.push(champ);
   }
 }

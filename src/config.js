@@ -1,6 +1,6 @@
 // Central tunable constants. Keep balance values here so simulation code stays clean.
 
-export const APP_VERSION = '0.11.0';
+export const APP_VERSION = '0.12.0';
 
 export const CONFIG = {
   // --- Lane / world geometry (diagonal ARAM bridge) ---
@@ -15,7 +15,7 @@ export const CONFIG = {
   FIRST_WAVE_DELAY: 12,
   STRUCT_NEXUS_HP: 3200,
   STRUCT_TURRET_HP: 2200,
-  TURRET_AD: 135,
+  TURRET_AD: 100,
   TURRET_RANGE: 11,
   TURRET_ATTACK_INTERVAL: 1.15,
   MINION_HP: 340,
@@ -63,6 +63,7 @@ export const TARGET_PRIORITIES = ['LOWEST_HP', 'CARRY', 'NEAREST', 'TURRET'];
 export const TARGET_PRIORITY_LABELS = ['Lowest HP', 'Carry', 'Nearest', 'Turret'];
 
 export const SAVE_KEY = 'moba-manager-save-v2';
+
 
 
 

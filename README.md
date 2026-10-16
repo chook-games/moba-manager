@@ -127,6 +127,9 @@ On desktop Chrome/Edge you can also click the install icon in the address bar.
 - `Push` — advance down the lane, take objectives and fight anything in the way.
 - `Defend` — hold near your own turret and fight enemies that approach.
 - `Retreat` — fall back to base and heal up.
+
+> **Too hard?** Set **Difficulty → Easy** in Settings. Your squad also auto-retreats when low on HP,
+> so heroes heal instead of feeding kills.
 - **Speed**: the `0.5x` button cycles `0.5x → 1x → 1.5x → Pause`. It starts at **0.5x**.
 
 **Goal:** destroy the enemy **Nexus** (ARAM / Titan Siege) or reach **25 kills** first (Blitz).
