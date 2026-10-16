@@ -165,6 +165,19 @@ assets/icons/              PWA icons
 
 Everything is split into small, single-responsibility modules (well under ~1000 lines each).
 
+## Distribution (Google Play / stores)
+
+The game is a PWA and ships to the Play Store as a **Trusted Web Activity (TWA)**.
+
+- **Store assets:** `store/` (1024 icon, 1024×500 feature graphic, bilingual listing copy, 8 real screenshots).
+- **Screenshots:** regenerate anytime with `node tests/screenshots.mjs`.
+- **TWA/Bubblewrap:** ready template + step-by-step guide in [`twa/README.md`](twa/README.md).
+- **Privacy policy:** https://chook-games.github.io/moba-manager/privacy.html (also `privacy.html`).
+
+> TWA verification needs `/.well-known/assetlinks.json` at the **domain root**. Since this is a
+> project page, either use a custom domain or host that file in a `chook-games.github.io` repo
+> (details in `twa/README.md`).
+
 ## Tech
 
 - Vanilla ES modules (no build step, no npm required)

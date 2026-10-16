@@ -1,6 +1,6 @@
 // Central tunable constants. Keep balance values here so simulation code stays clean.
 
-export const APP_VERSION = '0.6.0';
+export const APP_VERSION = '0.7.0';
 
 export const CONFIG = {
   // --- Lane / world geometry (diagonal ARAM bridge) ---

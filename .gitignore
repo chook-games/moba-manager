@@ -19,3 +19,13 @@ dist/
 
 # Local env
 .env
+
+# TWA / Android build outputs (never commit signing keys or bundles)
+twa/*.keystore
+twa/*.jks
+twa/*.aab
+twa/*.apk
+twa/app/
+twa/build/
+twa/.gradle/
+*keystore*

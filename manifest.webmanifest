@@ -1,4 +1,5 @@
 {
+  "id": "/moba-manager/",
   "name": "MOBA Manager — Tactical Esports Sim",
   "short_name": "MOBA Manager",
   "description": "Manage a 5-champion MOBA squad in real time. Draft, command stances, buy items and trigger ultimates to destroy the enemy Nexus.",
@@ -10,11 +11,18 @@
   "background_color": "#07090e",
   "theme_color": "#0d1117",
   "categories": ["games", "strategy", "sports"],
-  "lang": "el",
+  "lang": "en",
   "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "store/screenshots/05-game.png", "sizes": "824x1830", "type": "image/png", "form_factor": "narrow", "label": "Real-time 3D battle" },
+    { "src": "store/screenshots/06-commands.png", "sizes": "824x1830", "type": "image/png", "form_factor": "narrow", "label": "Command your champions" },
+    { "src": "store/screenshots/04-squad.png", "sizes": "824x1830", "type": "image/png", "form_factor": "narrow", "label": "Pick your squad" },
+    { "src": "store/screenshots/02-missions.png", "sizes": "824x1830", "type": "image/png", "form_factor": "narrow", "label": "Daily quests & achievements" }
   ]
 }
