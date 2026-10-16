@@ -1,4 +1,5 @@
 import { state } from '../state.js';
+import { APP_VERSION } from '../config.js';
 import { CHAMPION_POOL, ROLE_COLORS, ROLE_TIP } from '../data/champions.js';
 import { MODE_LIST } from '../data/modes.js';
 import { accountXpToNext, masteryXpToNext } from '../data/progression.js';
@@ -123,6 +124,7 @@ export function bindMenu() {
 function renderSettings() {
   const haptic = document.getElementById('toggle-haptic');
   if (haptic) haptic.checked = !!state.profile.settings.haptic;
+  setText('app-version', `v${APP_VERSION}`);
 }
 
 function setText(id, value) {

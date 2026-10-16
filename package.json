@@ -1,0 +1,15 @@
+{
+  "name": "moba-manager",
+  "version": "0.2.0",
+  "description": "Real-time MOBA manager game — a Progressive Web App built with vanilla ES modules and Three.js.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "node tests/serve.mjs",
+    "test": "node tests/check-syntax.mjs && node tests/smoke.mjs",
+    "test:syntax": "node tests/check-syntax.mjs",
+    "test:smoke": "node tests/smoke.mjs",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "license": "MIT"
+}

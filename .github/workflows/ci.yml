@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Syntax + smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: node tests/check-syntax.mjs
+      - name: Smoke test (import graph + logic + save migration)
+        run: node tests/smoke.mjs
+
+  e2e:
+    name: Browser e2e (headless Chrome)
+    runs-on: ubuntu-latest
+    # Headless WebGL can be environment-sensitive; keep it visible but non-blocking.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: browser-actions/setup-chrome@v1
+        id: setup-chrome
+      - name: Browser test
+        env:
+          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: node tests/browser.mjs

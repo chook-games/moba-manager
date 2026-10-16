@@ -34,15 +34,35 @@ This project uses **ES modules**, so it must be served over HTTP (not opened via
 Pick any one:
 
 ```powershell
-# Option A — Python (usually preinstalled)
-python -m http.server 8000
+# Option A — built-in Node server (no dependencies)
+node tests/serve.mjs        # or: npm run serve
 # then open http://localhost:8000
 
-# Option B — Node
+# Option B — Python (usually preinstalled)
+python -m http.server 8000
+
+# Option C — any static server
 npx serve .
 ```
 
 Or in VS Code: install **Live Server**, right-click `index.html` → *Open with Live Server*.
+
+## Testing
+
+No dependencies required (plain Node ≥ 18):
+
+```powershell
+node tests/check-syntax.mjs   # node --check on every JS file
+node tests/smoke.mjs          # imports the whole module graph + logic + save-migration tests
+node tests/browser.mjs        # headless-Chrome e2e (needs Chrome; set CHROME_PATH to override)
+# or simply: npm test
+```
+
+`npm test` runs syntax + smoke (fast, no browser). The browser test drives the full game
+flow (menu → mode → squad → match, hero selection, pause/resume, resize) and fails on any
+console error.
+
+CI runs these automatically on every push/PR (see `.github/workflows/ci.yml`).
 
 ---
 
@@ -115,6 +135,14 @@ Win matches to earn **Gold** and **Account XP**; spend Gold in **Champions** to 
 index.html                 App shell + all screen markup
 manifest.webmanifest       PWA manifest
 service-worker.js          Offline cache
+package.json               Test/serve scripts (no runtime deps)
+CHANGELOG.md               Version history
+.github/workflows/ci.yml   CI: syntax + smoke + e2e tests
+tests/
+  check-syntax.mjs         node --check across the codebase
+  smoke.mjs                import graph + logic + save-migration tests
+  browser.mjs              headless-Chrome e2e
+  serve.mjs                local static server
 css/
   base.css                 Reset, variables, layout, buttons
   components.css           Screen-specific styling
