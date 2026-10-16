@@ -19,6 +19,8 @@ import { bindSquad, getSelectedSquad, renderSquadSelectionGrid } from './ui/squa
 import { renderMissions, bindMissions } from './ui/missions.js';
 import { renderStats } from './ui/stats.js';
 import { openDraft, bindDraft } from './ui/draft.js';
+import { renderCosmetics, bindCosmetics } from './ui/cosmetics.js';
+import { shareResult } from './core/share.js';
 import { ensureDaily } from './core/missions.js';
 import { updateManagerDashboardUI } from './ui/hud.js';
 import { bindCommandSheet, closeCommandSheet, toggleMacro, selectChampion } from './ui/command-sheet.js';
@@ -74,6 +76,7 @@ function relocalize() {
   if (!document.getElementById('screen-squad').classList.contains('hidden')) renderSquadSelectionGrid();
   if (!document.getElementById('screen-missions').classList.contains('hidden')) renderMissions();
   if (!document.getElementById('screen-stats').classList.contains('hidden')) renderStats();
+  if (!document.getElementById('screen-cosmetics').classList.contains('hidden')) renderCosmetics();
   const sel = document.getElementById('select-lang');
   if (sel) sel.value = state.profile.settings.lang || 'en';
 }
@@ -107,6 +110,9 @@ function bindGameControls() {
   document.getElementById('btn-missions-back')?.addEventListener('click', () => { showScreen('screen-home'); refreshHome(); });
   document.getElementById('btn-home-stats')?.addEventListener('click', () => { renderStats(); showScreen('screen-stats'); });
   document.getElementById('btn-stats-back')?.addEventListener('click', () => showScreen('screen-home'));
+  document.getElementById('btn-home-cosmetics')?.addEventListener('click', () => { renderCosmetics(); showScreen('screen-cosmetics'); });
+  document.getElementById('btn-cosmetics-back')?.addEventListener('click', () => { showScreen('screen-home'); refreshHome(); });
+  document.getElementById('btn-go-share')?.addEventListener('click', () => shareResult(state.lastResult));
 
   document.getElementById('select-difficulty')?.addEventListener('change', (e) => {
     state.profile.settings.difficulty = e.target.value;
@@ -206,6 +212,7 @@ function boot() {
   bindGameControls();
   bindMissions();
   bindDraft();
+  bindCosmetics();
   bindTutorial();
   setupCanvasInput();
 

@@ -169,6 +169,14 @@ const slot2Res = abil.castAbility(slot2Champ, 2);
 check('castAbility slot 2 works', slot2Res.ok && slot2Champ.ability2Timer > 0);
 check('ability2 on cooldown blocked', abil.castAbility(slot2Champ, 2).ok === false);
 
+// 5c. Cosmetics + share
+const cos = await import('../src/data/cosmetics.js');
+check('unlockedTitles gates by level', cos.unlockedTitles(5).some((x) => x.id === 'commander') && !cos.unlockedTitles(1).some((x) => x.id === 'commander'));
+check('getSkin falls back to default', cos.getSkin('nope').id === 'default');
+check('profile has cosmetics', !!storage.defaultProfile().cosmetics && Array.isArray(storage.defaultProfile().cosmetics.unlockedSkins));
+const shareMod = await import('../src/core/share.js');
+check('share module loads', typeof shareMod.shareResult === 'function');
+
 // 6. Combat / AI math + level cap
 const combat = await import('../src/game/combat.js');
 check('effectiveAttackInterval positive', combat.effectiveAttackInterval({ as: 0.9, asBonus: 0 }) > 0);

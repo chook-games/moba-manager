@@ -62,11 +62,12 @@ export function createStructureMesh(team, type) {
   return group;
 }
 
-export function createChampionMesh(champData, team) {
+export function createChampionMesh(champData, team, tintHex = null) {
   const group = new THREE.Group();
   const isBlue = team === 'blue';
   const teamColor = isBlue ? 0x0ea5e9 : 0xef4444;
   const roleColor = (ROLE_COLORS[champData.role] || ROLE_COLORS.Fighter).threeColor;
+  const bodyColor = tintHex != null ? tintHex : roleColor;
 
   const baseRing = new THREE.Mesh(
     new THREE.RingGeometry(1.05, 1.32, 24),
@@ -105,7 +106,7 @@ export function createChampionMesh(champData, team) {
 
   const bodyGroup = new THREE.Group();
   const armorMat = new THREE.MeshStandardMaterial({ color: isBlue ? 0x1e3a8a : 0x7f1d1d, roughness: 0.5 });
-  const roleMat = new THREE.MeshStandardMaterial({ color: roleColor, emissive: roleColor, emissiveIntensity: 0.2, roughness: 0.4 });
+  const roleMat = new THREE.MeshStandardMaterial({ color: bodyColor, emissive: bodyColor, emissiveIntensity: 0.2, roughness: 0.4 });
   const headMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.4 });
   const steelMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8 });
 

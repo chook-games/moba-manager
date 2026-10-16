@@ -27,6 +27,8 @@ export function refreshHome() {
   if (fill) fill.style.width = `${pct}%`;
   setText('home-xp-text', `${Math.floor(p.xp)} / ${need} XP`);
 
+  if (p.cosmetics && p.cosmetics.title) setText('home-title', t(`title.${p.cosmetics.title}`));
+
   const banner = document.getElementById('daily-banner');
   if (banner && p.daily) {
     const streak = p.daily.streak || 0;

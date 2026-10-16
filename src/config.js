@@ -1,6 +1,6 @@
 // Central tunable constants. Keep balance values here so simulation code stays clean.
 
-export const APP_VERSION = '0.10.0';
+export const APP_VERSION = '0.11.0';
 
 export const CONFIG = {
   // --- Lane / world geometry (diagonal ARAM bridge) ---
@@ -63,6 +63,7 @@ export const TARGET_PRIORITIES = ['LOWEST_HP', 'CARRY', 'NEAREST', 'TURRET'];
 export const TARGET_PRIORITY_LABELS = ['Lowest HP', 'Carry', 'Nearest', 'Turret'];
 
 export const SAVE_KEY = 'moba-manager-save-v2';
+
 
 
 

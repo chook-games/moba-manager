@@ -20,6 +20,7 @@ fullscreen app on **Android** (and desktop) — offline included.
 - **Meta progression** — account level & XP, Gold, champion mastery, win stats.
 - **Missions** — rotating daily quests, 8 lifetime achievements, and an escalating daily-login Gold streak.
 - **Draft & depth** — ban-pick phase, a secondary ability per champion, level-up perks, a Difficulty setting and a Match History/Stats screen.
+- **Cosmetics & sharing** — unlockable colour skins & titles in the Locker, plus a share-your-result image.
 - **Champion roster & unlocks** — 18 champions (5 free, 13 unlockable with Gold).
 - **4 modes** — `ARAM`, `Blitz` (team deathmatch), `Titan Siege` (hard mode), `Sudden Death` (fast).
 - **Calmer pacing** — the match starts at **0.5x** speed by default (cycle: `0.5x → 1x → 1.5x → Pause`).

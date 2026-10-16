@@ -4,6 +4,7 @@ import { CHAMPION_POOL } from '../data/champions.js';
 import { getMode } from '../data/modes.js';
 import { getDifficulty } from '../data/difficulty.js';
 import { ROLE_SECOND } from '../data/abilities.js';
+import { getSkin } from '../data/cosmetics.js';
 import { lanePosFromS, clamp } from '../utils.js';
 import { createStructureMesh, createChampionMesh, createMinionMesh, clearThreeGroup } from '../three/meshes.js';
 import { setCameraPreset } from '../three/camera.js';
@@ -97,6 +98,12 @@ function buildTeams(mode, squadIds) {
   }
 }
 
+function skinTint(id) {
+  const cos = state.profile && state.profile.cosmetics;
+  if (!cos || !cos.skins) return null;
+  return getSkin(cos.skins[id]).tint;
+}
+
 function applyEnvironment(mode) {
   if (!state.scene || mode.fogColor == null) return;
   const color = new THREE.Color(mode.fogColor);
@@ -106,7 +113,8 @@ function applyEnvironment(mode) {
 
 export function createChampionInstance(base, team, slotIndex, startS, lateralOffset, statMult = 1) {
   const pos = lanePosFromS(startS, lateralOffset);
-  const mesh = createChampionMesh(base, team);
+  const tint = team === 'blue' ? skinTint(base.id) : null;
+  const mesh = createChampionMesh(base, team, tint);
   mesh.position.set(pos.x, 0, pos.z);
   state.unitsGroup.add(mesh);
   const labelEl = createUnitLabelElement(base.name, team, false);

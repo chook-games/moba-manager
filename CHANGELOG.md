@@ -3,6 +3,14 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.11.0] — Batch 3: Cosmetics & sharing
+
+### Added
+- **Locker** — buy & equip colour **skins** per champion (Gold) and select **titles** unlocked
+  by account level. Skins recolor the champion in 3D.
+- **Share result as image** — the game-over screen renders a summary PNG and shares it via the
+  Web Share API (or downloads it).
+
 ## [0.10.0] — Batch 2: Draft & deeper management
 
 ### Added

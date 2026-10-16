@@ -30,6 +30,7 @@
       <div class="brand-badge" data-i18n="home.badge">3D TACTICAL ESPORTS SIM</div>
       <h1 class="brand-title">MOBA <span>MANAGER</span></h1>
       <p class="brand-sub" data-i18n="home.sub">Manage a 5-champion squad in real time</p>
+      <div id="home-title" class="home-title"></div>
     </div>
 
     <div class="profile-card">
@@ -55,6 +56,7 @@
       <button id="btn-home-roster" class="btn btn-ghost" data-i18n="home.roster">🧬 CHAMPIONS &amp; UNLOCKS</button>
       <button id="btn-home-missions" class="btn btn-ghost" data-i18n="home.missions">🎯 MISSIONS</button>
       <button id="btn-home-stats" class="btn btn-ghost" data-i18n="home.stats">📊 STATS</button>
+      <button id="btn-home-cosmetics" class="btn btn-ghost" data-i18n="home.cosmetics">🎨 LOCKER</button>
       <button id="btn-home-settings" class="btn btn-ghost" data-i18n="home.settings">⚙️ SETTINGS</button>
       <button id="btn-install" class="btn btn-install hidden" data-i18n="home.install">⬇️ INSTALL APP (Android / Desktop)</button>
     </div>
@@ -154,6 +156,21 @@
       <button id="btn-stats-back" class="btn btn-icon">←</button>
     </header>
     <div id="stats-content" class="stats-content"></div>
+  </div>
+
+  <!-- ============================= COSMETICS ============================= -->
+  <div id="screen-cosmetics" class="screen hidden">
+    <header class="screen-head">
+      <div>
+        <h1 class="screen-title" data-i18n="cosmetics.title">LOCKER</h1>
+        <p class="screen-sub"><span data-i18n="cosmetics.sub">Skins &amp; titles</span> • 🪙 <span id="cosmetics-gold">0</span></p>
+      </div>
+      <button id="btn-cosmetics-back" class="btn btn-icon">←</button>
+    </header>
+    <div class="settings-sub" data-i18n="cosmetics.titles">Titles</div>
+    <div id="cosmetics-titles" class="title-row"></div>
+    <div class="settings-sub" data-i18n="cosmetics.looks">Hero look</div>
+    <div id="cosmetics-skins" class="skin-list"></div>
   </div>
 
   <!-- ============================= SETTINGS ============================= -->
@@ -448,6 +465,7 @@
       <button id="btn-go-squad" class="btn btn-ghost btn-third" data-i18n="go.squadBtn">🧬 Squad</button>
       <button id="btn-go-replay" class="btn btn-primary btn-third" data-i18n="go.replay">🔁 Replay</button>
     </div>
+    <button id="btn-go-share" class="btn btn-ghost" style="width:100%;margin-top:8px" data-i18n="go.share">📸 Share result</button>
   </div>
 
 </div>

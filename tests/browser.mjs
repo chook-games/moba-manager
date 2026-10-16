@@ -139,6 +139,14 @@ check('stats content rendered', (await ev(`document.getElementById('stats-conten
 await ev(`document.getElementById('btn-stats-back').click()`); await sleep(80);
 check('stats back to home', !(await ev(`document.getElementById('screen-home').classList.contains('hidden')`)));
 
+// Cosmetics (locker) screen.
+await ev(`document.getElementById('btn-home-cosmetics').click()`); await sleep(120);
+check('cosmetics screen opens', !(await ev(`document.getElementById('screen-cosmetics').classList.contains('hidden')`)));
+check('titles rendered', (await ev(`document.querySelectorAll('#cosmetics-titles .title-chip').length`)) > 0);
+check('skins rendered', (await ev(`document.querySelectorAll('#cosmetics-skins .skin-row').length`)) > 0);
+await ev(`document.getElementById('btn-cosmetics-back').click()`); await sleep(80);
+check('share button present', await ev(`!!document.getElementById('btn-go-share')`));
+
 await ev(`document.getElementById('btn-home-play').click()`); await sleep(200);
 check('mode screen + 4 modes', await ev(`document.querySelectorAll('.mode-card').length === 4`));
 await ev(`document.querySelector('.mode-card:not(.is-locked)').click()`); await sleep(200);
