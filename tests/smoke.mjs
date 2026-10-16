@@ -98,6 +98,25 @@ const gained = prog.applyAccountXp(lvlProfile, 100000);
 check('account levels up on big xp', gained > 0 && lvlProfile.level > 1);
 check('computeRewards finite', Number.isFinite(prog.computeRewards({ victory: false, kills: 1, deaths: 5, assists: 0, duration: 120 }, { rewardMult: 1 }).gold));
 
+// 4c. Missions (daily + achievements)
+const missions = await import('../src/core/missions.js');
+const mp = storage.defaultProfile();
+const beforeGold = mp.gold;
+const dl = missions.ensureDaily(mp);
+check('daily login grants gold', dl.granted > 0 && mp.gold === beforeGold + dl.granted);
+check('daily quests picked (4)', mp.daily.quests.length === 4);
+check('second ensureDaily no grant', missions.ensureDaily(mp).granted === 0);
+storage.recordMatchResult(mp, {
+  victory: true, kills: 5, deaths: 1, assists: 3, duration: 300, mvpChampionId: 'wildfire',
+  championResults: [{ id: 'wildfire', role: 'Marksman', kills: 5, deaths: 1, assists: 3 }],
+}, 'aram');
+check('daily matches counter', mp.daily.counters.matches === 1);
+check('daily kills counter', mp.daily.counters.kills === 5);
+check('lifetime nexus counter', (mp.counters.nexus || 0) >= 1);
+check('achievement first_win unlocked', missions.evaluateAchievements(mp).find((a) => a.id === 'first_win').unlocked);
+check('claim achievement rewards', missions.claimAchievement(mp, 'first_win') === 200);
+check('achievement cannot double-claim', missions.claimAchievement(mp, 'first_win') === 0);
+
 // 4b. i18n
 const i18n = await import('../src/core/i18n.js');
 i18n.setLang('en');

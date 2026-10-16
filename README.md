@@ -18,6 +18,7 @@ fullscreen app on **Android** (and desktop) — offline included.
 - **Support escort system** — select a Support hero and choose which ally they follow, heal and shield (the chooser appears inside Tactics whenever a Support is selected).
 - **In-match item shop** — 8 items, 6 slots, instant purchase.
 - **Meta progression** — account level & XP, Gold, champion mastery, win stats.
+- **Missions** — rotating daily quests, 8 lifetime achievements, and an escalating daily-login Gold streak.
 - **Champion roster & unlocks** — 5 free champions, 7 more unlockable with Gold.
 - **3 modes** — `ARAM`, `Blitz` (team deathmatch), `Titan Siege` (hard mode).
 - **Calmer pacing** — the match starts at **0.5x** speed by default (cycle: `0.5x → 1x → 1.5x → Pause`).

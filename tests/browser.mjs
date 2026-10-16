@@ -116,6 +116,14 @@ check('language switch -> Greek', (await ev(`document.getElementById('btn-home-p
 await ev(`(()=>{const s=document.getElementById('select-lang'); s.value='en'; s.dispatchEvent(new Event('change'));})()`); await sleep(100);
 check('language switch -> English', (await ev(`document.getElementById('btn-home-play').textContent`)) === '▶ PLAY');
 
+// Missions screen.
+await ev(`document.getElementById('btn-home-missions').click()`); await sleep(100);
+check('missions screen opens', !(await ev(`document.getElementById('screen-missions').classList.contains('hidden')`)));
+check('daily quests rendered (4)', (await ev(`document.querySelectorAll('#daily-quests-list .mission-row').length`)) === 4);
+check('achievements rendered', (await ev(`document.querySelectorAll('#achievements-list .mission-row').length`)) >= 6);
+await ev(`document.getElementById('btn-missions-back').click()`); await sleep(100);
+check('missions back to home', !(await ev(`document.getElementById('screen-home').classList.contains('hidden')`)));
+
 await ev(`document.getElementById('btn-home-play').click()`); await sleep(200);
 check('mode screen + 3 modes', await ev(`document.querySelectorAll('.mode-card').length === 3`));
 await ev(`document.querySelector('.mode-card:not(.is-locked)').click()`); await sleep(200);

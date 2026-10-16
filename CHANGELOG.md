@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.5.0] — Phase 3: Missions
+
+### Added
+- **Daily quests** — 4 rotating objectives each day (seeded by date), progress tracked per day,
+  claim Gold rewards.
+- **Achievements** — 8 lifetime milestones with one-time Gold rewards.
+- **Daily login reward** — escalating Gold streak (Day 1–7+), shown on the home screen.
+- **Missions screen** (from the home menu) with progress bars and claim buttons.
+- New profile data: lifetime counters + daily state, all with save migration.
+
 ## [0.4.0] — Phase 4: UX / i18n / accessibility
 
 ### Added

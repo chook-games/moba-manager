@@ -13,6 +13,8 @@ import { applyPreferences } from './core/preferences.js';
 import { showScreen } from './ui/nav.js';
 import { refreshHome, bindMenu, renderModeList, renderRoster } from './ui/menu.js';
 import { bindSquad, getSelectedSquad, renderSquadSelectionGrid } from './ui/squad.js';
+import { renderMissions, bindMissions } from './ui/missions.js';
+import { ensureDaily } from './core/missions.js';
 import { updateManagerDashboardUI } from './ui/hud.js';
 import { bindCommandSheet, closeCommandSheet, toggleMacro, selectChampion } from './ui/command-sheet.js';
 import { registerPWA } from './pwa.js';
@@ -65,6 +67,7 @@ function relocalize() {
   if (!document.getElementById('screen-mode').classList.contains('hidden')) renderModeList();
   if (!document.getElementById('screen-roster').classList.contains('hidden')) renderRoster();
   if (!document.getElementById('screen-squad').classList.contains('hidden')) renderSquadSelectionGrid();
+  if (!document.getElementById('screen-missions').classList.contains('hidden')) renderMissions();
   const sel = document.getElementById('select-lang');
   if (sel) sel.value = state.profile.settings.lang || 'en';
 }
@@ -93,6 +96,9 @@ function bindGameControls() {
 
   document.getElementById('btn-help')?.addEventListener('click', () => document.getElementById('modal-help')?.classList.remove('hidden'));
   document.getElementById('btn-help-close')?.addEventListener('click', () => document.getElementById('modal-help')?.classList.add('hidden'));
+
+  document.getElementById('btn-home-missions')?.addEventListener('click', () => { renderMissions(); showScreen('screen-missions'); });
+  document.getElementById('btn-missions-back')?.addEventListener('click', () => { showScreen('screen-home'); refreshHome(); });
 
   document.getElementById('btn-start-match')?.addEventListener('click', startMatch);
   document.getElementById('btn-go-home')?.addEventListener('click', goHome);
@@ -132,11 +138,15 @@ function boot() {
   state.profile = loadProfile();
   state.speedIndex = 0;
   applyPreferences();
+  const daily = ensureDaily(state.profile);
+  state.dailyGranted = daily.granted;
+  saveProfile(state.profile);
 
   bindMenu();
   bindSquad();
   bindCommandSheet();
   bindGameControls();
+  bindMissions();
   bindTutorial();
   setupCanvasInput();
 

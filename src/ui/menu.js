@@ -25,6 +25,20 @@ export function refreshHome() {
   const fill = document.getElementById('home-xp-fill');
   if (fill) fill.style.width = `${pct}%`;
   setText('home-xp-text', `${Math.floor(p.xp)} / ${need} XP`);
+
+  const banner = document.getElementById('daily-banner');
+  if (banner && p.daily) {
+    const streak = p.daily.streak || 0;
+    if (streak > 0) {
+      banner.classList.remove('hidden');
+      banner.classList.toggle('granted', state.dailyGranted > 0);
+      banner.textContent = state.dailyGranted > 0
+        ? t('missions.dailyReward', { gold: state.dailyGranted, n: streak })
+        : t('missions.streak', { n: streak });
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
 }
 
 export function renderModeList() {

@@ -2,6 +2,7 @@ import { SAVE_KEY } from './config.js';
 import { CHAMPION_POOL } from './data/champions.js';
 import { applyAccountXp, applyMasteryXp, computeRewards } from './data/progression.js';
 import { getMode } from './data/modes.js';
+import { recordMatch } from './core/missions.js';
 
 export const SAVE_VERSION = 2;
 
@@ -14,6 +15,9 @@ export function defaultProfile() {
     unlocked: CHAMPION_POOL.filter((c) => c.free).map((c) => c.id),
     mastery: {},
     stats: { matches: 0, wins: 0, losses: 0, kills: 0, deaths: 0, assists: 0, bestTimeSec: null },
+    counters: { nexus: 0, supportGames: 0, blitzWins: 0, siegeWins: 0 },
+    achievements: [],
+    daily: { date: null, counters: {}, claimed: [], quests: [], streak: 0, lastLogin: null },
     settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false },
     lastResult: null,
   };
@@ -38,7 +42,10 @@ function migrate(p) {
     ...p,
     settings: { ...base.settings, ...(p.settings || {}) },
     stats: { ...base.stats, ...(p.stats || {}) },
+    counters: { ...base.counters, ...(p.counters || {}) },
+    daily: { ...base.daily, ...(p.daily || {}) },
     mastery: p.mastery || {},
+    achievements: Array.isArray(p.achievements) ? p.achievements : [],
     unlocked: Array.isArray(p.unlocked) && p.unlocked.length ? p.unlocked : base.unlocked,
   };
   // Ensure every free champion is always unlocked.
@@ -93,6 +100,7 @@ export function recordMatchResult(profile, result, modeId) {
   }
 
   profile.gold += rewards.gold;
+  recordMatch(profile, result, mode);
   const accountLevelsGained = applyAccountXp(profile, rewards.xp);
 
   let masteryLevelsGained = 0;

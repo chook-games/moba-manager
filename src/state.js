@@ -56,6 +56,7 @@ export const state = {
   currentModeId: 'aram',
   pendingModeId: 'aram',
   lastResult: null,
+  dailyGranted: 0,
 };
 
 export function getSpeedMult() {
