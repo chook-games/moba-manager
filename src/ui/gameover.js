@@ -3,11 +3,13 @@ import { getMode } from '../data/modes.js';
 import { recordMatchResult } from '../storage.js';
 import { formatTime } from '../utils.js';
 import { refreshHome } from './menu.js';
+import { onMatchEnd } from '../game/feedback.js';
 
 export function endMatch(isVictory) {
   if (state.matchEnded) return;
   state.matchEnded = true;
   state.isGameRunning = false;
+  onMatchEnd(isVictory);
 
   const blue = state.blueChampions;
   const totals = blue.reduce((acc, c) => {

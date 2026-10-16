@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { CONFIG } from '../config.js';
 import { distXZ, clamp } from '../utils.js';
 import { endMatch } from '../ui/gameover.js';
+import { onUnitKilled, onStructureDestroyed } from './feedback.js';
 
 export function addChampionXp(c, amount) {
   if (c.level >= CONFIG.MAX_LEVEL) return;
@@ -25,7 +26,7 @@ export function spawnProjectile(source, target, damage, colorHex, speed) {
   );
   mesh.position.set(source.x, 1.35, source.z);
   state.projectilesGroup.add(mesh);
-  state.projectiles.push({ source, target, damage, speed, mesh });
+  state.projectiles.push({ source, target, damage, speed, mesh, color: colorHex });
 }
 
 export function spawnSupportBeam(sup, ally) {
@@ -91,6 +92,7 @@ function killUnit(target, attacker) {
   target.dead = true;
 
   if (target.role) {
+    onUnitKilled(target, attacker);
     target.deaths++;
     target.respawnTimer = 6 + Math.floor(target.level * 0.8);
     if (attacker && attacker.role) {
@@ -110,6 +112,7 @@ function killUnit(target, attacker) {
     if (target.team === 'red') state.blueKills++;
     else state.redKills++;
   } else if (target.type) {
+    onStructureDestroyed(target);
     target.mesh.visible = false;
     if (target.labelEl) target.labelEl.style.display = 'none';
     const team = target.team === 'blue' ? state.redChampions : state.blueChampions;

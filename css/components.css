@@ -354,3 +354,47 @@
   .screen:not(.game-screen) > * { max-width: 860px; }
   .champ-grid { grid-template-columns: repeat(5, 1fr); }
 }
+
+/* ============================ FEEDBACK / JUICE ============================ */
+.screen-flash { position: absolute; inset: 0; z-index: 45; pointer-events: none; opacity: 0; background: transparent; }
+
+.kill-feed {
+  position: absolute; top: calc(46px + var(--safe-t)); left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 18; pointer-events: none;
+  max-width: 92%;
+}
+.kill-row {
+  display: flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 8px;
+  background: rgba(2, 6, 12, 0.8); border: 1px solid var(--line);
+  font-size: 10px; font-weight: 800; white-space: nowrap;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.kill-row.fade { opacity: 0; transform: translateY(-6px); }
+.kf-name.blue { color: var(--cyan); }
+.kf-name.red { color: #fb7185; }
+.kf-icon { color: var(--amber); }
+
+.tutorial-banner {
+  pointer-events: auto; margin: 0 8px 6px; padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px; justify-content: space-between;
+  background: rgba(15, 22, 35, 0.97); border: 1px solid rgba(251, 191, 36, 0.55);
+  border-radius: 14px; box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+}
+.tut-body { display: flex; flex-direction: column; gap: 2px; }
+.tut-step { font-size: 9px; font-weight: 900; letter-spacing: 0.12em; color: var(--amber); text-transform: uppercase; }
+.tut-text { font-size: 12px; color: #fff; font-weight: 600; }
+
+.help-btn { margin-left: 4px; }
+.help-card {
+  width: 100%; max-width: 420px; max-height: 82%; overflow-y: auto; text-align: left;
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.help-title { margin: 0; font-size: 16px; font-weight: 900; color: var(--amber); text-transform: uppercase; letter-spacing: 0.08em; }
+.help-sub { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.help-list { display: flex; flex-direction: column; gap: 8px; }
+.help-item { display: flex; gap: 10px; align-items: baseline; }
+.help-item strong { min-width: 78px; font-size: 12px; font-weight: 900; color: #fff; }
+.help-item span { font-size: 11px; color: var(--muted); line-height: 1.45; }
+
+.vol-slider { width: 130px; accent-color: var(--cyan); }

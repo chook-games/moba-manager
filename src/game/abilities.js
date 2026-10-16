@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { getAbility } from '../data/abilities.js';
 import { distXZ } from '../utils.js';
 import { dealDamage, spawnNovaEffect, spawnFloatingText, spawnSupportBeam } from './combat.js';
+import { onUltimate } from './feedback.js';
 
 export function commandersTeam(c) {
   return c.team === 'blue' ? state.blueChampions : state.redChampions;
@@ -87,6 +88,7 @@ export function castAbility(c) {
       break;
   }
 
+  onUltimate(c);
   c.abilityTimer = ab.cooldown;
   return { ok: true };
 }

@@ -49,6 +49,7 @@ export const state = {
   cameraMode: 0,
   camPanOffset: { x: 0, z: 0 },
   camZoom: 0.80,
+  camShake: 0,
 
   // Meta
   profile: null,

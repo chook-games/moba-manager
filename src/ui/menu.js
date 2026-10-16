@@ -6,6 +6,8 @@ import { accountXpToNext, masteryXpToNext } from '../data/progression.js';
 import { isUnlocked, unlockChampion, unlockCost, resetProfile, saveProfile } from '../storage.js';
 import { showScreen } from './nav.js';
 import { renderSquadSelectionGrid } from './squad.js';
+import { refreshVolume } from '../core/audio.js';
+import { replayTutorial } from './tutorial.js';
 
 export function refreshHome() {
   const p = state.profile;
@@ -112,6 +114,22 @@ export function bindMenu() {
     saveProfile(state.profile);
   });
 
+  const soundToggle = document.getElementById('toggle-sound');
+  soundToggle?.addEventListener('change', () => {
+    state.profile.settings.muted = !soundToggle.checked;
+    saveProfile(state.profile);
+    refreshVolume();
+  });
+
+  const volumeSlider = document.getElementById('volume-slider');
+  volumeSlider?.addEventListener('input', () => {
+    state.profile.settings.audioVolume = Number(volumeSlider.value) / 100;
+    saveProfile(state.profile);
+    refreshVolume();
+  });
+
+  document.getElementById('btn-replay-tutorial')?.addEventListener('click', replayTutorial);
+
   document.getElementById('btn-reset-save')?.addEventListener('click', () => {
     if (confirm('Reset all progress? This cannot be undone.')) {
       state.profile = resetProfile();
@@ -122,8 +140,13 @@ export function bindMenu() {
 }
 
 function renderSettings() {
+  const s = state.profile.settings;
   const haptic = document.getElementById('toggle-haptic');
-  if (haptic) haptic.checked = !!state.profile.settings.haptic;
+  if (haptic) haptic.checked = !!s.haptic;
+  const sound = document.getElementById('toggle-sound');
+  if (sound) sound.checked = !s.muted;
+  const vol = document.getElementById('volume-slider');
+  if (vol) vol.value = Math.round((typeof s.audioVolume === 'number' ? s.audioVolume : 0.6) * 100);
   setText('app-version', `v${APP_VERSION}`);
 }
 

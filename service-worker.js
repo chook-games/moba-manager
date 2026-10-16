@@ -1,5 +1,5 @@
 // Offline-first service worker for the MOBA Manager PWA.
-const VERSION = 'v1.2.0';
+const VERSION = 'v1.3.0';
 const STATIC_CACHE = `moba-static-${VERSION}`;
 const RUNTIME_CACHE = `moba-runtime-${VERSION}`;
 
@@ -15,6 +15,8 @@ const PRECACHE = [
   './src/storage.js',
   './src/utils.js',
   './src/pwa.js',
+  './src/core/audio.js',
+  './src/core/haptics.js',
   './src/data/champions.js',
   './src/data/items.js',
   './src/data/abilities.js',
@@ -29,12 +31,14 @@ const PRECACHE = [
   './src/game/combat.js',
   './src/game/ai.js',
   './src/game/abilities.js',
+  './src/game/feedback.js',
   './src/ui/nav.js',
   './src/ui/squad.js',
   './src/ui/hud.js',
   './src/ui/command-sheet.js',
   './src/ui/gameover.js',
   './src/ui/menu.js',
+  './src/ui/tutorial.js',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   './assets/icons/maskable-512.png',

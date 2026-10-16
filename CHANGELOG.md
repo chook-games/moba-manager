@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.3.0] — Phase 1: Game feel
+
+### Added
+- **Audio** — generated WebAudio SFX (hits, kills, ultimates, structures, victory/defeat, UI).
+  Sound on/off + volume in Settings (persisted). Unlocks on first user gesture.
+- **Vibration / haptics** on hits, kills, ultimates, structures and match end (Android).
+- **Feedback / "juice"** — kill feed, screen flash, camera shake, 3D death bursts and
+  projectile impact sparks.
+- **First-match interactive tutorial** — auto-advances as you select a hero, give an order,
+  fire an ultimate and buy an item. Replayable from Settings.
+- **Help modal** explaining orders and target priorities (❔ button in the Tactics panel).
+
 ## [0.2.0] — Phase 0: Stability & QA
 
 ### Added

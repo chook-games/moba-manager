@@ -8,6 +8,7 @@ import { updateChampionAI, getAttackableTargets, moveTowardsPoint, engageTarget 
 import { spawnProjectile, dealDamage, applyItem } from './combat.js';
 import { updateManagerDashboardUI } from '../ui/hud.js';
 import { endMatch } from '../ui/gameover.js';
+import { spawnImpact } from './feedback.js';
 
 export function updateSimulation(dt) {
   if (!state.isGameRunning || state.matchEnded) return;
@@ -115,6 +116,7 @@ function updateProjectiles(simDt) {
     const step = p.speed * simDt;
     if (dist <= step + 0.35) {
       dealDamage(p.source, p.target, p.damage);
+      spawnImpact(p.target.x, p.target.z, p.color || 0xffffff);
       state.projectilesGroup.remove(p.mesh);
       state.projectiles.splice(i, 1);
     } else {
@@ -130,8 +132,9 @@ function updateEffects(simDt) {
     const b = state.visualBeams[i];
     b.life -= simDt;
     if (b.grow && b.mesh) {
-      b.mesh.scale.setScalar(1 + (1 - Math.max(0, b.life) / 0.55) * 0.4);
-      b.mesh.material.opacity = 0.55 * (Math.max(0, b.life) / 0.55);
+      const k = Math.max(0, b.life) / (b.maxLife || 0.55);
+      b.mesh.scale.setScalar((b.startScale || 1) + (1 - k) * (b.growScale || 0.4));
+      if (b.mesh.material) b.mesh.material.opacity = (b.startOpacity != null ? b.startOpacity : 0.55) * k;
     }
     if (b.life <= 0) {
       state.effectsGroup.remove(b.mesh);

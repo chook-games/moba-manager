@@ -48,6 +48,14 @@ export function updateCameraPosition() {
     focusZ + offsetHorizontal * 0.95
   );
 
+  if (state.camShake > 0) {
+    const s = state.camShake;
+    desired.x += (Math.random() - 0.5) * s * 6;
+    desired.y += (Math.random() - 0.5) * s * 8;
+    desired.z += (Math.random() - 0.5) * s * 6;
+    state.camShake = Math.max(0, state.camShake - 0.05);
+  }
+
   camera.position.lerp(desired, 0.12);
   camera.lookAt(focusX, 0.9, focusZ);
 }

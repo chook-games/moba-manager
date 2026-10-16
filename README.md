@@ -22,6 +22,7 @@ fullscreen app on **Android** (and desktop) — offline included.
 - **3 modes** — `ARAM`, `Blitz` (team deathmatch), `Titan Siege` (hard mode).
 - **Calmer pacing** — the match starts at **0.5x** speed by default (cycle: `0.5x → 1x → 1.5x → Pause`).
 - **Starts zoomed out** — the camera opens on the wide **Map** view; zoom in with the tabs or pinch/wheel.
+- **Game feel** — generated WebAudio SFX, vibration, kill feed, screen flash & camera shake, plus a **first-match tutorial** and an in-game **help** panel.
 - **Mobile + desktop** — the UI adapts: a phone column on mobile, a wider centered layout with more grid columns on desktop. Tap/drag/pinch on touch, mouse drag + wheel zoom on desktop.
 - **Offline PWA** — service worker caches the app; installable from the browser.
 

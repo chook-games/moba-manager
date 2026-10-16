@@ -14,7 +14,7 @@ export function defaultProfile() {
     unlocked: CHAMPION_POOL.filter((c) => c.free).map((c) => c.id),
     mastery: {},
     stats: { matches: 0, wins: 0, losses: 0, kills: 0, deaths: 0, assists: 0, bestTimeSec: null },
-    settings: { speedIndex: 0, haptic: true, quality: 'auto' },
+    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false },
     lastResult: null,
   };
 }

@@ -14,6 +14,8 @@ import { refreshHome, bindMenu } from './ui/menu.js';
 import { bindSquad, getSelectedSquad } from './ui/squad.js';
 import { bindCommandSheet, closeCommandSheet, toggleMacro, selectChampion } from './ui/command-sheet.js';
 import { registerPWA } from './pwa.js';
+import { unlockAudio } from './core/audio.js';
+import { bindTutorial, maybeStartTutorial } from './ui/tutorial.js';
 
 function startMatch() {
   showScreen('screen-game');
@@ -22,6 +24,7 @@ function startMatch() {
   setCameraPreset(0);
   setupNewMatch(state.pendingModeId, getSelectedSquad());
   updateSpeedButton();
+  maybeStartTutorial();
 }
 
 function restartMatch() {
@@ -31,6 +34,7 @@ function restartMatch() {
   setCameraPreset(0);
   setupNewMatch(state.currentModeId, getSelectedSquad());
   updateSpeedButton();
+  maybeStartTutorial();
 }
 
 function goHome() {
@@ -62,6 +66,9 @@ function bindGameControls() {
   document.getElementById('btn-zoom-out')?.addEventListener('click', () => adjustZoom(-0.28));
   const slider = document.getElementById('zoom-range-input');
   slider?.addEventListener('input', () => setZoomFromSlider(slider.value));
+
+  document.getElementById('btn-help')?.addEventListener('click', () => document.getElementById('modal-help')?.classList.remove('hidden'));
+  document.getElementById('btn-help-close')?.addEventListener('click', () => document.getElementById('modal-help')?.classList.add('hidden'));
 
   document.getElementById('btn-start-match')?.addEventListener('click', startMatch);
   document.getElementById('btn-go-home')?.addEventListener('click', goHome);
@@ -105,7 +112,11 @@ function boot() {
   bindSquad();
   bindCommandSheet();
   bindGameControls();
+  bindTutorial();
   setupCanvasInput();
+
+  // Unlock WebAudio on the first user gesture (required by mobile browsers).
+  window.addEventListener('pointerdown', unlockAudio, { once: true });
 
   refreshHome();
   showScreen('screen-home');

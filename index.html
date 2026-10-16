@@ -22,6 +22,8 @@
 
 <div id="app-shell">
 
+  <div id="screen-flash" class="screen-flash"></div>
+
   <!-- ============================= HOME ============================= -->
   <div id="screen-home" class="screen">
     <div class="home-top">
@@ -114,10 +116,31 @@
       <label class="settings-row">
         <span>
           <strong>Haptics / Vibration</strong>
-          <em>Vibrate on taps (supported devices)</em>
+          <em>Vibrate on hits, kills and ultimates</em>
         </span>
         <input id="toggle-haptic" type="checkbox" class="switch" checked />
       </label>
+      <label class="settings-row">
+        <span>
+          <strong>Sound effects</strong>
+          <em>Mute all in-game audio</em>
+        </span>
+        <input id="toggle-sound" type="checkbox" class="switch" checked />
+      </label>
+      <label class="settings-row">
+        <span>
+          <strong>Volume</strong>
+          <em>SFX loudness</em>
+        </span>
+        <input id="volume-slider" type="range" min="0" max="100" step="1" value="60" class="vol-slider" />
+      </label>
+      <div class="settings-row">
+        <span>
+          <strong>First-match tutorial</strong>
+          <em>Show the guide again</em>
+        </span>
+        <button id="btn-replay-tutorial" class="btn btn-ghost">▶ Replay</button>
+      </div>
       <div class="settings-row col">
         <span>
           <strong>Default game speed</strong>
@@ -168,6 +191,8 @@
       </div>
     </div>
 
+    <div id="kill-feed" class="kill-feed"></div>
+
     <div id="macro-popover" class="macro-popover hidden">
       <span class="macro-label">ALL SQUAD:</span>
       <button id="btn-team-farm" class="btn btn-mini team-farm">Farm</button>
@@ -191,6 +216,14 @@
     </div>
 
     <div class="bottom-stack">
+      <div id="tutorial-banner" class="tutorial-banner hidden">
+        <div class="tut-body">
+          <span id="tutorial-step" class="tut-step">Step 1/5</span>
+          <span id="tutorial-text" class="tut-text">Welcome!</span>
+        </div>
+        <button id="btn-tutorial-skip" class="btn btn-mini">Skip</button>
+      </div>
+
       <div id="command-sheet" class="command-sheet sheet-hidden">
         <div class="sheet-head">
           <div class="sheet-id">
@@ -224,6 +257,7 @@
               <button id="prio-2" class="prio">Nearest</button>
               <button id="prio-3" class="prio">Turret</button>
             </div>
+            <button id="btn-help" class="prio help-btn" title="What do orders mean?">?</button>
           </div>
           <div id="support-section" class="support-section hidden">
             <div class="support-hint">Choose which ally the <strong>Support</strong> escorts, heals &amp; shields:</div>
@@ -257,6 +291,27 @@
       <div class="squad-dock">
         <div id="squad-cards-row" class="squad-row"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ============================= HELP MODAL ============================= -->
+  <div id="modal-help" class="modal hidden">
+    <div class="help-card">
+      <h2 class="help-title">Orders &amp; Priorities</h2>
+      <div class="help-list">
+        <div class="help-item"><strong class="order-farm">Farm</strong><span>Safely clear minions near mid and stay back.</span></div>
+        <div class="help-item"><strong class="order-push">Push</strong><span>Advance down the lane, take objectives and fight anything in the way.</span></div>
+        <div class="help-item"><strong class="order-defend">Defend</strong><span>Hold near your own turret and fight enemies that approach.</span></div>
+        <div class="help-item"><strong class="order-retreat">Retreat</strong><span>Fall back to base and heal up.</span></div>
+      </div>
+      <div class="help-sub">Target priority</div>
+      <div class="help-list">
+        <div class="help-item"><strong>Lowest HP</strong><span>Attack the weakest enemy first.</span></div>
+        <div class="help-item"><strong>Carry</strong><span>Dive the enemy Marksman / Mage first.</span></div>
+        <div class="help-item"><strong>Nearest</strong><span>Attack whatever is closest.</span></div>
+        <div class="help-item"><strong>Turret</strong><span>Focus enemy towers / Nexus.</span></div>
+      </div>
+      <button id="btn-help-close" class="btn btn-primary">Got it</button>
     </div>
   </div>
 

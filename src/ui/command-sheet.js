@@ -3,6 +3,9 @@ import { SHOP_ITEMS } from '../data/items.js';
 import { castAbility, abilityReady } from '../game/abilities.js';
 import { applyItem } from '../game/combat.js';
 import { updateManagerDashboardUI } from './hud.js';
+import { notifyTutorial } from './tutorial.js';
+import { sfx } from '../core/audio.js';
+import { haptics } from '../core/haptics.js';
 
 let bound = false;
 
@@ -14,7 +17,9 @@ export function selectChampion(index) {
   });
   const sheet = document.getElementById('command-sheet');
   if (sheet) { sheet.classList.remove('sheet-hidden'); sheet.classList.add('sheet-visible'); }
+  sfx.ui(); haptics.tap();
   updateManagerDashboardUI();
+  notifyTutorial('select');
 }
 
 export function closeCommandSheet() {
@@ -29,6 +34,7 @@ export function closeCommandSheet() {
 
 export function switchSheetTab(tabName) {
   state.activeSheetTab = tabName;
+  sfx.ui();
   ['tactics', 'shop'].forEach((t) => {
     const btn = document.getElementById(`tab-btn-${t}`);
     const panel = document.getElementById(`tab-panel-${t}`);
@@ -44,11 +50,14 @@ export function setChampionOrder(orderName) {
   const c = state.blueChampions[state.selectedChampIndex];
   if (!c) return;
   c.order = orderName;
+  sfx.ui(); haptics.tap();
   updateManagerDashboardUI();
+  notifyTutorial('order');
 }
 
 export function setTeamOrder(orderName) {
   state.blueChampions.forEach((c) => { c.order = orderName; });
+  sfx.ui();
   updateManagerDashboardUI();
 }
 
@@ -107,7 +116,9 @@ export function buyItem(itemId) {
   if (c.gold < item.cost) return show(`Need ${item.cost}G!`, 'err');
   applyItem(c, item);
   show(`+ ${item.name}!`, 'ok');
+  sfx.ui();
   updateManagerDashboardUI();
+  notifyTutorial('buy');
 }
 
 export function castSelectedUltimate() {
@@ -116,6 +127,7 @@ export function castSelectedUltimate() {
   if (!abilityReady(c)) return;
   castAbility(c);
   updateManagerDashboardUI();
+  notifyTutorial('ultimate');
 }
 
 export function bindCommandSheet() {

@@ -90,9 +90,10 @@ function send(method, params = {}) {
 ws.addEventListener('message', (ev) => {
   const m = JSON.parse(ev.data);
   if (m.id && pending.has(m.id)) { pending.get(m.id)(m.result); pending.delete(m.id); return; }
+  const benign = (t) => /navigator\.vibrate|user hasn't tapped/i.test(t);
   if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text);
   if (m.method === 'Runtime.consoleAPICalled' && m.params.type === 'error') errors.push('console.error: ' + m.params.args.map((a) => a.value ?? a.description ?? '').join(' '));
-  if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error') errors.push(m.params.entry.text);
+  if (m.method === 'Log.entryAdded' && m.params.entry.level === 'error' && !benign(m.params.entry.text)) errors.push(m.params.entry.text);
 });
 await new Promise((r) => ws.addEventListener('open', r, { once: true }));
 await send('Page.enable');
@@ -119,6 +120,13 @@ check('game screen visible', await ev(`!document.getElementById('screen-game').c
 check('5 squad cards', await ev(`document.querySelectorAll('#squad-cards-row .squad-card').length === 5`));
 check('starts zoomed out (0.8x)', await ev(`document.getElementById('zoom-label').textContent === '0.8x'`));
 check('map preset active', await ev(`document.getElementById('cam-preset-0').classList.contains('is-active')`));
+check('tutorial banner shows on first match', await ev(`!document.getElementById('tutorial-banner').classList.contains('hidden')`));
+
+// Help modal opens/closes.
+await ev(`document.getElementById('btn-help').click()`); await sleep(50);
+check('help modal opens', !(await ev(`document.getElementById('modal-help').classList.contains('hidden')`)));
+await ev(`document.getElementById('btn-help-close').click()`); await sleep(50);
+check('help modal closes', await ev(`document.getElementById('modal-help').classList.contains('hidden')`));
 
 // Selection switching via pointerdown.
 const tap = (i) => `(()=>{const c=document.querySelectorAll('#squad-cards-row .squad-card')[${i}];const r=c.getBoundingClientRect();c.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,clientX:r.x+5,clientY:r.y+5}));})()`;
@@ -160,5 +168,6 @@ console.log(`\nbrowser: ${checks.filter((c) => c.ok).length}/${checks.length} ch
 ws.close();
 chrome.kill();
 server.close();
-fs.rmSync(userDir, { recursive: true, force: true });
+await sleep(300); // let Chrome release its profile lock before cleanup
+try { fs.rmSync(userDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch { /* ignore */ }
 process.exit(ok && errors.length === 0 ? 0 : 1);
