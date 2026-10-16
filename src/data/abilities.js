@@ -61,6 +61,15 @@ export const ABILITIES = {
     flat: 80,
     desc: 'Spins through nearby enemies dealing area damage.',
   },
+  overshield: {
+    id: 'overshield',
+    name: 'Aegis Wall',
+    type: 'OVERSHIELD',
+    cooldown: 26,
+    radius: 10,
+    duration: 4,
+    desc: 'Shields every nearby ally against incoming damage.',
+  },
 };
 
 export function getAbility(id) {

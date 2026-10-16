@@ -169,6 +169,9 @@ const DICT = {
     'mode.siege.name': 'Titan Siege',
     'mode.siege.tagline': 'Hard Mode',
     'mode.siege.desc': 'The enemy squad is 15% stronger. Destroy their Nexus for big rewards.',
+    'mode.sudden.name': 'Sudden Death',
+    'mode.sudden.tagline': 'Fast & Furious',
+    'mode.sudden.desc': 'Structures fall fast — short, explosive matches.',
 
     'tut.step': 'Step {n}/{t}',
     'tut.skip': 'Skip',
@@ -346,6 +349,9 @@ const DICT = {
     'mode.siege.name': 'Πολιορκία Τιτάνων',
     'mode.siege.tagline': 'Δύσκολο Mode',
     'mode.siege.desc': 'Η αντίπαλη ομάδα είναι 15% πιο δυνατή. Κατέστρεψε το Nexus για μεγάλες ανταμοιβές.',
+    'mode.sudden.name': 'Αιφνίδιος Θάνατος',
+    'mode.sudden.tagline': 'Γρήγορο & Δυνατό',
+    'mode.sudden.desc': 'Οι πύργοι πέφτουν γρήγορα — σύντομοι, εκρηκτικοί αγώνες.',
 
     'tut.step': 'Βήμα {n}/{t}',
     'tut.skip': 'Προσπέραση',

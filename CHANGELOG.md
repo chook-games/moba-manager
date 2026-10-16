@@ -3,6 +3,15 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.6.0] — Phase 2: Content
+
+### Added
+- **6 new champions** (18 total): Volleystorm, Emberlord, Gravemaw, Bloodmoon, Lifewarden, Ironclad.
+- New ultimate **Aegis Wall** (`OVERSHIELD`) — shields every nearby ally.
+- **4 new items** (12 total): Devourer, Stasis Hourglass, Ghostblade, Juggernaut Plate.
+- **4th mode: Sudden Death** — structures at 60% HP for short, explosive matches.
+- **Per-mode environment tint** (scene background/fog colour).
+
 ## [0.5.0] — Phase 3: Missions
 
 ### Added

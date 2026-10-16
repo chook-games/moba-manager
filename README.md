@@ -16,11 +16,11 @@ fullscreen app on **Android** (and desktop) — offline included.
 - **Real-time tactical management** — per-hero orders: `Farm / Push / Defend / Retreat`, target priority (`Lowest HP / Carry / Nearest / Turret`) and a team-wide macro order.
 - **Ultimates** — each champion has a role-defining ability with a cooldown you trigger manually.
 - **Support escort system** — select a Support hero and choose which ally they follow, heal and shield (the chooser appears inside Tactics whenever a Support is selected).
-- **In-match item shop** — 8 items, 6 slots, instant purchase.
+- **In-match item shop** — 12 items, 6 slots, instant purchase.
 - **Meta progression** — account level & XP, Gold, champion mastery, win stats.
 - **Missions** — rotating daily quests, 8 lifetime achievements, and an escalating daily-login Gold streak.
-- **Champion roster & unlocks** — 5 free champions, 7 more unlockable with Gold.
-- **3 modes** — `ARAM`, `Blitz` (team deathmatch), `Titan Siege` (hard mode).
+- **Champion roster & unlocks** — 18 champions (5 free, 13 unlockable with Gold).
+- **4 modes** — `ARAM`, `Blitz` (team deathmatch), `Titan Siege` (hard mode), `Sudden Death` (fast).
 - **Calmer pacing** — the match starts at **0.5x** speed by default (cycle: `0.5x → 1x → 1.5x → Pause`).
 - **Starts zoomed out** — the camera opens on the wide **Map** view; zoom in with the tabs or pinch/wheel.
 - **Game feel** — generated WebAudio SFX, vibration, kill feed, screen flash & camera shake, plus a **first-match tutorial** and an in-game **help** panel.

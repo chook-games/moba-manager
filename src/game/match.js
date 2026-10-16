@@ -38,6 +38,7 @@ export function setupNewMatch(modeId, squadIds) {
 
   buildStructures(mode);
   buildTeams(mode, squadIds);
+  applyEnvironment(mode);
 
   renderSupportTargetsBar();
   renderItemShop();
@@ -60,7 +61,10 @@ function buildStructures(mode) {
     structDefs.push({ id: 'red_turret', name: 'Red Turret', team: 'red', type: 'turret', s: 0.75, hp: CONFIG.STRUCT_TURRET_HP, maxHp: CONFIG.STRUCT_TURRET_HP, ad: CONFIG.TURRET_AD, range: CONFIG.TURRET_RANGE });
   }
 
+  const hpMult = mode.structHpMult || 1;
   structDefs.forEach((sd) => {
+    sd.hp = Math.round(sd.hp * hpMult);
+    sd.maxHp = Math.round(sd.maxHp * hpMult);
     const pos = lanePosFromS(sd.s, 0);
     const mesh = createStructureMesh(sd.team, sd.type);
     mesh.position.set(pos.x, 0, pos.z);
@@ -85,6 +89,13 @@ function buildTeams(mode, squadIds) {
     champ.order = base.role === 'Tank' ? 'DEFEND' : (base.role === 'Support' ? 'FARM' : 'PUSH');
     state.redChampions.push(champ);
   }
+}
+
+function applyEnvironment(mode) {
+  if (!state.scene || mode.fogColor == null) return;
+  const color = new THREE.Color(mode.fogColor);
+  state.scene.background = color;
+  if (state.scene.fog) state.scene.fog.color = color;
 }
 
 export function createChampionInstance(base, team, slotIndex, startS, lateralOffset, statMult = 1) {

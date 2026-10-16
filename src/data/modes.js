@@ -17,6 +17,8 @@ export const MODES = {
     rewardMult: 1.0,
     xpMult: 1.0,
     redStatMult: 1.0,
+    structHpMult: 1.0,
+    fogColor: 0x111a24,
   },
   blitz: {
     id: 'blitz',
@@ -33,6 +35,8 @@ export const MODES = {
     rewardMult: 1.2,
     xpMult: 1.15,
     redStatMult: 1.0,
+    structHpMult: 1.0,
+    fogColor: 0x1a1220,
   },
   siege: {
     id: 'siege',
@@ -49,10 +53,30 @@ export const MODES = {
     rewardMult: 1.6,
     xpMult: 1.4,
     redStatMult: 1.15,
+    structHpMult: 1.0,
+    fogColor: 0x101a24,
+  },
+  sudden: {
+    id: 'sudden',
+    name: 'Sudden Death',
+    tagline: 'Fast & Furious',
+    desc: 'Structures fall fast — short, explosive matches.',
+    icon: '⚡',
+    color: '#06b6d4',
+    unlockLevel: 2,
+    hasNexus: true,
+    hasTurret: true,
+    hasMinions: true,
+    killTarget: null,
+    rewardMult: 1.25,
+    xpMult: 1.15,
+    redStatMult: 1.0,
+    structHpMult: 0.6,
+    fogColor: 0x241012,
   },
 };
 
-export const MODE_LIST = [MODES.aram, MODES.blitz, MODES.siege];
+export const MODE_LIST = [MODES.aram, MODES.blitz, MODES.siege, MODES.sudden];
 
 export function getMode(id) {
   return MODES[id] || MODES.aram;

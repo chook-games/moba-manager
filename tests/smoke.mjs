@@ -131,11 +131,12 @@ i18n.setLang('en');
 const champs = await import('../src/data/champions.js');
 const abilities = await import('../src/data/abilities.js');
 const modes = await import('../src/data/modes.js');
-check('12 champions', champs.CHAMPION_POOL.length === 12);
+check('18 champions', champs.CHAMPION_POOL.length === 18);
 check('every champion has a valid ability', champs.CHAMPION_POOL.every((c) => abilities.ABILITIES[c.ability]));
 check('every champion has unlock data', champs.CHAMPION_POOL.every((c) => typeof c.unlockCost === 'number'));
 check('default squad ids valid', champs.DEFAULT_SQUAD_IDS.every((id) => champs.getChampion(id)));
-check('3 modes', modes.MODE_LIST.length === 3);
+check('4 modes', modes.MODE_LIST.length === 4);
+check('sudden death halves structures', modes.getMode('sudden').structHpMult < 1);
 check('unknown mode falls back to aram', modes.getMode('nope').id === 'aram');
 check('blitz has kill target', modes.getMode('blitz').killTarget === 25);
 

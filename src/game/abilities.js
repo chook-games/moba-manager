@@ -74,6 +74,18 @@ export function castAbility(c) {
       break;
     }
 
+    case 'OVERSHIELD': {
+      const radius = ab.radius;
+      allies.filter((a) => !a.dead).forEach((a) => {
+        if (distXZ(c, a) <= radius) {
+          a.shieldTimer = Math.max(a.shieldTimer || 0, ab.duration);
+          spawnSupportBeam(c, a);
+        }
+      });
+      spawnFloatingText(c.x, c.z, ab.name.toUpperCase(), '#5eead4');
+      break;
+    }
+
     case 'WHIRLWIND': {
       const radius = ab.radius;
       [...enemies.filter((e) => !e.dead), ...state.minions.filter((m) => !m.dead && m.team !== c.team)]

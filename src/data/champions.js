@@ -32,6 +32,14 @@ export const CHAMPION_POOL = [
   { id: 'stormbringer', name: 'Stormbringer', role: 'Support',  hp: 1350, ad: 35, ap: 40, armor: 28, as: 0.78, range: 7.5, speed: 4.3, ability: 'sanctuary',    unlockCost: 800,  free: false },
   { id: 'stormreaver',  name: 'Stormreaver',  role: 'Fighter',  hp: 1600, ad: 58, ap: 0,  armor: 34, as: 0.82, range: 3.2, speed: 4.5, ability: 'whirlwind',    unlockCost: 850,  free: false },
   { id: 'duskblade',    name: 'Duskblade',    role: 'Fighter',  hp: 1550, ad: 60, ap: 0,  armor: 32, as: 0.85, range: 3.2, speed: 4.6, ability: 'whirlwind',    unlockCost: 850,  free: false },
+
+  // --- Extended roster (added in Phase 2) ---
+  { id: 'volleystorm',  name: 'Volleystorm',  role: 'Marksman', hp: 1380, ad: 60, ap: 0,  armor: 20, as: 0.92, range: 9.4, speed: 4.35, ability: 'barrage',     unlockCost: 950,  free: false },
+  { id: 'emberlord',    name: 'Emberlord',    role: 'Mage',     hp: 1180, ad: 22, ap: 72, armor: 18, as: 0.76, range: 8.9, speed: 4.1,  ability: 'nova',        unlockCost: 950,  free: false },
+  { id: 'gravemaw',     name: 'Gravemaw',     role: 'Tank',     hp: 1950, ad: 49, ap: 0,  armor: 44, as: 0.63, range: 2.8, speed: 3.95, ability: 'bulwark',     unlockCost: 900,  free: false },
+  { id: 'bloodmoon',    name: 'Bloodmoon',    role: 'Assassin', hp: 1230, ad: 70, ap: 0,  armor: 23, as: 0.96, range: 3.0, speed: 4.95, ability: 'execute',     unlockCost: 1100, free: false },
+  { id: 'lifewarden',   name: 'Lifewarden',   role: 'Support',  hp: 1330, ad: 32, ap: 43, armor: 27, as: 0.76, range: 7.6, speed: 4.3,  ability: 'overshield',  unlockCost: 900,  free: false },
+  { id: 'ironclad',     name: 'Ironclad',     role: 'Fighter',  hp: 1580, ad: 59, ap: 0,  armor: 33, as: 0.84, range: 3.2, speed: 4.55, ability: 'whirlwind',   unlockCost: 900,  free: false },
 ];
 
 export function getChampion(id) {

@@ -125,7 +125,7 @@ await ev(`document.getElementById('btn-missions-back').click()`); await sleep(10
 check('missions back to home', !(await ev(`document.getElementById('screen-home').classList.contains('hidden')`)));
 
 await ev(`document.getElementById('btn-home-play').click()`); await sleep(200);
-check('mode screen + 3 modes', await ev(`document.querySelectorAll('.mode-card').length === 3`));
+check('mode screen + 4 modes', await ev(`document.querySelectorAll('.mode-card').length === 4`));
 await ev(`document.querySelector('.mode-card:not(.is-locked)').click()`); await sleep(200);
 await ev(`document.getElementById('btn-squad-auto').click()`); await sleep(150);
 await ev(`document.getElementById('btn-start-match').click()`); await sleep(3000);

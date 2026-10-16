@@ -1,5 +1,5 @@
 // Offline-first service worker for the MOBA Manager PWA.
-const VERSION = 'v1.5.0';
+const VERSION = 'v1.6.0';
 const STATIC_CACHE = `moba-static-${VERSION}`;
 const RUNTIME_CACHE = `moba-runtime-${VERSION}`;
 
