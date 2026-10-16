@@ -19,13 +19,32 @@ export function addChampionXp(c, amount) {
   }
 }
 
-export function spawnProjectile(source, target, damage, colorHex, speed) {
-  const mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.26, 8, 8),
-    new THREE.MeshBasicMaterial({ color: colorHex })
-  );
-  mesh.position.set(source.x, 1.35, source.z);
+// Projectile mesh pool — avoids per-shot allocation / GC churn.
+const projectilePool = [];
+
+function acquireProjectile(colorHex) {
+  let mesh = projectilePool.pop();
+  if (!mesh) {
+    mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.26, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+  }
+  mesh.material.color.setHex(colorHex);
+  mesh.visible = true;
   state.projectilesGroup.add(mesh);
+  return mesh;
+}
+
+export function releaseProjectile(mesh) {
+  state.projectilesGroup.remove(mesh);
+  mesh.visible = false;
+  if (projectilePool.length < 120) projectilePool.push(mesh);
+}
+
+export function spawnProjectile(source, target, damage, colorHex, speed) {
+  const mesh = acquireProjectile(colorHex);
+  mesh.position.set(source.x, 1.35, source.z);
   state.projectiles.push({ source, target, damage, speed, mesh, color: colorHex });
 }
 

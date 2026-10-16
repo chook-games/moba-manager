@@ -132,6 +132,13 @@ check('export produces a save code', (await ev(`document.getElementById('transfe
 await ev(`document.getElementById('btn-transfer-close').click()`); await sleep(50);
 check('transfer modal closes', await ev(`document.getElementById('modal-transfer').classList.contains('hidden')`));
 
+// Stats screen.
+await ev(`document.getElementById('btn-home-stats').click()`); await sleep(100);
+check('stats screen opens', !(await ev(`document.getElementById('screen-stats').classList.contains('hidden')`)));
+check('stats content rendered', (await ev(`document.getElementById('stats-content').children.length`)) > 0);
+await ev(`document.getElementById('btn-stats-back').click()`); await sleep(80);
+check('stats back to home', !(await ev(`document.getElementById('screen-home').classList.contains('hidden')`)));
+
 await ev(`document.getElementById('btn-home-play').click()`); await sleep(200);
 check('mode screen + 4 modes', await ev(`document.querySelectorAll('.mode-card').length === 4`));
 await ev(`document.querySelector('.mode-card:not(.is-locked)').click()`); await sleep(200);

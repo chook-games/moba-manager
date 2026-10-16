@@ -23,8 +23,9 @@ export function defaultProfile() {
     stats: { matches: 0, wins: 0, losses: 0, kills: 0, deaths: 0, assists: 0, bestTimeSec: null },
     counters: { nexus: 0, supportGames: 0, blitzWins: 0, siegeWins: 0 },
     achievements: [],
+    history: [],
     daily: { date: null, counters: {}, claimed: [], quests: [], streak: 0, lastLogin: null },
-    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false, analytics: false },
+    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false, analytics: false, difficulty: 'normal' },
     lastResult: null,
   };
 }
@@ -50,6 +51,7 @@ function migrate(p) {
     stats: { ...base.stats, ...(p.stats || {}) },
     counters: { ...base.counters, ...(p.counters || {}) },
     daily: { ...base.daily, ...(p.daily || {}) },
+    history: Array.isArray(p.history) ? p.history : [],
     mastery: p.mastery || {},
     achievements: Array.isArray(p.achievements) ? p.achievements : [],
     unlocked: Array.isArray(p.unlocked) && p.unlocked.length ? p.unlocked : base.unlocked,
@@ -144,6 +146,20 @@ export function recordMatchResult(profile, result, modeId) {
   (result.championResults || []).forEach((cr) => {
     applyMasteryXp(profile, cr.id, Math.round((cr.kills * 10 + cr.assists * 5) * (mode?.xpMult || 1)));
   });
+
+  if (!Array.isArray(profile.history)) profile.history = [];
+  profile.history.unshift({
+    ts: Date.now(),
+    modeId,
+    victory: !!result.victory,
+    kills: result.kills || 0,
+    deaths: result.deaths || 0,
+    assists: result.assists || 0,
+    duration: Math.round(result.duration || 0),
+    mvp: result.mvpName || '',
+    champs: (result.championResults || []).map((c) => ({ id: c.id, name: c.name, role: c.role, kills: c.kills, deaths: c.deaths, assists: c.assists })),
+  });
+  if (profile.history.length > 20) profile.history.length = 20;
 
   profile.lastResult = { ...result, rewards, modeId, accountLevelsGained, masteryLevelsGained };
   saveProfile(profile);

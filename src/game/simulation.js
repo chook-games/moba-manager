@@ -3,9 +3,9 @@ import { CONFIG } from '../config.js';
 import { SHOP_ITEMS } from '../data/items.js';
 import { getMode } from '../data/modes.js';
 import { distXZ, lanePosFromS, pickRandom } from '../utils.js';
-import { spawnMinionWave } from './match.js';
+import { spawnMinionWave, releaseMinionMesh } from './match.js';
 import { updateChampionAI, getAttackableTargets, moveTowardsPoint, engageTarget } from './ai.js';
-import { spawnProjectile, dealDamage, applyItem } from './combat.js';
+import { spawnProjectile, dealDamage, applyItem, releaseProjectile } from './combat.js';
 import { updateManagerDashboardUI } from '../ui/hud.js';
 import { endMatch } from '../ui/gameover.js';
 import { spawnImpact } from './feedback.js';
@@ -105,7 +105,7 @@ function updateProjectiles(simDt) {
   for (let i = state.projectiles.length - 1; i >= 0; i--) {
     const p = state.projectiles[i];
     if (!p.target || p.target.dead) {
-      state.projectilesGroup.remove(p.mesh);
+      releaseProjectile(p.mesh);
       state.projectiles.splice(i, 1);
       continue;
     }
@@ -117,7 +117,7 @@ function updateProjectiles(simDt) {
     if (dist <= step + 0.35) {
       dealDamage(p.source, p.target, p.damage);
       spawnImpact(p.target.x, p.target.z, p.color || 0xffffff);
-      state.projectilesGroup.remove(p.mesh);
+      releaseProjectile(p.mesh);
       state.projectiles.splice(i, 1);
     } else {
       p.mesh.position.x += (dx / dist) * step;
@@ -145,8 +145,9 @@ function updateEffects(simDt) {
 
 function cleanupDeadMinions() {
   for (let i = state.minions.length - 1; i >= 0; i--) {
-    if (state.minions[i].dead) {
-      state.unitsGroup.remove(state.minions[i].mesh);
+    const m = state.minions[i];
+    if (m.dead) {
+      releaseMinionMesh(m.mesh, m.team);
       state.minions.splice(i, 1);
     }
   }

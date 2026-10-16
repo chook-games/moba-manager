@@ -169,6 +169,8 @@ function renderSettings() {
   if (rm) rm.checked = !!s.reduceMotion;
   const an = document.getElementById('toggle-analytics');
   if (an) an.checked = !!s.analytics;
+  const diff = document.getElementById('select-difficulty');
+  if (diff) diff.value = s.difficulty || 'normal';
   setText('cloud-status', t(cloudStatusKey()));
   setText('app-version', `v${APP_VERSION}`);
 }

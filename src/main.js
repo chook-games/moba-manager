@@ -17,6 +17,7 @@ import { showScreen } from './ui/nav.js';
 import { refreshHome, bindMenu, renderModeList, renderRoster } from './ui/menu.js';
 import { bindSquad, getSelectedSquad, renderSquadSelectionGrid } from './ui/squad.js';
 import { renderMissions, bindMissions } from './ui/missions.js';
+import { renderStats } from './ui/stats.js';
 import { ensureDaily } from './core/missions.js';
 import { updateManagerDashboardUI } from './ui/hud.js';
 import { bindCommandSheet, closeCommandSheet, toggleMacro, selectChampion } from './ui/command-sheet.js';
@@ -71,6 +72,7 @@ function relocalize() {
   if (!document.getElementById('screen-roster').classList.contains('hidden')) renderRoster();
   if (!document.getElementById('screen-squad').classList.contains('hidden')) renderSquadSelectionGrid();
   if (!document.getElementById('screen-missions').classList.contains('hidden')) renderMissions();
+  if (!document.getElementById('screen-stats').classList.contains('hidden')) renderStats();
   const sel = document.getElementById('select-lang');
   if (sel) sel.value = state.profile.settings.lang || 'en';
 }
@@ -102,6 +104,13 @@ function bindGameControls() {
 
   document.getElementById('btn-home-missions')?.addEventListener('click', () => { renderMissions(); showScreen('screen-missions'); });
   document.getElementById('btn-missions-back')?.addEventListener('click', () => { showScreen('screen-home'); refreshHome(); });
+  document.getElementById('btn-home-stats')?.addEventListener('click', () => { renderStats(); showScreen('screen-stats'); });
+  document.getElementById('btn-stats-back')?.addEventListener('click', () => showScreen('screen-home'));
+
+  document.getElementById('select-difficulty')?.addEventListener('change', (e) => {
+    state.profile.settings.difficulty = e.target.value;
+    saveProfile(state.profile);
+  });
 
   document.getElementById('btn-start-match')?.addEventListener('click', startMatch);
   document.getElementById('btn-go-home')?.addEventListener('click', goHome);

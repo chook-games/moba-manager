@@ -2,6 +2,7 @@ import { state } from '../state.js';
 import { CONFIG } from '../config.js';
 import { CHAMPION_POOL } from '../data/champions.js';
 import { getMode } from '../data/modes.js';
+import { getDifficulty } from '../data/difficulty.js';
 import { lanePosFromS, clamp } from '../utils.js';
 import { createStructureMesh, createChampionMesh, createMinionMesh, clearThreeGroup } from '../three/meshes.js';
 import { setCameraPreset } from '../three/camera.js';
@@ -82,10 +83,14 @@ function buildTeams(mode, squadIds) {
     state.blueChampions.push(createChampionInstance(base, 'blue', idx, 0.12 + idx * 0.012, slots[idx], 1));
   });
 
-  const unpicked = CHAMPION_POOL.filter((c) => !squadIds.includes(c.id));
+  const difficulty = getDifficulty(state.profile && state.profile.settings && state.profile.settings.difficulty);
+  const redMult = (mode.redStatMult || 1) * difficulty.redMult;
+  const banned = state.bans || [];
+  const unpicked = CHAMPION_POOL.filter((c) => !squadIds.includes(c.id) && !banned.includes(c.id));
+  const pool = unpicked.length >= 5 ? unpicked : CHAMPION_POOL.filter((c) => !squadIds.includes(c.id));
   for (let i = 0; i < 5; i++) {
-    const base = unpicked[(i * 3 + 1) % unpicked.length];
-    const champ = createChampionInstance(base, 'red', i, 0.88 - i * 0.012, slots[i], mode.redStatMult);
+    const base = pool[(i * 3 + 1) % pool.length];
+    const champ = createChampionInstance(base, 'red', i, 0.88 - i * 0.012, slots[i], redMult);
     champ.order = base.role === 'Tank' ? 'DEFEND' : (base.role === 'Support' ? 'FARM' : 'PUSH');
     state.redChampions.push(champ);
   }
@@ -149,18 +154,33 @@ export function createChampionInstance(base, team, slotIndex, startS, lateralOff
   };
 }
 
+// Minion mesh pool (per team) so waves don't allocate/GC constantly.
+const minionPool = { blue: [], red: [] };
+
+function acquireMinionMesh(team) {
+  const pool = minionPool[team];
+  const mesh = pool.pop() || createMinionMesh(team);
+  mesh.visible = true;
+  state.unitsGroup.add(mesh);
+  return mesh;
+}
+
+export function releaseMinionMesh(mesh, team) {
+  state.unitsGroup.remove(mesh);
+  mesh.visible = false;
+  if (minionPool[team].length < 60) minionPool[team].push(mesh);
+}
+
 export function spawnMinionWave() {
   CONFIG.MINION_OFFSETS.forEach((lat, idx) => {
     const bPos = lanePosFromS(0.11, lat);
-    const bMesh = createMinionMesh('blue');
+    const bMesh = acquireMinionMesh('blue');
     bMesh.position.set(bPos.x, 0, bPos.z);
-    state.unitsGroup.add(bMesh);
     state.minions.push(makeMinion('blue', bPos, lat, 0.11 - idx * 0.01, bMesh));
 
     const rPos = lanePosFromS(0.89, lat);
-    const rMesh = createMinionMesh('red');
+    const rMesh = acquireMinionMesh('red');
     rMesh.position.set(rPos.x, 0, rPos.z);
-    state.unitsGroup.add(rMesh);
     state.minions.push(makeMinion('red', rPos, lat, 0.89 + idx * 0.01, rMesh));
   });
 }

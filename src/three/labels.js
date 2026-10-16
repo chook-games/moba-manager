@@ -14,6 +14,7 @@ export function createUnitLabelElement(name, team, isStructure) {
     div.innerHTML = `
       <div class="structure-bar"><div class="hp-fill ${barClass}" style="width:100%"></div></div>
     `;
+    div._refs = { hpFill: div.querySelector('.hp-fill') };
   } else {
     div.innerHTML = `
       <div class="detail-tag hidden">
@@ -24,6 +25,13 @@ export function createUnitLabelElement(name, team, isStructure) {
       <div class="escort-tag hidden">🛡️ Protected</div>
       <div class="micro-bar"><div class="hp-fill ${barClass}" style="width:100%"></div></div>
     `;
+    div._refs = {
+      detailTag: div.querySelector('.detail-tag'),
+      lvlBadge: div.querySelector('.lvl-badge'),
+      stanceBadge: div.querySelector('.stance-badge'),
+      escortTag: div.querySelector('.escort-tag'),
+      hpFill: div.querySelector('.hp-fill'),
+    };
   }
   layer.appendChild(div);
   return div;
@@ -51,26 +59,28 @@ export function updateFloatingLabels() {
     u.labelEl.style.left = `${(tempV.x * 0.5 + 0.5) * width}px`;
     u.labelEl.style.top = `${(-(tempV.y * 0.5) + 0.5) * height}px`;
 
-    const hpFill = u.labelEl.querySelector('.hp-fill');
-    if (hpFill) hpFill.style.width = `${clamp((u.hp / u.maxHp) * 100, 0, 100)}%`;
+    const refs = u.labelEl._refs;
+    if (refs) {
+      if (refs.hpFill) refs.hpFill.style.width = `${clamp((u.hp / u.maxHp) * 100, 0, 100)}%`;
+    } else {
+      const hpFill = u.labelEl.querySelector('.hp-fill');
+      if (hpFill) hpFill.style.width = `${clamp((u.hp / u.maxHp) * 100, 0, 100)}%`;
+    }
 
-    if (u.role) {
-      const detailTag = u.labelEl.querySelector('.detail-tag');
-      if (detailTag) {
+    if (u.role && refs) {
+      if (refs.detailTag) {
         if (u === selected) {
-          detailTag.classList.remove('hidden');
-          detailTag.querySelector('.lvl-badge').textContent = `Lv.${u.level}`;
-          detailTag.querySelector('.stance-badge').textContent = u.order;
+          refs.detailTag.classList.remove('hidden');
+          if (refs.lvlBadge) refs.lvlBadge.textContent = `Lv.${u.level}`;
+          if (refs.stanceBadge) refs.stanceBadge.textContent = u.order;
         } else {
-          detailTag.classList.add('hidden');
+          refs.detailTag.classList.add('hidden');
         }
       }
-
-      const escortTag = u.labelEl.querySelector('.escort-tag');
-      if (escortTag) {
+      if (refs.escortTag) {
         const isEscorted = u.team === 'blue' && state.blueChampions[state.supportTargetIndex] === u;
         const show = isEscorted && !!selected && selected.role === 'Support';
-        escortTag.classList.toggle('hidden', !show);
+        refs.escortTag.classList.toggle('hidden', !show);
       }
     }
   });

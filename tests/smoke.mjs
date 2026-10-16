@@ -117,6 +117,16 @@ check('achievement first_win unlocked', missions.evaluateAchievements(mp).find((
 check('claim achievement rewards', missions.claimAchievement(mp, 'first_win') === 200);
 check('achievement cannot double-claim', missions.claimAchievement(mp, 'first_win') === 0);
 
+// 4e. Difficulty + stats
+const diffMod = await import('../src/data/difficulty.js');
+check('difficulty default normal', storage.defaultProfile().settings.difficulty === 'normal');
+check('difficulty easy < hard', diffMod.getDifficulty('easy').redMult < diffMod.getDifficulty('hard').redMult);
+const statsAgg = await import('../src/core/stats.js');
+const agg = statsAgg.aggregateStats(mp);
+check('stats totals reflect a match', agg.totals.matches >= 1);
+check('stats per-champion aggregates', agg.champions.length >= 1 && agg.champions[0].games >= 1);
+check('kda helper', statsAgg.kda(5, 1, 3) === '8.00');
+
 // 4d. Save transfer codes
 const code = storage.exportSaveCode(profile);
 check('save code format', typeof code === 'string' && code.startsWith('MOBA1.'));
