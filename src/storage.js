@@ -6,9 +6,15 @@ import { recordMatch } from './core/missions.js';
 
 export const SAVE_VERSION = 2;
 
+function makeDeviceId() {
+  return 'd' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+}
+
 export function defaultProfile() {
   return {
     version: SAVE_VERSION,
+    deviceId: makeDeviceId(),
+    updatedAt: 0,
     level: 1,
     xp: 0,
     gold: 300,
@@ -18,7 +24,7 @@ export function defaultProfile() {
     counters: { nexus: 0, supportGames: 0, blitzWins: 0, siegeWins: 0 },
     achievements: [],
     daily: { date: null, counters: {}, claimed: [], quests: [], streak: 0, lastLogin: null },
-    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false },
+    settings: { speedIndex: 0, haptic: true, quality: 'auto', audioVolume: 0.6, muted: false, tutorialDone: false, lang: null, reduceMotion: false, analytics: false },
     lastResult: null,
   };
 }
@@ -58,9 +64,35 @@ function migrate(p) {
 
 export function saveProfile(profile) {
   try {
+    if (profile) profile.updatedAt = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(profile));
   } catch (err) {
     console.warn('Save failed.', err);
+  }
+}
+
+// Cross-device transfer without a backend: a portable save string.
+export function exportSaveCode(profile) {
+  try {
+    const json = JSON.stringify(profile);
+    const b64 = btoa(unescape(encodeURIComponent(json)));
+    return 'MOBA1.' + b64;
+  } catch (_) {
+    return '';
+  }
+}
+
+export function importSaveCode(code) {
+  try {
+    const raw = String(code || '').trim();
+    if (!raw) return null;
+    const b64 = raw.startsWith('MOBA1.') ? raw.slice(6) : raw;
+    const json = decodeURIComponent(escape(atob(b64)));
+    const parsed = JSON.parse(json);
+    if (!parsed || typeof parsed !== 'object') return null;
+    return migrate(parsed);
+  } catch (_) {
+    return null;
   }
 }
 

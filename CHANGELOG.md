@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.8.0] — Phase 6: Cloud / transfer & ops
+
+### Added
+- **Cross-device save transfer** — export/import a portable save code (Settings → Transfer Save).
+  Works offline with no backend.
+- Optional **cloud save** adapter (`src/core/cloud.js`, Supabase-style REST) — inert until configured.
+- Optional **remote balance config** (`balance.json`) — tune numbers in production without redeploy.
+- **Opt-in anonymous analytics** (`src/core/analytics.js`) — off by default, inert until an endpoint
+  is set.
+- Save metadata: `deviceId` and `updatedAt`.
+
 ## [0.7.0] — Phase 5: Distribution
 
 ### Added

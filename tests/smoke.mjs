@@ -117,6 +117,13 @@ check('achievement first_win unlocked', missions.evaluateAchievements(mp).find((
 check('claim achievement rewards', missions.claimAchievement(mp, 'first_win') === 200);
 check('achievement cannot double-claim', missions.claimAchievement(mp, 'first_win') === 0);
 
+// 4d. Save transfer codes
+const code = storage.exportSaveCode(profile);
+check('save code format', typeof code === 'string' && code.startsWith('MOBA1.'));
+const restored = storage.importSaveCode(code);
+check('save code round-trip', !!restored && restored.level === profile.level && restored.gold === profile.gold);
+check('save code rejects garbage', storage.importSaveCode('@@not-a-code@@') === null);
+
 // 4b. i18n
 const i18n = await import('../src/core/i18n.js');
 i18n.setLang('en');

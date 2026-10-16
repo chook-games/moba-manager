@@ -178,6 +178,16 @@ The game is a PWA and ships to the Play Store as a **Trusted Web Activity (TWA)*
 > project page, either use a custom domain or host that file in a `chook-games.github.io` repo
 > (details in `twa/README.md`).
 
+## Advanced configuration (all optional)
+
+- **Save transfer (works out of the box):** Settings → Transfer Save exports a portable code you
+  can import on another device. No backend required.
+- **Remote balance:** set `window.__MOBA_REMOTE_CONFIG = true` in `index.html` and publish a
+  `balance.json` (top-level `CONFIG` keys) to tweak balance in production without redeploying.
+- **Cloud save:** fill `src/core/cloud.js` (or `window.__MOBA_CLOUD`) with a Supabase URL/anon key
+  and a `saves` table.
+- **Analytics:** set `ENDPOINT` in `src/core/analytics.js`; users opt in from Settings (off by default).
+
 ## Tech
 
 - Vanilla ES modules (no build step, no npm required)

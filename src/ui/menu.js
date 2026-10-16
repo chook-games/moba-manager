@@ -8,6 +8,7 @@ import { isUnlocked, unlockChampion, unlockCost, resetProfile, saveProfile } fro
 import { showScreen } from './nav.js';
 import { renderSquadSelectionGrid } from './squad.js';
 import { refreshVolume } from '../core/audio.js';
+import { cloudStatusKey } from '../core/cloud.js';
 import { replayTutorial } from './tutorial.js';
 
 export function refreshHome() {
@@ -166,6 +167,9 @@ function renderSettings() {
   if (langSel) langSel.value = s.lang || 'en';
   const rm = document.getElementById('toggle-reduce-motion');
   if (rm) rm.checked = !!s.reduceMotion;
+  const an = document.getElementById('toggle-analytics');
+  if (an) an.checked = !!s.analytics;
+  setText('cloud-status', t(cloudStatusKey()));
   setText('app-version', `v${APP_VERSION}`);
 }
 

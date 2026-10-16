@@ -183,6 +183,26 @@
         </span>
         <button id="btn-replay-tutorial" class="btn btn-ghost" data-i18n="settings.replay">▶ Replay</button>
       </div>
+      <div class="settings-row">
+        <span>
+          <strong data-i18n="settings.transfer">Transfer save</strong>
+          <em data-i18n="settings.transferSub">Move progress between devices with a code</em>
+        </span>
+        <button id="btn-transfer-open" class="btn btn-ghost" data-i18n="settings.transferOpen">Open</button>
+      </div>
+      <label class="settings-row">
+        <span>
+          <strong data-i18n="settings.analytics">Anonymous analytics</strong>
+          <em data-i18n="settings.analyticsSub">Help improve the game (off, no personal data)</em>
+        </span>
+        <input id="toggle-analytics" type="checkbox" class="switch" />
+      </label>
+      <div class="settings-row">
+        <span>
+          <strong data-i18n="settings.cloud">Cloud save</strong>
+          <em id="cloud-status" data-i18n="settings.cloudOff">Not configured (local only)</em>
+        </span>
+      </div>
       <div class="settings-row col">
         <span>
           <strong data-i18n="settings.danger">Danger zone</strong>
@@ -349,6 +369,21 @@
         <div class="help-item"><strong data-i18n="prio.TURRET">Turret</strong><span data-i18n="help.turret">Focus enemy towers / Nexus.</span></div>
       </div>
       <button id="btn-help-close" class="btn btn-primary" data-i18n="help.close">Got it</button>
+    </div>
+  </div>
+
+  <!-- ============================= TRANSFER MODAL ============================= -->
+  <div id="modal-transfer" class="modal hidden">
+    <div class="help-card">
+      <h2 class="help-title" data-i18n="settings.transferTitle">Transfer Save</h2>
+      <p class="transfer-hint" data-i18n="settings.transferHint">Export to get a code, or paste a code and import.</p>
+      <textarea id="transfer-text" class="transfer-text" spellcheck="false" placeholder="MOBA1...."></textarea>
+      <div id="transfer-status" class="transfer-status"></div>
+      <div class="go-actions">
+        <button id="btn-transfer-export" class="btn btn-ghost btn-third" data-i18n="settings.transferExport">📤 Export</button>
+        <button id="btn-transfer-import" class="btn btn-primary btn-third" data-i18n="settings.transferImport">📥 Import</button>
+      </div>
+      <button id="btn-transfer-close" class="btn btn-ghost" data-i18n="settings.transferClose">Close</button>
     </div>
   </div>
 

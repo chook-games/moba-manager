@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { SPEED_STEPS } from './config.js';
-import { loadProfile, saveProfile } from './storage.js';
+import { loadProfile, saveProfile, exportSaveCode, importSaveCode } from './storage.js';
 import { initThreeScene, handleResize } from './three/scene.js';
 import {
   setCameraPreset, adjustZoom, setZoomFromSlider, setZoomValue,
@@ -10,6 +10,9 @@ import { updateFloatingLabels } from './three/labels.js';
 import { setupNewMatch } from './game/match.js';
 import { updateSimulation } from './game/simulation.js';
 import { applyPreferences } from './core/preferences.js';
+import { t } from './core/i18n.js';
+import { initAnalytics } from './core/analytics.js';
+import { loadRemoteConfig } from './core/remote-config.js';
 import { showScreen } from './ui/nav.js';
 import { refreshHome, bindMenu, renderModeList, renderRoster } from './ui/menu.js';
 import { bindSquad, getSelectedSquad, renderSquadSelectionGrid } from './ui/squad.js';
@@ -107,6 +110,47 @@ function bindGameControls() {
     document.getElementById('modal-gameover')?.classList.add('hidden');
     showScreen('screen-squad');
   });
+
+  bindTransfer();
+}
+
+function bindTransfer() {
+  const modal = document.getElementById('modal-transfer');
+  const text = document.getElementById('transfer-text');
+  const status = document.getElementById('transfer-status');
+  const setStatus = (msg, cls) => { if (status) { status.textContent = msg; status.className = `transfer-status ${cls || ''}`; } };
+
+  document.getElementById('btn-transfer-open')?.addEventListener('click', () => {
+    if (text) text.value = '';
+    setStatus('');
+    modal?.classList.remove('hidden');
+  });
+  document.getElementById('btn-transfer-close')?.addEventListener('click', () => modal?.classList.add('hidden'));
+
+  document.getElementById('btn-transfer-export')?.addEventListener('click', () => {
+    if (!text) return;
+    text.value = exportSaveCode(state.profile);
+    text.focus();
+    text.select();
+    if (navigator.clipboard) navigator.clipboard.writeText(text.value).catch(() => {});
+    setStatus(t('settings.transferExported'), 'ok');
+  });
+
+  document.getElementById('toggle-analytics')?.addEventListener('change', (e) => {
+    state.profile.settings.analytics = e.target.checked;
+    saveProfile(state.profile);
+    initAnalytics();
+  });
+
+  document.getElementById('btn-transfer-import')?.addEventListener('click', () => {
+    const parsed = importSaveCode(text ? text.value : '');
+    if (!parsed) { setStatus(t('settings.transferInvalid'), 'err'); return; }
+    state.profile = parsed;
+    applyPreferences();
+    saveProfile(state.profile);
+    refreshHome();
+    setStatus(t('settings.transferDone'), 'ok');
+  });
 }
 
 function setupCanvasInput() {
@@ -141,6 +185,8 @@ function boot() {
   const daily = ensureDaily(state.profile);
   state.dailyGranted = daily.granted;
   saveProfile(state.profile);
+  loadRemoteConfig();
+  initAnalytics();
 
   bindMenu();
   bindSquad();

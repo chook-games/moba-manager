@@ -419,6 +419,15 @@
 .help-item span { font-size: 11px; color: var(--muted); line-height: 1.45; }
 
 .vol-slider { width: 130px; accent-color: var(--cyan); }
+.transfer-hint { font-size: 12px; color: var(--muted); }
+.transfer-text {
+  width: 100%; min-height: 96px; resize: vertical;
+  background: #0f1620; border: 1px solid var(--line); border-radius: 10px;
+  color: var(--text); padding: 10px; font-family: ui-monospace, monospace; font-size: 11px;
+}
+.transfer-status { min-height: 16px; font-size: 11px; font-weight: 800; text-align: center; color: var(--muted); }
+.transfer-status.ok { color: var(--green); }
+.transfer-status.err { color: var(--rose); }
 .lang-select {
   background: #0f1620; color: var(--text); border: 1px solid var(--line);
   border-radius: 9px; padding: 8px 10px; font-family: inherit; font-weight: 700; font-size: 12px;
