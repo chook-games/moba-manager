@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.4.0] — Phase 4: UX / i18n / accessibility
+
+### Added
+- **English + Greek localization** — full UI translation with a Language switch in Settings
+  (auto-detects Greek browsers on first run). All screens, help, tutorial, modes and rewards
+  are translated.
+- **Reduce motion** setting — disables camera shake, screen flashes and animations.
+- **Next minion-wave timer** in the HUD (for modes with minions).
+- Landscape-phone layout tweaks and larger tap targets.
+
 ## [0.3.0] — Phase 1: Game feel
 
 ### Added

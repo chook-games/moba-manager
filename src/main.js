@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { SPEED_STEPS } from './config.js';
-import { loadProfile } from './storage.js';
+import { loadProfile, saveProfile } from './storage.js';
 import { initThreeScene, handleResize } from './three/scene.js';
 import {
   setCameraPreset, adjustZoom, setZoomFromSlider, setZoomValue,
@@ -9,9 +9,11 @@ import {
 import { updateFloatingLabels } from './three/labels.js';
 import { setupNewMatch } from './game/match.js';
 import { updateSimulation } from './game/simulation.js';
+import { applyPreferences } from './core/preferences.js';
 import { showScreen } from './ui/nav.js';
-import { refreshHome, bindMenu } from './ui/menu.js';
-import { bindSquad, getSelectedSquad } from './ui/squad.js';
+import { refreshHome, bindMenu, renderModeList, renderRoster } from './ui/menu.js';
+import { bindSquad, getSelectedSquad, renderSquadSelectionGrid } from './ui/squad.js';
+import { updateManagerDashboardUI } from './ui/hud.js';
 import { bindCommandSheet, closeCommandSheet, toggleMacro, selectChampion } from './ui/command-sheet.js';
 import { registerPWA } from './pwa.js';
 import { unlockAudio } from './core/audio.js';
@@ -56,7 +58,29 @@ function updateSpeedButton() {
   btn.classList.toggle('is-paused', s.mult === 0);
 }
 
+function relocalize() {
+  applyPreferences();
+  refreshHome();
+  if (state.isGameRunning) updateManagerDashboardUI();
+  if (!document.getElementById('screen-mode').classList.contains('hidden')) renderModeList();
+  if (!document.getElementById('screen-roster').classList.contains('hidden')) renderRoster();
+  if (!document.getElementById('screen-squad').classList.contains('hidden')) renderSquadSelectionGrid();
+  const sel = document.getElementById('select-lang');
+  if (sel) sel.value = state.profile.settings.lang || 'en';
+}
+
 function bindGameControls() {
+  document.getElementById('select-lang')?.addEventListener('change', (e) => {
+    state.profile.settings.lang = e.target.value;
+    saveProfile(state.profile);
+    relocalize();
+  });
+  document.getElementById('toggle-reduce-motion')?.addEventListener('change', (e) => {
+    state.profile.settings.reduceMotion = e.target.checked;
+    saveProfile(state.profile);
+    applyPreferences();
+  });
+
   document.getElementById('btn-speed')?.addEventListener('click', cycleSpeed);
   document.getElementById('btn-quit-game')?.addEventListener('click', goHome);
   document.getElementById('cam-preset-0')?.addEventListener('click', () => setCameraPreset(0));
@@ -107,6 +131,7 @@ function animateLoop(now) {
 function boot() {
   state.profile = loadProfile();
   state.speedIndex = 0;
+  applyPreferences();
 
   bindMenu();
   bindSquad();

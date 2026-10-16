@@ -2,14 +2,17 @@
 import { state } from '../state.js';
 import { sfx } from '../core/audio.js';
 import { haptics } from '../core/haptics.js';
+import { reduceMotionEnabled } from '../core/preferences.js';
 
 const TEAM_COLOR = { blue: 0x38bdf8, red: 0xf87171 };
 
 export function shake(mag) {
+  if (reduceMotionEnabled()) return;
   state.camShake = Math.min(1.2, (state.camShake || 0) + mag);
 }
 
 export function flash(color, durationMs) {
+  if (reduceMotionEnabled()) return;
   const el = document.getElementById('screen-flash');
   if (!el) return;
   el.style.transition = 'none';

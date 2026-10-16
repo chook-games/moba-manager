@@ -1,4 +1,5 @@
 import { state } from '../state.js';
+import { t } from '../core/i18n.js';
 import { getMode } from '../data/modes.js';
 import { recordMatchResult } from '../storage.js';
 import { formatTime } from '../utils.js';
@@ -64,19 +65,15 @@ function renderGameOver(result, rewards, accountLevels, masteryLevels, mode) {
   if (result.victory) {
     badge.textContent = '🏆';
     badge.className = 'go-badge win';
-    title.textContent = 'VICTORY';
+    title.textContent = t('go.victory');
     title.className = 'go-title win';
-    desc.textContent = mode.id === 'blitz'
-      ? 'Your squad dominated the arena!'
-      : 'Your tactical management shattered the enemy Nexus!';
+    desc.textContent = t(mode.id === 'blitz' ? 'go.blitzWin' : 'go.winDesc');
   } else {
     badge.textContent = '💀';
     badge.className = 'go-badge lose';
-    title.textContent = 'DEFEAT';
+    title.textContent = t('go.defeat');
     title.className = 'go-title lose';
-    desc.textContent = mode.id === 'blitz'
-      ? 'The enemy squad reached the kill target first.'
-      : 'Your Nexus has fallen. Adjust stances and try again!';
+    desc.textContent = t(mode.id === 'blitz' ? 'go.blitzLose' : 'go.loseDesc');
   }
 
   stats.innerHTML = result.championResults.map((c) => `
@@ -87,14 +84,14 @@ function renderGameOver(result, rewards, accountLevels, masteryLevels, mode) {
 
   if (rewardsEl) {
     const levelUps = [];
-    if (accountLevels > 0) levelUps.push(`Account +${accountLevels} level${accountLevels > 1 ? 's' : ''}!`);
-    if (masteryLevels > 0) levelUps.push(`${result.mvpName} mastery +${masteryLevels}!`);
+    if (accountLevels > 0) levelUps.push(t('go.accountLevels', { n: accountLevels }));
+    if (masteryLevels > 0) levelUps.push(t('go.masteryLevels', { name: result.mvpName, n: masteryLevels }));
     rewardsEl.innerHTML = `
-      <div class="go-rewards-title">Rewards — ${mode.name} • ${formatTime(result.duration)}</div>
+      <div class="go-rewards-title">${t('go.rewards', { mode: t(`mode.${mode.id}.name`), time: formatTime(result.duration) })}</div>
       <div class="go-rewards-row">
         <span class="reward-chip gold">🪙 +${rewards.gold}</span>
         <span class="reward-chip xp">✨ +${rewards.xp} XP</span>
-        <span class="reward-chip mvp">⭐ MVP ${result.mvpName}</span>
+        <span class="reward-chip mvp">${t('go.mvp', { name: result.mvpName })}</span>
       </div>
       ${levelUps.length ? `<div class="go-levelup">${levelUps.join(' ')}</div>` : ''}`;
   }

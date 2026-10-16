@@ -1,4 +1,5 @@
 import { state } from '../state.js';
+import { t } from '../core/i18n.js';
 import { CHAMPION_POOL, ROLE_COLORS, DEFAULT_SQUAD_IDS } from '../data/champions.js';
 import { isUnlocked, unlockCost } from '../storage.js';
 import { showScreen } from './nav.js';
@@ -14,15 +15,13 @@ export function renderSquadSelectionGrid() {
   const remaining = 5 - selectedSquadIds.length;
   const sub = document.getElementById('squad-subtitle');
   if (sub) {
-    sub.textContent = remaining === 0
-      ? 'Squad ready — tap to swap'
-      : `Pick ${remaining} more champion${remaining !== 1 ? 's' : ''}`;
+    sub.textContent = remaining === 0 ? t('squad.ready') : t('squad.pickMore', { n: remaining });
   }
 
   const tray = document.getElementById('selected-pills-tray');
   if (tray) {
     tray.innerHTML = selectedSquadIds.length === 0
-      ? `<span class="muted-note">Tap champions below to build your team…</span>`
+      ? `<span class="muted-note">${t('squad.tapHint')}</span>`
       : selectedSquadIds.map((id) => {
           const c = CHAMPION_POOL.find((x) => x.id === id);
           const rc = ROLE_COLORS[c.role];
@@ -46,7 +45,7 @@ export function renderSquadSelectionGrid() {
         <div class="champ-card ${isSel ? 'is-picked' : ''}" data-champ="${c.id}" style="${style}">
           <div class="champ-avatar" style="background:${rc.bg};color:${rc.hex};border:1px solid ${rc.border}44">${rc.letter}</div>
           <div class="champ-name">${c.name}</div>
-          <div class="champ-role" style="color:${rc.hex}">${c.role}</div>
+          <div class="champ-role" style="color:${rc.hex}">${t(`role.${c.role}`)}</div>
           <div class="champ-stats">HP ${c.hp} · AD ${c.ad}</div>
           ${badge}
         </div>`;
@@ -61,10 +60,10 @@ function updateStartButton(remaining) {
   if (!startBtn) return;
   if (selectedSquadIds.length === 5) {
     startBtn.disabled = false;
-    startBtn.textContent = '▶ START GAME';
+    startBtn.textContent = t('squad.start');
   } else {
     startBtn.disabled = true;
-    startBtn.textContent = `SELECT ${remaining} MORE`;
+    startBtn.textContent = t('squad.selectMore', { n: remaining });
   }
 }
 

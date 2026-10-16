@@ -1,13 +1,14 @@
 // First-match interactive tutorial. Advances as the player performs each action.
 import { state } from '../state.js';
+import { t } from '../core/i18n.js';
 import { saveProfile } from '../storage.js';
 
 const STEPS = [
-  { ev: 'select',   text: 'Tap a champion — in the 3D view or the squad dock below — to open their commands.' },
-  { ev: 'order',    text: 'Give an order. Try “Push” to send them down the lane.' },
-  { ev: 'ultimate', text: 'When the ULTIMATE button says READY, tap it to unleash it.' },
-  { ev: 'buy',      text: 'Open the ⚔️/🛒 Shop tab and tap an item to buy it with gold.' },
-  { ev: 'done',     text: 'That’s it! Destroy the enemy Nexus to win. Good luck, manager!' },
+  { ev: 'select',   key: 'tut.s1' },
+  { ev: 'order',    key: 'tut.s2' },
+  { ev: 'ultimate', key: 'tut.s3' },
+  { ev: 'buy',      key: 'tut.s4' },
+  { ev: 'done',     key: 'tut.s5' },
 ];
 
 let active = false;
@@ -46,8 +47,8 @@ function render() {
   el.classList.remove('hidden');
   const text = document.getElementById('tutorial-text');
   const step = document.getElementById('tutorial-step');
-  if (text) text.textContent = STEPS[idx].text;
-  if (step) step.textContent = `Step ${Math.min(idx + 1, STEPS.length)}/${STEPS.length}`;
+  if (text) text.textContent = t(STEPS[idx].key);
+  if (step) step.textContent = t('tut.step', { n: Math.min(idx + 1, STEPS.length), t: STEPS.length });
   if (STEPS[idx].ev === 'done') setTimeout(() => { if (active) finishTutorial(); }, 6000);
 }
 

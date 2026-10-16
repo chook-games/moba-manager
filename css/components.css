@@ -398,3 +398,29 @@
 .help-item span { font-size: 11px; color: var(--muted); line-height: 1.45; }
 
 .vol-slider { width: 130px; accent-color: var(--cyan); }
+.lang-select {
+  background: #0f1620; color: var(--text); border: 1px solid var(--line);
+  border-radius: 9px; padding: 8px 10px; font-family: inherit; font-weight: 700; font-size: 12px;
+}
+.hud-score .wave { color: var(--muted); font-size: 10px; white-space: nowrap; }
+
+/* Larger tap targets for accessibility */
+.order { padding: 11px 2px; }
+.prio { padding: 6px 10px; min-height: 26px; }
+
+/* Reduced motion */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* Landscape phones */
+@media (orientation: landscape) and (max-height: 560px) {
+  .command-sheet { max-height: 60vh; overflow-y: auto; }
+  .cam-controls { top: calc(42px + var(--safe-t)); }
+  .tutorial-banner { padding: 6px 10px; }
+  .squad-dock { padding-top: 6px; }
+}

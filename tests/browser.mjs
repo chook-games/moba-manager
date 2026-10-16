@@ -110,6 +110,12 @@ await sleep(3500);
 
 check('home screen visible', await ev(`!document.getElementById('screen-home').classList.contains('hidden')`));
 
+// i18n toggle (Greek <-> English).
+await ev(`(()=>{const s=document.getElementById('select-lang'); s.value='el'; s.dispatchEvent(new Event('change'));})()`); await sleep(100);
+check('language switch -> Greek', (await ev(`document.getElementById('btn-home-play').textContent`)) === '▶ ΠΑΙΞΕ');
+await ev(`(()=>{const s=document.getElementById('select-lang'); s.value='en'; s.dispatchEvent(new Event('change'));})()`); await sleep(100);
+check('language switch -> English', (await ev(`document.getElementById('btn-home-play').textContent`)) === '▶ PLAY');
+
 await ev(`document.getElementById('btn-home-play').click()`); await sleep(200);
 check('mode screen + 3 modes', await ev(`document.querySelectorAll('.mode-card').length === 3`));
 await ev(`document.querySelector('.mode-card:not(.is-locked)').click()`); await sleep(200);

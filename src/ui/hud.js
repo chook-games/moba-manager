@@ -1,6 +1,9 @@
 import { state } from '../state.js';
+import { CONFIG } from '../config.js';
 import { formatTime, clamp } from '../utils.js';
+import { t } from '../core/i18n.js';
 import { ROLE_COLORS } from '../data/champions.js';
+import { getMode } from '../data/modes.js';
 import { abilityCooldownInfo } from '../game/abilities.js';
 
 export function updateManagerDashboardUI() {
@@ -15,6 +18,17 @@ export function updateManagerDashboardUI() {
   const rNex = structures.find((s) => s.id === 'red_nexus');
   if (bNex) setText('hud-blue-nexus', `${Math.ceil((bNex.hp / bNex.maxHp) * 100)}%`);
   if (rNex) setText('hud-red-nexus', `${Math.ceil((rNex.hp / rNex.maxHp) * 100)}%`);
+
+  const waveEl = document.getElementById('hud-wave');
+  if (waveEl) {
+    if (getMode(state.currentModeId).hasMinions) {
+      const rem = Math.max(0, Math.ceil(CONFIG.WAVE_INTERVAL - state.minionWaveTimer));
+      waveEl.textContent = t('game.wave', { s: rem });
+      waveEl.classList.remove('hidden');
+    } else {
+      waveEl.classList.add('hidden');
+    }
+  }
 
   renderSquadDock();
   renderSelectedSheet();
@@ -80,7 +94,7 @@ function renderSelectedSheet() {
   setText('sel-name', sel.name);
   const roleEl = document.getElementById('sel-role');
   if (roleEl) {
-    roleEl.textContent = sel.role;
+    roleEl.textContent = t(`role.${sel.role}`);
     roleEl.style.color = rc.hex;
     roleEl.style.backgroundColor = rc.bg;
   }
@@ -124,7 +138,7 @@ function renderUltimateButton(sel) {
   const labelEl = document.getElementById('ultimate-label');
   const cdEl = document.getElementById('ultimate-cd');
   if (labelEl) labelEl.textContent = info.name;
-  if (cdEl) cdEl.textContent = info.ready ? 'READY' : `${Math.ceil(info.remaining)}s`;
+  if (cdEl) cdEl.textContent = info.ready ? t('ultimate.ready') : `${Math.ceil(info.remaining)}s`;
   btn.classList.toggle('is-ready', info.ready);
   btn.classList.toggle('is-cooling', !info.ready);
 }

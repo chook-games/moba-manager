@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -27,55 +27,55 @@
   <!-- ============================= HOME ============================= -->
   <div id="screen-home" class="screen">
     <div class="home-top">
-      <div class="brand-badge">3D TACTICAL ESPORTS SIM</div>
+      <div class="brand-badge" data-i18n="home.badge">3D TACTICAL ESPORTS SIM</div>
       <h1 class="brand-title">MOBA <span>MANAGER</span></h1>
-      <p class="brand-sub">Manage a 5-champion squad in real time</p>
+      <p class="brand-sub" data-i18n="home.sub">Manage a 5-champion squad in real time</p>
     </div>
 
     <div class="profile-card">
       <div class="profile-row">
         <div class="profile-level">LV<br /><span id="home-level">1</span></div>
         <div class="profile-xp">
-          <div class="xp-head"><span>Account XP</span><span id="home-xp-text">0 / 600 XP</span></div>
+          <div class="xp-head"><span data-i18n="home.accountXp">Account XP</span><span id="home-xp-text">0 / 600 XP</span></div>
           <div class="bar"><div id="home-xp-fill" class="bar-fill bar-xp" style="width:0%"></div></div>
         </div>
       </div>
       <div class="profile-stats">
-        <div class="stat"><span class="stat-val" id="home-gold">0</span><span class="stat-label">🪙 Gold</span></div>
-        <div class="stat"><span class="stat-val" id="home-wins">0</span><span class="stat-label">🏆 Wins</span></div>
-        <div class="stat"><span class="stat-val" id="home-matches">0</span><span class="stat-label">🎮 Matches</span></div>
-        <div class="stat"><span class="stat-val" id="home-winrate">0%</span><span class="stat-label">📈 Win rate</span></div>
+        <div class="stat"><span class="stat-val" id="home-gold">0</span><span class="stat-label" data-i18n="home.gold">🪙 Gold</span></div>
+        <div class="stat"><span class="stat-val" id="home-wins">0</span><span class="stat-label" data-i18n="home.wins">🏆 Wins</span></div>
+        <div class="stat"><span class="stat-val" id="home-matches">0</span><span class="stat-label" data-i18n="home.matches">🎮 Matches</span></div>
+        <div class="stat"><span class="stat-val" id="home-winrate">0%</span><span class="stat-label" data-i18n="home.winrate">📈 Win rate</span></div>
       </div>
     </div>
 
     <div class="home-actions">
-      <button id="btn-home-play" class="btn btn-primary btn-lg">▶ PLAY</button>
-      <button id="btn-home-roster" class="btn btn-ghost">🧬 CHAMPIONS &amp; UNLOCKS</button>
-      <button id="btn-home-settings" class="btn btn-ghost">⚙️ SETTINGS</button>
-      <button id="btn-install" class="btn btn-install hidden">⬇️ INSTALL APP (Android / Desktop)</button>
+      <button id="btn-home-play" class="btn btn-primary btn-lg" data-i18n="home.play">▶ PLAY</button>
+      <button id="btn-home-roster" class="btn btn-ghost" data-i18n="home.roster">🧬 CHAMPIONS &amp; UNLOCKS</button>
+      <button id="btn-home-settings" class="btn btn-ghost" data-i18n="home.settings">⚙️ SETTINGS</button>
+      <button id="btn-install" class="btn btn-install hidden" data-i18n="home.install">⬇️ INSTALL APP (Android / Desktop)</button>
     </div>
 
-    <div class="home-foot">Offline-ready PWA • Three.js 3D Engine • Touch + Mouse</div>
+    <div class="home-foot" data-i18n="home.foot">Offline-ready PWA • Three.js 3D Engine • Touch + Mouse</div>
   </div>
 
   <!-- ============================= MODE SELECT ============================= -->
   <div id="screen-mode" class="screen hidden">
     <header class="screen-head">
       <div>
-        <h1 class="screen-title">SELECT GAME MODE</h1>
-        <p class="screen-sub">Choose your battlefield</p>
+        <h1 class="screen-title" data-i18n="mode.title">SELECT GAME MODE</h1>
+        <p class="screen-sub" data-i18n="mode.sub">Choose your battlefield</p>
       </div>
       <button id="btn-mode-back" class="btn btn-icon">←</button>
     </header>
     <div id="mode-list" class="mode-list"></div>
-    <div class="screen-foot">Win matches to earn Gold &amp; Account XP. Spend Gold to unlock champions.</div>
+    <div class="screen-foot" data-i18n="mode.foot">Win matches to earn Gold &amp; Account XP. Spend Gold to unlock champions.</div>
   </div>
 
   <!-- ============================= SQUAD SELECT ============================= -->
   <div id="screen-squad" class="screen hidden">
     <header class="screen-head">
       <div>
-        <h1 class="screen-title">SELECT YOUR SQUAD</h1>
+        <h1 class="screen-title" data-i18n="squad.title">SELECT YOUR SQUAD</h1>
         <p id="squad-subtitle" class="screen-sub">Pick 5 champions</p>
       </div>
       <button id="btn-squad-back" class="btn btn-icon">←</button>
@@ -85,8 +85,8 @@
     <div id="champions-grid" class="champ-grid"></div>
 
     <div class="screen-actions">
-      <button id="btn-squad-auto" class="btn btn-ghost btn-third">⚡ AUTO</button>
-      <button id="btn-squad-balanced" class="btn btn-ghost btn-third">⚖️ BALANCED</button>
+      <button id="btn-squad-auto" class="btn btn-ghost btn-third" data-i18n="squad.auto">⚡ AUTO</button>
+      <button id="btn-squad-balanced" class="btn btn-ghost btn-third" data-i18n="squad.balanced">⚖️ BALANCED</button>
       <button id="btn-start-match" class="btn btn-primary btn-two-thirds" disabled>SELECT 5 MORE</button>
     </div>
   </div>
@@ -95,8 +95,8 @@
   <div id="screen-roster" class="screen hidden">
     <header class="screen-head">
       <div>
-        <h1 class="screen-title">CHAMPIONS</h1>
-        <p class="screen-sub">Unlock with Gold • 🪙 <span id="roster-gold">0</span></p>
+        <h1 class="screen-title" data-i18n="roster.title">CHAMPIONS</h1>
+        <p class="screen-sub"><span data-i18n="roster.sub">Unlock with Gold</span> • 🪙 <span id="roster-gold">0</span></p>
       </div>
       <button id="btn-roster-back" class="btn btn-icon">←</button>
     </header>
@@ -107,57 +107,68 @@
   <div id="screen-settings" class="screen hidden">
     <header class="screen-head">
       <div>
-        <h1 class="screen-title">SETTINGS</h1>
-        <p class="screen-sub">Preferences &amp; data</p>
+        <h1 class="screen-title" data-i18n="settings.title">SETTINGS</h1>
+        <p class="screen-sub" data-i18n="settings.sub">Preferences &amp; data</p>
       </div>
       <button id="btn-settings-back" class="btn btn-icon">←</button>
     </header>
     <div class="settings-list">
       <label class="settings-row">
         <span>
-          <strong>Haptics / Vibration</strong>
-          <em>Vibrate on hits, kills and ultimates</em>
+          <strong data-i18n="settings.haptics">Haptics / Vibration</strong>
+          <em data-i18n="settings.hapticsSub">Vibrate on hits, kills and ultimates</em>
         </span>
         <input id="toggle-haptic" type="checkbox" class="switch" checked />
       </label>
       <label class="settings-row">
         <span>
-          <strong>Sound effects</strong>
-          <em>Mute all in-game audio</em>
+          <strong data-i18n="settings.sound">Sound effects</strong>
+          <em data-i18n="settings.soundSub">Mute all in-game audio</em>
         </span>
         <input id="toggle-sound" type="checkbox" class="switch" checked />
       </label>
       <label class="settings-row">
         <span>
-          <strong>Volume</strong>
-          <em>SFX loudness</em>
+          <strong data-i18n="settings.volume">Volume</strong>
+          <em data-i18n="settings.volumeSub">SFX loudness</em>
         </span>
         <input id="volume-slider" type="range" min="0" max="100" step="1" value="60" class="vol-slider" />
       </label>
+      <label class="settings-row">
+        <span>
+          <strong data-i18n="settings.language">Language</strong>
+          <em data-i18n="settings.languageSub">Interface language</em>
+        </span>
+        <select id="select-lang" class="lang-select">
+          <option value="en">English</option>
+          <option value="el">Ελληνικά</option>
+        </select>
+      </label>
+      <label class="settings-row">
+        <span>
+          <strong data-i18n="settings.reduceMotion">Reduce motion</strong>
+          <em data-i18n="settings.reduceMotionSub">Disable shake, flashes and animations</em>
+        </span>
+        <input id="toggle-reduce-motion" type="checkbox" class="switch" />
+      </label>
       <div class="settings-row">
         <span>
-          <strong>First-match tutorial</strong>
-          <em>Show the guide again</em>
+          <strong data-i18n="settings.tutorial">First-match tutorial</strong>
+          <em data-i18n="settings.tutorialSub">Show the guide again</em>
         </span>
-        <button id="btn-replay-tutorial" class="btn btn-ghost">▶ Replay</button>
+        <button id="btn-replay-tutorial" class="btn btn-ghost" data-i18n="settings.replay">▶ Replay</button>
       </div>
       <div class="settings-row col">
         <span>
-          <strong>Default game speed</strong>
-          <em>The match starts at 0.5x for calmer, readable action.</em>
+          <strong data-i18n="settings.danger">Danger zone</strong>
+          <em data-i18n="settings.dangerSub">Wipe champions, gold and stats.</em>
         </span>
-      </div>
-      <div class="settings-row col">
-        <span>
-          <strong>Danger zone</strong>
-          <em>Wipe champions, gold and stats.</em>
-        </span>
-        <button id="btn-reset-save" class="btn btn-danger">🗑️ RESET PROGRESS</button>
+        <button id="btn-reset-save" class="btn btn-danger" data-i18n="settings.reset">🗑️ RESET PROGRESS</button>
       </div>
       <div class="settings-row">
         <span>
-          <strong>Version</strong>
-          <em>MOBA Manager build</em>
+          <strong data-i18n="settings.version">Version</strong>
+          <em data-i18n="settings.versionSub">MOBA Manager build</em>
         </span>
         <span id="app-version" class="version-tag">—</span>
       </div>
@@ -175,7 +186,7 @@
       <div class="hud-score">
         <span class="dot dot-blue"></span>
         <span id="hud-blue-kills" class="k blue">0</span>
-        <span class="vs">VS</span>
+        <span class="vs" data-i18n="game.vs">VS</span>
         <span id="hud-red-kills" class="k red">0</span>
         <span class="dot dot-red"></span>
         <span class="sep">|</span>
@@ -183,9 +194,10 @@
         <span class="sep">|</span>
         <span class="nexus blue">🟦<span id="hud-blue-nexus">100%</span></span>
         <span class="nexus red">🟥<span id="hud-red-nexus">100%</span></span>
+        <span id="hud-wave" class="wave hidden"></span>
       </div>
       <div class="hud-actions">
-        <button id="btn-macro-toggle" class="btn btn-mini btn-macro">⚡ Team</button>
+        <button id="btn-macro-toggle" class="btn btn-mini btn-macro">⚡ <span data-i18n="team.short">Team</span></button>
         <button id="btn-speed" class="btn btn-mini">0.5x</button>
         <button id="btn-quit-game" class="btn btn-mini" title="Back to menu">⏏</button>
       </div>
@@ -194,18 +206,18 @@
     <div id="kill-feed" class="kill-feed"></div>
 
     <div id="macro-popover" class="macro-popover hidden">
-      <span class="macro-label">ALL SQUAD:</span>
-      <button id="btn-team-farm" class="btn btn-mini team-farm">Farm</button>
-      <button id="btn-team-push" class="btn btn-mini team-push">Push</button>
-      <button id="btn-team-defend" class="btn btn-mini team-defend">Defend</button>
-      <button id="btn-team-retreat" class="btn btn-mini team-retreat">Retreat</button>
+      <span class="macro-label" data-i18n="team.all">ALL SQUAD:</span>
+      <button id="btn-team-farm" class="btn btn-mini team-farm" data-i18n="order.FARM">Farm</button>
+      <button id="btn-team-push" class="btn btn-mini team-push" data-i18n="order.PUSH">Push</button>
+      <button id="btn-team-defend" class="btn btn-mini team-defend" data-i18n="order.DEFEND">Defend</button>
+      <button id="btn-team-retreat" class="btn btn-mini team-retreat" data-i18n="order.RETREAT">Retreat</button>
     </div>
 
     <div class="cam-controls">
       <div class="cam-presets">
-        <button id="cam-preset-2" class="btn btn-mini cam-btn">🔍 Fight</button>
-        <button id="cam-preset-1" class="btn btn-mini cam-btn">🎯 Hero</button>
-        <button id="cam-preset-0" class="btn btn-mini cam-btn is-active">🗺️ Map</button>
+        <button id="cam-preset-2" class="btn btn-mini cam-btn" data-i18n="camera.fight">🔍 Fight</button>
+        <button id="cam-preset-1" class="btn btn-mini cam-btn" data-i18n="camera.hero">🎯 Hero</button>
+        <button id="cam-preset-0" class="btn btn-mini cam-btn is-active" data-i18n="camera.map">🗺️ Map</button>
       </div>
       <div class="zoom-box">
         <button id="btn-zoom-in" class="btn btn-mini zoom-step">+</button>
@@ -221,7 +233,7 @@
           <span id="tutorial-step" class="tut-step">Step 1/5</span>
           <span id="tutorial-text" class="tut-text">Welcome!</span>
         </div>
-        <button id="btn-tutorial-skip" class="btn btn-mini">Skip</button>
+        <button id="btn-tutorial-skip" class="btn btn-mini" data-i18n="tut.skip">Skip</button>
       </div>
 
       <div id="command-sheet" class="command-sheet sheet-hidden">
@@ -238,33 +250,33 @@
         </div>
 
         <div class="sheet-tabs">
-          <button id="tab-btn-tactics" class="sheet-tab is-active">⚔️ Tactics</button>
-          <button id="tab-btn-shop" class="sheet-tab">🛒 Shop</button>
+          <button id="tab-btn-tactics" class="sheet-tab is-active" data-i18n="tactics.tab">⚔️ Tactics</button>
+          <button id="tab-btn-shop" class="sheet-tab" data-i18n="shop.tab">🛒 Shop</button>
         </div>
 
         <div id="tab-panel-tactics" class="sheet-panel">
           <div class="order-grid">
-            <button id="order-FARM" class="order order-farm">Farm</button>
-            <button id="order-PUSH" class="order order-push">Push</button>
-            <button id="order-DEFEND" class="order order-defend">Defend</button>
-            <button id="order-RETREAT" class="order order-retreat">Retreat</button>
+            <button id="order-FARM" class="order order-farm" data-i18n="order.FARM">Farm</button>
+            <button id="order-PUSH" class="order order-push" data-i18n="order.PUSH">Push</button>
+            <button id="order-DEFEND" class="order order-defend" data-i18n="order.DEFEND">Defend</button>
+            <button id="order-RETREAT" class="order order-retreat" data-i18n="order.RETREAT">Retreat</button>
           </div>
           <div class="priority-row">
-            <span class="priority-label">🎯 Target priority:</span>
+            <span class="priority-label" data-i18n="prio.label">🎯 Target priority:</span>
             <div class="prio-btns">
-              <button id="prio-0" class="prio is-active">Lowest HP</button>
-              <button id="prio-1" class="prio">Carry</button>
-              <button id="prio-2" class="prio">Nearest</button>
-              <button id="prio-3" class="prio">Turret</button>
+              <button id="prio-0" class="prio is-active" data-i18n="prio.LOWEST_HP">Lowest HP</button>
+              <button id="prio-1" class="prio" data-i18n="prio.CARRY">Carry</button>
+              <button id="prio-2" class="prio" data-i18n="prio.NEAREST">Nearest</button>
+              <button id="prio-3" class="prio" data-i18n="prio.TURRET">Turret</button>
             </div>
             <button id="btn-help" class="prio help-btn" title="What do orders mean?">?</button>
           </div>
           <div id="support-section" class="support-section hidden">
-            <div class="support-hint">Choose which ally the <strong>Support</strong> escorts, heals &amp; shields:</div>
+            <div class="support-hint" data-i18n="support.hint">Choose which ally the Support escorts, heals &amp; shields:</div>
             <div id="support-targets-row" class="support-row"></div>
           </div>
           <button id="btn-ultimate" class="ultimate is-ready">
-            <span class="ult-tag">ULTIMATE</span>
+            <span class="ult-tag" data-i18n="ultimate.tag">ULTIMATE</span>
             <span id="ultimate-label" class="ult-name">Barrage</span>
             <span id="ultimate-cd" class="ult-cd">READY</span>
           </button>
@@ -281,7 +293,7 @@
             <div id="sel-items-row" class="sel-items"></div>
           </div>
           <div class="shop-head">
-            <span class="shop-hint">Tap an item to buy instantly</span>
+            <span class="shop-hint" data-i18n="shop.hint">Tap an item to buy instantly</span>
             <span id="shop-feedback" class="shop-feedback"></span>
           </div>
           <div id="item-shop-row" class="shop-row"></div>
@@ -297,21 +309,21 @@
   <!-- ============================= HELP MODAL ============================= -->
   <div id="modal-help" class="modal hidden">
     <div class="help-card">
-      <h2 class="help-title">Orders &amp; Priorities</h2>
+      <h2 class="help-title" data-i18n="help.title">Orders &amp; Priorities</h2>
       <div class="help-list">
-        <div class="help-item"><strong class="order-farm">Farm</strong><span>Safely clear minions near mid and stay back.</span></div>
-        <div class="help-item"><strong class="order-push">Push</strong><span>Advance down the lane, take objectives and fight anything in the way.</span></div>
-        <div class="help-item"><strong class="order-defend">Defend</strong><span>Hold near your own turret and fight enemies that approach.</span></div>
-        <div class="help-item"><strong class="order-retreat">Retreat</strong><span>Fall back to base and heal up.</span></div>
+        <div class="help-item"><strong class="order-farm" data-i18n="order.FARM">Farm</strong><span data-i18n="help.farm">Safely clear minions near mid and stay back.</span></div>
+        <div class="help-item"><strong class="order-push" data-i18n="order.PUSH">Push</strong><span data-i18n="help.push">Advance down the lane, take objectives and fight anything in the way.</span></div>
+        <div class="help-item"><strong class="order-defend" data-i18n="order.DEFEND">Defend</strong><span data-i18n="help.defend">Hold near your own turret and fight enemies that approach.</span></div>
+        <div class="help-item"><strong class="order-retreat" data-i18n="order.RETREAT">Retreat</strong><span data-i18n="help.retreat">Fall back to base and heal up.</span></div>
       </div>
-      <div class="help-sub">Target priority</div>
+      <div class="help-sub" data-i18n="help.priorities">Target priority</div>
       <div class="help-list">
-        <div class="help-item"><strong>Lowest HP</strong><span>Attack the weakest enemy first.</span></div>
-        <div class="help-item"><strong>Carry</strong><span>Dive the enemy Marksman / Mage first.</span></div>
-        <div class="help-item"><strong>Nearest</strong><span>Attack whatever is closest.</span></div>
-        <div class="help-item"><strong>Turret</strong><span>Focus enemy towers / Nexus.</span></div>
+        <div class="help-item"><strong data-i18n="prio.LOWEST_HP">Lowest HP</strong><span data-i18n="help.lowestHp">Attack the weakest enemy first.</span></div>
+        <div class="help-item"><strong data-i18n="prio.CARRY">Carry</strong><span data-i18n="help.carry">Dive the enemy Marksman / Mage first.</span></div>
+        <div class="help-item"><strong data-i18n="prio.NEAREST">Nearest</strong><span data-i18n="help.nearest">Attack whatever is closest.</span></div>
+        <div class="help-item"><strong data-i18n="prio.TURRET">Turret</strong><span data-i18n="help.turret">Focus enemy towers / Nexus.</span></div>
       </div>
-      <button id="btn-help-close" class="btn btn-primary">Got it</button>
+      <button id="btn-help-close" class="btn btn-primary" data-i18n="help.close">Got it</button>
     </div>
   </div>
 
@@ -323,9 +335,9 @@
     <div id="gameover-rewards" class="go-rewards"></div>
     <div id="gameover-stats" class="go-stats"></div>
     <div class="go-actions">
-      <button id="btn-go-home" class="btn btn-ghost btn-third">🏠 Menu</button>
-      <button id="btn-go-squad" class="btn btn-ghost btn-third">🧬 Squad</button>
-      <button id="btn-go-replay" class="btn btn-primary btn-third">🔁 Replay</button>
+      <button id="btn-go-home" class="btn btn-ghost btn-third" data-i18n="go.menu">🏠 Menu</button>
+      <button id="btn-go-squad" class="btn btn-ghost btn-third" data-i18n="go.squadBtn">🧬 Squad</button>
+      <button id="btn-go-replay" class="btn btn-primary btn-third" data-i18n="go.replay">🔁 Replay</button>
     </div>
   </div>
 

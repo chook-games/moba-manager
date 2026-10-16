@@ -98,6 +98,16 @@ const gained = prog.applyAccountXp(lvlProfile, 100000);
 check('account levels up on big xp', gained > 0 && lvlProfile.level > 1);
 check('computeRewards finite', Number.isFinite(prog.computeRewards({ victory: false, kills: 1, deaths: 5, assists: 0, duration: 120 }, { rewardMult: 1 }).gold));
 
+// 4b. i18n
+const i18n = await import('../src/core/i18n.js');
+i18n.setLang('en');
+check('i18n EN lookup', i18n.t('order.FARM') === 'Farm');
+check('i18n vars', i18n.t('mode.lock', { lv: 3 }) === '🔒 Lv.3');
+i18n.setLang('el');
+check('i18n EL lookup', i18n.t('home.gold') === '🪙 Χρυσός');
+check('i18n fallback to key', i18n.t('does.not.exist') === 'does.not.exist');
+i18n.setLang('en');
+
 // 5. Data integrity
 const champs = await import('../src/data/champions.js');
 const abilities = await import('../src/data/abilities.js');

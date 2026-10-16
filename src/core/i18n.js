@@ -1,0 +1,335 @@
+// Lightweight i18n. English + Greek. Static markup uses data-i18n="key";
+// dynamic code calls t('key', {vars}).
+
+const DICT = {
+  en: {
+    'home.badge': '3D TACTICAL ESPORTS SIM',
+    'home.sub': 'Manage a 5-champion squad in real time',
+    'home.accountXp': 'Account XP',
+    'home.gold': '🪙 Gold',
+    'home.wins': '🏆 Wins',
+    'home.matches': '🎮 Matches',
+    'home.winrate': '📈 Win rate',
+    'home.play': '▶ PLAY',
+    'home.roster': '🧬 CHAMPIONS & UNLOCKS',
+    'home.settings': '⚙️ SETTINGS',
+    'home.install': '⬇️ INSTALL APP (Android / Desktop)',
+    'home.foot': 'Offline-ready PWA • Three.js 3D Engine • Touch + Mouse',
+
+    'mode.title': 'SELECT GAME MODE',
+    'mode.sub': 'Choose your battlefield',
+    'mode.foot': 'Win matches to earn Gold & Account XP. Spend Gold to unlock champions.',
+    'mode.choose': 'Choose Squad →',
+    'mode.lock': '🔒 Lv.{lv}',
+
+    'squad.title': 'SELECT YOUR SQUAD',
+    'squad.pickMore': 'Pick {n} more champion(s)',
+    'squad.ready': 'Squad ready — tap to swap',
+    'squad.auto': '⚡ AUTO',
+    'squad.balanced': '⚖️ BALANCED',
+    'squad.selectMore': 'SELECT {n} MORE',
+    'squad.start': '▶ START GAME',
+    'squad.tapHint': 'Tap champions below to build your team…',
+
+    'roster.title': 'CHAMPIONS',
+    'roster.sub': 'Unlock with Gold',
+    'roster.owned': '✓ Owned',
+    'roster.unlock': '🔓 {cost}G',
+    'roster.mastery': 'Mastery Lv.{lv}',
+    'roster.notPlayed': 'Not played',
+
+    'settings.title': 'SETTINGS',
+    'settings.sub': 'Preferences & data',
+    'settings.haptics': 'Haptics / Vibration',
+    'settings.hapticsSub': 'Vibrate on hits, kills and ultimates',
+    'settings.sound': 'Sound effects',
+    'settings.soundSub': 'Mute all in-game audio',
+    'settings.volume': 'Volume',
+    'settings.volumeSub': 'SFX loudness',
+    'settings.language': 'Language',
+    'settings.languageSub': 'Interface language',
+    'settings.reduceMotion': 'Reduce motion',
+    'settings.reduceMotionSub': 'Disable shake, flashes and animations',
+    'settings.tutorial': 'First-match tutorial',
+    'settings.tutorialSub': 'Show the guide again',
+    'settings.replay': '▶ Replay',
+    'settings.danger': 'Danger zone',
+    'settings.dangerSub': 'Wipe champions, gold and stats.',
+    'settings.reset': '🗑️ RESET PROGRESS',
+    'settings.version': 'Version',
+    'settings.versionSub': 'MOBA Manager build',
+
+    'camera.fight': '🔍 Fight',
+    'camera.hero': '🎯 Hero',
+    'camera.map': '🗺️ Map',
+    'camera.zoom': 'Zoom',
+
+    'team.all': 'ALL SQUAD:',
+    'team.short': 'Team',
+    'order.FARM': 'Farm',
+    'order.PUSH': 'Push',
+    'order.DEFEND': 'Defend',
+    'order.RETREAT': 'Retreat',
+    'prio.label': '🎯 Target priority:',
+    'prio.LOWEST_HP': 'Lowest HP',
+    'prio.CARRY': 'Carry',
+    'prio.NEAREST': 'Nearest',
+    'prio.TURRET': 'Turret',
+
+    'tactics.tab': '⚔️ Tactics',
+    'shop.tab': '🛒 Shop',
+    'ultimate.tag': 'ULTIMATE',
+    'ultimate.ready': 'READY',
+    'support.hint': 'Choose which ally the Support escorts, heals & shields:',
+    'shop.hint': 'Tap an item to buy instantly',
+    'shop.full': 'Full (6/6)',
+    'shop.need': 'Need {cost}G!',
+
+    'game.vs': 'VS',
+    'game.wave': 'Wave in {s}s',
+
+    'go.victory': 'VICTORY',
+    'go.defeat': 'DEFEAT',
+    'go.winDesc': 'Your tactical management shattered the enemy Nexus!',
+    'go.loseDesc': 'Your Nexus has fallen. Adjust stances and try again!',
+    'go.blitzWin': 'Your squad dominated the arena!',
+    'go.blitzLose': 'The enemy squad reached the kill target first.',
+    'go.rewards': 'Rewards — {mode} • {time}',
+    'go.mvp': '⭐ MVP {name}',
+    'go.accountLevels': 'Account +{n} level(s)!',
+    'go.masteryLevels': '{name} mastery +{n}!',
+    'go.menu': '🏠 Menu',
+    'go.squadBtn': '🧬 Squad',
+    'go.replay': '🔁 Replay',
+
+    'help.title': 'Orders & Priorities',
+    'help.priorities': 'Target priority',
+    'help.close': 'Got it',
+    'help.farm': 'Safely clear minions near mid and stay back.',
+    'help.push': 'Advance down the lane, take objectives and fight anything in the way.',
+    'help.defend': 'Hold near your own turret and fight enemies that approach.',
+    'help.retreat': 'Fall back to base and heal up.',
+    'help.lowestHp': 'Attack the weakest enemy first.',
+    'help.carry': 'Dive the enemy Marksman / Mage first.',
+    'help.nearest': 'Attack whatever is closest.',
+    'help.turret': 'Focus enemy towers / Nexus.',
+
+    'role.Marksman': 'Marksman',
+    'role.Mage': 'Mage',
+    'role.Tank': 'Tank',
+    'role.Assassin': 'Assassin',
+    'role.Support': 'Support',
+    'role.Fighter': 'Fighter',
+
+    'roleTip.Marksman': 'Ranged carry. Deals sustained damage from the backline.',
+    'roleTip.Mage': 'High burst from range. Fragile — keep it protected.',
+    'roleTip.Tank': 'Frontline wall. Absorbs damage and blocks the lane.',
+    'roleTip.Assassin': 'Dives enemy carries. Best with the Carry priority.',
+    'roleTip.Support': 'Heals and shields an assigned ally. Escort them.',
+    'roleTip.Fighter': 'Bruiser. Soaks damage while dealing consistent melee damage.',
+
+    'mode.aram.name': 'ARAM',
+    'mode.aram.tagline': 'All Random, All Mid',
+    'mode.aram.desc': '5v5 on a single mid bridge. First to destroy the enemy Nexus wins.',
+    'mode.blitz.name': 'Blitz',
+    'mode.blitz.tagline': 'Team Deathmatch',
+    'mode.blitz.desc': 'No towers, no minions. First team to 25 kills wins. Pure chaos.',
+    'mode.siege.name': 'Titan Siege',
+    'mode.siege.tagline': 'Hard Mode',
+    'mode.siege.desc': 'The enemy squad is 15% stronger. Destroy their Nexus for big rewards.',
+
+    'tut.step': 'Step {n}/{t}',
+    'tut.skip': 'Skip',
+    'tut.s1': 'Tap a champion — in the 3D view or the squad dock below — to open their commands.',
+    'tut.s2': 'Give an order. Try “Push” to send them down the lane.',
+    'tut.s3': 'When the ULTIMATE button says READY, tap it to unleash it.',
+    'tut.s4': 'Open the Shop tab and tap an item to buy it with gold.',
+    'tut.s5': 'That’s it! Destroy the enemy Nexus to win. Good luck, manager!',
+  },
+
+  el: {
+    'home.badge': '3D TACTICAL ESPORTS SIM',
+    'home.sub': 'Διαχειρίσου 5 ήρωες σε πραγματικό χρόνο',
+    'home.accountXp': 'XP Λογαριασμού',
+    'home.gold': '🪙 Χρυσός',
+    'home.wins': '🏆 Νίκες',
+    'home.matches': '🎮 Αγώνες',
+    'home.winrate': '📈 Ποσοστό νικών',
+    'home.play': '▶ ΠΑΙΞΕ',
+    'home.roster': '🧬 ΗΡΩΕΣ & ΞΕΚΛΕΙΔΩΜΑΤΑ',
+    'home.settings': '⚙️ ΡΥΘΜΙΣΕΙΣ',
+    'home.install': '⬇️ ΕΓΚΑΤΑΣΤΑΣΗ (Android / Desktop)',
+    'home.foot': 'Offline PWA • Μηχανή 3D Three.js • Αφή + Ποντίκι',
+
+    'mode.title': 'ΔΙΑΛΕΞΕ MODE',
+    'mode.sub': 'Διάλεξε πεδίο μάχης',
+    'mode.foot': 'Κέρδισε αγώνες για Χρυσό & XP. Ξόδεψε Χρυσό για ξεκλειδώματα.',
+    'mode.choose': 'Διάλεξε ομάδα →',
+    'mode.lock': '🔒 Lv.{lv}',
+
+    'squad.title': 'ΔΙΑΛΕΞΕ ΤΗΝ ΟΜΑΔΑ',
+    'squad.pickMore': 'Διάλεξε {n} ακόμη ήρωες',
+    'squad.ready': 'Έτοιμη — πάτα για αλλαγή',
+    'squad.auto': '⚡ ΑΥΤΟΜΑΤΟ',
+    'squad.balanced': '⚖️ ΙΣΟΡΡΟΠΗΜΕΝΟ',
+    'squad.selectMore': 'ΔΙΑΛΕΞΕ {n} ΑΚΟΜΗ',
+    'squad.start': '▶ ΕΝΑΡΞΗ',
+    'squad.tapHint': 'Πάτα ήρωες παρακάτω για να φτιάξεις την ομάδα…',
+
+    'roster.title': 'ΗΡΩΕΣ',
+    'roster.sub': 'Ξεκλείδωμα με Χρυσό',
+    'roster.owned': '✓ Δικός σου',
+    'roster.unlock': '🔓 {cost}G',
+    'roster.mastery': 'Mastery Lv.{lv}',
+    'roster.notPlayed': 'Δεν έχει παιχτεί',
+
+    'settings.title': 'ΡΥΘΜΙΣΕΙΣ',
+    'settings.sub': 'Προτιμήσεις & δεδομένα',
+    'settings.haptics': 'Δόνηση',
+    'settings.hapticsSub': 'Δόνηση σε χτυπήματα, kills και ultimates',
+    'settings.sound': 'Ηχητικά εφέ',
+    'settings.soundSub': 'Σίγαση όλου του ήχου',
+    'settings.volume': 'Ένταση',
+    'settings.volumeSub': 'Ένταση εφέ',
+    'settings.language': 'Γλώσσα',
+    'settings.languageSub': 'Γλώσσα διεπαφής',
+    'settings.reduceMotion': 'Λιγότερη κίνηση',
+    'settings.reduceMotionSub': 'Απενεργοποίηση shake, flash και animations',
+    'settings.tutorial': 'Tutorial πρώτου αγώνα',
+    'settings.tutorialSub': 'Δείξε ξανά τον οδηγό',
+    'settings.replay': '▶ Ξανά',
+    'settings.danger': 'Επικίνδυνη ζώνη',
+    'settings.dangerSub': 'Διαγραφή ηρώων, χρυσού και στατιστικών.',
+    'settings.reset': '🗑️ ΕΠΑΝΑΦΟΡΑ',
+    'settings.version': 'Έκδοση',
+    'settings.versionSub': 'Έκδοση MOBA Manager',
+
+    'camera.fight': '🔍 Μάχη',
+    'camera.hero': '🎯 Ήρωας',
+    'camera.map': '🗺️ Χάρτης',
+    'camera.zoom': 'Zoom',
+
+    'team.all': 'ΟΛΗ Η ΟΜΑΔΑ:',
+    'team.short': 'Ομάδα',
+    'order.FARM': 'Farm',
+    'order.PUSH': 'Push',
+    'order.DEFEND': 'Defend',
+    'order.RETREAT': 'Retreat',
+    'prio.label': '🎯 Προτεραιότητα στόχου:',
+    'prio.LOWEST_HP': 'Λιγότερο HP',
+    'prio.CARRY': 'Carry',
+    'prio.NEAREST': 'Κοντινότερος',
+    'prio.TURRET': 'Πύργος',
+
+    'tactics.tab': '⚔️ Τακτική',
+    'shop.tab': '🛒 Shop',
+    'ultimate.tag': 'ULTIMATE',
+    'ultimate.ready': 'ΕΤΟΙΜΟ',
+    'support.hint': 'Διάλεξε ποιον σύμμαχο συνοδεύει, γιατρεύει & θωρακίζει ο Support:',
+    'shop.hint': 'Πάτα ένα item για άμεση αγορά',
+    'shop.full': 'Γεμάτο (6/6)',
+    'shop.need': 'Χρειάζεσαι {cost}G!',
+
+    'game.vs': 'VS',
+    'game.wave': 'Κύμα σε {s}s',
+
+    'go.victory': 'ΝΙΚΗ',
+    'go.defeat': 'ΗΤΤΑ',
+    'go.winDesc': 'Η τακτική σου κατέστρεψε το αντίπαλο Nexus!',
+    'go.loseDesc': 'Το Nexus σου έπεσε. Άλλαξε orders και ξαναπροσπάθησε!',
+    'go.blitzWin': 'Η ομάδα σου κυριάρχησε στην αρένα!',
+    'go.blitzLose': 'Η αντίπαλη ομάδα έφτασε πρώτη στο όριο kills.',
+    'go.rewards': 'Ανταμοιβές — {mode} • {time}',
+    'go.mvp': '⭐ MVP {name}',
+    'go.accountLevels': 'Λογαριασμός +{n} επίπεδο!',
+    'go.masteryLevels': '{name} mastery +{n}!',
+    'go.menu': '🏠 Μενού',
+    'go.squadBtn': '🧬 Ομάδα',
+    'go.replay': '🔁 Ξανά',
+
+    'help.title': 'Orders & Στόχοι',
+    'help.priorities': 'Προτεραιότητα στόχου',
+    'help.close': 'Κατάλαβα',
+    'help.farm': 'Καθάρισε με ασφάλεια minions και μείνε πίσω.',
+    'help.push': 'Προχώρα στη λωρίδα, πάρε objectives και πολέμησε ό,τι βρεθεί.',
+    'help.defend': 'Κρατήσου κοντά στον πύργο σου και χτύπα όποιον πλησιάζει.',
+    'help.retreat': 'Γύρνα στη βάση και γιατρέψου.',
+    'help.lowestHp': 'Χτύπα τον πιο αδύναμο πρώτα.',
+    'help.carry': 'Βούτα πρώτα τον Marksman / Mage.',
+    'help.nearest': 'Χτύπα ό,τι είναι πιο κοντά.',
+    'help.turret': 'Εστίασε σε πύργους / Nexus.',
+
+    'role.Marksman': 'Σκοπευτής',
+    'role.Mage': 'Μάγος',
+    'role.Tank': 'Τανκ',
+    'role.Assassin': 'Δολοφόνος',
+    'role.Support': 'Υποστήριξη',
+    'role.Fighter': 'Μαχητής',
+
+    'roleTip.Marksman': 'Ranged carry. Σταθερή ζημιά από πίσω.',
+    'roleTip.Mage': 'Υψηλό burst από απόσταση. Εύθραυστος — προστάτεψέ τον.',
+    'roleTip.Tank': 'Τείχος πρώτης γραμμής. Απορροφά ζημιά και μπλοκάρει.',
+    'roleTip.Assassin': 'Βούτα τους carries. Καλύτερα με προτεραιότητα Carry.',
+    'roleTip.Support': 'Γιατρεύει και θωρακίζει σύμμαχο. Ακολούθησέ τον.',
+    'roleTip.Fighter': 'Bruiser. Αντέχει ζημιά δίνοντας σταθερή melee ζημιά.',
+
+    'mode.aram.name': 'ARAM',
+    'mode.aram.tagline': 'Όλοι τυχαία, όλοι mid',
+    'mode.aram.desc': '5v5 σε μία mid γέφυρα. Νικάει όποιος καταστρέψει το Nexus.',
+    'mode.blitz.name': 'Blitz',
+    'mode.blitz.tagline': 'Team Deathmatch',
+    'mode.blitz.desc': 'Χωρίς πύργους, χωρίς minions. Πρώτος στις 25 δολοφονίες κερδίζει.',
+    'mode.siege.name': 'Πολιορκία Τιτάνων',
+    'mode.siege.tagline': 'Δύσκολο Mode',
+    'mode.siege.desc': 'Η αντίπαλη ομάδα είναι 15% πιο δυνατή. Κατέστρεψε το Nexus για μεγάλες ανταμοιβές.',
+
+    'tut.step': 'Βήμα {n}/{t}',
+    'tut.skip': 'Προσπέραση',
+    'tut.s1': 'Πάτα έναν ήρωα — στο 3D ή στην μπάρα κάτω — για να ανοίξεις τις εντολές του.',
+    'tut.s2': 'Δώσε εντολή. Δοκίμασε “Push” για να προχωρήσει στη λωρίδα.',
+    'tut.s3': 'Όταν το ULTIMATE λέει ΕΤΟΙΜΟ, πάτα το για να το ρίξεις.',
+    'tut.s4': 'Άνοιξε το Shop και πάτα ένα item για αγορά με χρυσό.',
+    'tut.s5': 'Αυτό ήταν! Κατέστρεψε το αντίπαλο Nexus για νίκη. Καλή τύχη, manager!',
+  },
+};
+
+let lang = 'en';
+
+export function setLang(next) {
+  lang = DICT[next] ? next : 'en';
+}
+
+export function getLang() {
+  return lang;
+}
+
+export function detectLang() {
+  try {
+    const n = (navigator.language || 'en').toLowerCase();
+    if (n.startsWith('el')) return 'el';
+  } catch (_) { /* ignore */ }
+  return 'en';
+}
+
+export function initLang(pref) {
+  setLang(pref || detectLang());
+}
+
+export function t(key, vars) {
+  const d = DICT[lang] || DICT.en;
+  let s = (d && d[key] != null) ? d[key] : (DICT.en[key] != null ? DICT.en[key] : key);
+  if (vars) {
+    for (const k of Object.keys(vars)) s = s.replace(new RegExp(`\\{${k}\\}`, 'g'), vars[k]);
+  }
+  return s;
+}
+
+export function applyI18n(root) {
+  const scope = root || document;
+  scope.querySelectorAll('[data-i18n]').forEach((el) => {
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  scope.querySelectorAll('[data-i18n-title]').forEach((el) => {
+    el.setAttribute('title', t(el.getAttribute('data-i18n-title')));
+  });
+}

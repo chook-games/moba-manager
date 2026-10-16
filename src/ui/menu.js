@@ -1,6 +1,7 @@
 import { state } from '../state.js';
 import { APP_VERSION } from '../config.js';
-import { CHAMPION_POOL, ROLE_COLORS, ROLE_TIP } from '../data/champions.js';
+import { t } from '../core/i18n.js';
+import { CHAMPION_POOL, ROLE_COLORS } from '../data/champions.js';
 import { MODE_LIST } from '../data/modes.js';
 import { accountXpToNext, masteryXpToNext } from '../data/progression.js';
 import { isUnlocked, unlockChampion, unlockCost, resetProfile, saveProfile } from '../storage.js';
@@ -36,12 +37,12 @@ export function renderModeList() {
       <div class="mode-card ${locked ? 'is-locked' : ''}" data-mode="${m.id}" style="border-color:${locked ? '#334155' : m.color}">
         <div class="mode-head" style="color:${m.color}">
           <span class="mode-icon">${m.icon}</span>
-          <span class="mode-name">${m.name}</span>
-          ${locked ? `<span class="mode-lock">🔒 Lv.${m.unlockLevel}</span>` : ''}
+          <span class="mode-name">${t(`mode.${m.id}.name`)}</span>
+          ${locked ? `<span class="mode-lock">${t('mode.lock', { lv: m.unlockLevel })}</span>` : ''}
         </div>
-        <div class="mode-tagline">${m.tagline}</div>
-        <div class="mode-desc">${m.desc}</div>
-        ${locked ? '' : `<div class="mode-cta">Choose Squad →</div>`}
+        <div class="mode-tagline">${t(`mode.${m.id}.tagline`)}</div>
+        <div class="mode-desc">${t(`mode.${m.id}.desc`)}</div>
+        ${locked ? '' : `<div class="mode-cta">${t('mode.choose')}</div>`}
       </div>`;
   }).join('');
 }
@@ -55,16 +56,16 @@ export function renderRoster() {
     const rc = ROLE_COLORS[c.role];
     const m = state.profile.mastery[c.id];
     const mLevel = m ? m.level : 1;
-    const mInfo = m ? `Mastery Lv.${mLevel}` : 'Not played';
+    const mInfo = m ? t('roster.mastery', { lv: mLevel }) : t('roster.notPlayed');
     const action = unlocked
-      ? `<div class="roster-owned">✓ Owned</div>`
-      : `<button class="roster-buy" data-unlock="${c.id}" ${state.profile.gold < c.unlockCost ? 'disabled' : ''}>🔓 ${c.unlockCost}G</button>`;
+      ? `<div class="roster-owned">${t('roster.owned')}</div>`
+      : `<button class="roster-buy" data-unlock="${c.id}" ${state.profile.gold < c.unlockCost ? 'disabled' : ''}>${t('roster.unlock', { cost: c.unlockCost })}</button>`;
     return `
       <div class="roster-row" style="border-left:3px solid ${rc.hex}">
         <div class="roster-avatar" style="background:${rc.bg};color:${rc.hex}">${rc.letter}</div>
         <div class="roster-info">
-          <div class="roster-name">${c.name} <span class="muted">${c.role}</span></div>
-          <div class="roster-tip">${ROLE_TIP[c.role]}</div>
+          <div class="roster-name">${c.name} <span class="muted">${t(`role.${c.role}`)}</span></div>
+          <div class="roster-tip">${t(`roleTip.${c.role}`)}</div>
           <div class="roster-meta">${mInfo} · HP ${c.hp} · AD ${c.ad} · AP ${c.ap}</div>
         </div>
         ${action}
@@ -147,6 +148,10 @@ function renderSettings() {
   if (sound) sound.checked = !s.muted;
   const vol = document.getElementById('volume-slider');
   if (vol) vol.value = Math.round((typeof s.audioVolume === 'number' ? s.audioVolume : 0.6) * 100);
+  const langSel = document.getElementById('select-lang');
+  if (langSel) langSel.value = s.lang || 'en';
+  const rm = document.getElementById('toggle-reduce-motion');
+  if (rm) rm.checked = !!s.reduceMotion;
   setText('app-version', `v${APP_VERSION}`);
 }
 
