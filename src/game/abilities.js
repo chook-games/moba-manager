@@ -1,5 +1,5 @@
 import { state } from '../state.js';
-import { getAbility } from '../data/abilities.js';
+import { getAbility, PERKS } from '../data/abilities.js';
 import { distXZ } from '../utils.js';
 import { dealDamage, spawnNovaEffect, spawnFloatingText, spawnSupportBeam } from './combat.js';
 import { onUltimate } from './feedback.js';
@@ -11,11 +11,15 @@ export function enemyTeam(c) {
   return c.team === 'blue' ? state.redChampions : state.blueChampions;
 }
 
-export function castAbility(c) {
-  if (!c || c.dead || !c.ability) return { ok: false, reason: 'none' };
-  if (c.abilityTimer > 0) return { ok: false, reason: 'cooldown' };
+export function castAbility(c, slot = 1) {
+  if (!c || c.dead) return { ok: false, reason: 'none' };
+  const aKey = slot === 2 ? 'ability2' : 'ability';
+  const tKey = slot === 2 ? 'ability2Timer' : 'abilityTimer';
+  const id = c[aKey];
+  if (!id) return { ok: false, reason: 'none' };
+  if (c[tKey] > 0) return { ok: false, reason: 'cooldown' };
 
-  const ab = getAbility(c.ability);
+  const ab = getAbility(id);
   if (!ab) return { ok: false, reason: 'none' };
 
   const enemies = enemyTeam(c);
@@ -100,25 +104,41 @@ export function castAbility(c) {
       break;
   }
 
-  onUltimate(c);
-  c.abilityTimer = ab.cooldown;
+  if (slot === 1) onUltimate(c);
+  c[tKey] = ab.cooldown;
   return { ok: true };
+}
+
+// Manager-selected level-up perk (blue champions earn a point per level).
+export function castPerk(c) {
+  if (!c || c.dead) return { ok: false, reason: 'none' };
+  if (!c.perkPoints || c.perkPoints <= 0) return { ok: false, reason: 'none' };
+  const perk = PERKS[Math.floor(Math.random() * PERKS.length)];
+  perk.apply(c);
+  c.perkPoints--;
+  spawnFloatingText(c.x, c.z, perk.label, '#34d399');
+  return { ok: true, perk };
 }
 
 export function tickAbilities(c, dt) {
   if (c.abilityTimer > 0) c.abilityTimer = Math.max(0, c.abilityTimer - dt);
+  if (c.ability2Timer > 0) c.ability2Timer = Math.max(0, c.ability2Timer - dt);
   if (c.asBonusTimer > 0) {
     c.asBonusTimer -= dt;
     if (c.asBonusTimer <= 0) c.asBonus = 0;
   }
 }
 
-export function abilityReady(c) {
-  return c && c.ability && c.abilityTimer <= 0 && !c.dead;
+export function abilityReady(c, slot = 1) {
+  const id = slot === 2 ? c && c.ability2 : c && c.ability;
+  const timer = slot === 2 ? c && c.ability2Timer : c && c.abilityTimer;
+  return !!(c && id && timer <= 0 && !c.dead);
 }
 
-export function abilityCooldownInfo(c) {
-  const ab = c && c.ability ? getAbility(c.ability) : null;
+export function abilityCooldownInfo(c, slot = 1) {
+  const id = slot === 2 ? c && c.ability2 : c && c.ability;
+  const timer = slot === 2 ? (c && c.ability2Timer) : (c && c.abilityTimer);
+  const ab = id ? getAbility(id) : null;
   if (!ab) return null;
-  return { ...ab, remaining: Math.max(0, c.abilityTimer), ready: c.abilityTimer <= 0 };
+  return { ...ab, remaining: Math.max(0, timer || 0), ready: (timer || 0) <= 0 };
 }

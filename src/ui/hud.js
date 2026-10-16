@@ -129,6 +129,29 @@ function renderSelectedSheet() {
   if (supportSection) supportSection.classList.toggle('hidden', sel.role !== 'Support');
 
   renderUltimateButton(sel);
+  renderAbility2Button(sel);
+  renderPerkButton(sel);
+}
+
+function renderAbility2Button(sel) {
+  const btn = document.getElementById('btn-ability2');
+  const info = abilityCooldownInfo(sel, 2);
+  if (!btn || !info) return;
+  const labelEl = document.getElementById('ability2-label');
+  const cdEl = document.getElementById('ability2-cd');
+  if (labelEl) labelEl.textContent = info.name;
+  if (cdEl) cdEl.textContent = info.ready ? t('ultimate.ready') : `${Math.ceil(info.remaining)}s`;
+  btn.classList.toggle('is-ready', info.ready);
+  btn.classList.toggle('is-cooling', !info.ready);
+}
+
+function renderPerkButton(sel) {
+  const btn = document.getElementById('btn-perk');
+  if (!btn) return;
+  const pts = sel.perkPoints || 0;
+  btn.classList.toggle('hidden', pts <= 0);
+  const cnt = document.getElementById('perk-count');
+  if (cnt) cnt.textContent = pts;
 }
 
 function renderUltimateButton(sel) {

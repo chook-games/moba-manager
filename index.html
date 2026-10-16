@@ -95,6 +95,21 @@
     </div>
   </div>
 
+  <!-- ============================= DRAFT ============================= -->
+  <div id="screen-draft" class="screen hidden">
+    <header class="screen-head">
+      <div>
+        <h1 class="screen-title" data-i18n="draft.title">DRAFT</h1>
+        <p class="screen-sub"><span data-i18n="draft.hint">Ban enemy champions</span> · <span data-i18n="draft.bansLeft">Bans left</span>: <span id="draft-bans-left">2</span></p>
+      </div>
+      <button id="btn-draft-back" class="btn btn-icon">←</button>
+    </header>
+    <div id="draft-grid" class="champ-grid"></div>
+    <div class="screen-actions">
+      <button id="btn-draft-fight" class="btn btn-primary btn-two-thirds" data-i18n="draft.fight">⚔️ FIGHT</button>
+    </div>
+  </div>
+
   <!-- ============================= ROSTER ============================= -->
   <div id="screen-roster" class="screen hidden">
     <header class="screen-head">
@@ -344,10 +359,20 @@
             <div class="support-hint" data-i18n="support.hint">Choose which ally the Support escorts, heals &amp; shields:</div>
             <div id="support-targets-row" class="support-row"></div>
           </div>
-          <button id="btn-ultimate" class="ultimate is-ready">
-            <span class="ult-tag" data-i18n="ultimate.tag">ULTIMATE</span>
-            <span id="ultimate-label" class="ult-name">Barrage</span>
-            <span id="ultimate-cd" class="ult-cd">READY</span>
+          <div class="ability-row">
+            <button id="btn-ultimate" class="ultimate is-ready">
+              <span class="ult-tag" data-i18n="ultimate.tag">ULTIMATE</span>
+              <span id="ultimate-label" class="ult-name">Barrage</span>
+              <span id="ultimate-cd" class="ult-cd">READY</span>
+            </button>
+            <button id="btn-ability2" class="ability2 is-ready">
+              <span class="ab2-name" id="ability2-label">Volley</span>
+              <span class="ab2-cd" id="ability2-cd">READY</span>
+            </button>
+          </div>
+          <button id="btn-perk" class="perk-btn hidden">
+            <span data-i18n="perk.tag">⚡ LEVEL PERK</span>
+            <span class="perk-count" id="perk-count">1</span>
           </button>
         </div>
 

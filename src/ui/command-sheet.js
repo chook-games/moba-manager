@@ -1,6 +1,6 @@
 import { state } from '../state.js';
 import { SHOP_ITEMS } from '../data/items.js';
-import { castAbility, abilityReady } from '../game/abilities.js';
+import { castAbility, castPerk, abilityReady } from '../game/abilities.js';
 import { applyItem } from '../game/combat.js';
 import { updateManagerDashboardUI } from './hud.js';
 import { notifyTutorial } from './tutorial.js';
@@ -124,10 +124,25 @@ export function buyItem(itemId) {
 export function castSelectedUltimate() {
   const c = state.blueChampions[state.selectedChampIndex];
   if (!c) return;
-  if (!abilityReady(c)) return;
-  castAbility(c);
+  if (!abilityReady(c, 1)) return;
+  castAbility(c, 1);
   updateManagerDashboardUI();
   notifyTutorial('ultimate');
+}
+
+export function castSelectedAbility2() {
+  const c = state.blueChampions[state.selectedChampIndex];
+  if (!c) return;
+  if (!abilityReady(c, 2)) return;
+  castAbility(c, 2);
+  updateManagerDashboardUI();
+}
+
+export function castSelectedPerk() {
+  const c = state.blueChampions[state.selectedChampIndex];
+  if (!c) return;
+  if (castPerk(c).ok) sfx.kill();
+  updateManagerDashboardUI();
 }
 
 export function bindCommandSheet() {
@@ -155,6 +170,8 @@ export function bindCommandSheet() {
 
   document.getElementById('btn-close-sheet')?.addEventListener('click', closeCommandSheet);
   document.getElementById('btn-ultimate')?.addEventListener('click', castSelectedUltimate);
+  document.getElementById('btn-ability2')?.addEventListener('click', castSelectedAbility2);
+  document.getElementById('btn-perk')?.addEventListener('click', castSelectedPerk);
 
   document.getElementById('tab-btn-tactics')?.addEventListener('click', () => switchSheetTab('tactics'));
   document.getElementById('tab-btn-shop')?.addEventListener('click', () => switchSheetTab('shop'));

@@ -260,6 +260,15 @@
 .ult-cd { font-size: 11px; font-family: ui-monospace, monospace; }
 .ultimate.is-cooling .ult-cd { color: var(--muted); }
 
+.ability-row { display: grid; grid-template-columns: 3fr 2fr; gap: 6px; }
+.ability2 { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px; border-radius: 12px; font-family: inherit; font-weight: 800; cursor: pointer; border: 1px solid; }
+.ability2.is-ready { background: rgba(34, 211, 238, 0.14); border-color: rgba(34, 211, 238, 0.5); color: #fff; }
+.ability2.is-cooling { background: #10161f; border-color: var(--line); color: var(--muted-2); }
+.ab2-name { font-size: 11px; }
+.ab2-cd { font-size: 9px; font-family: ui-monospace, monospace; }
+.perk-btn { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 11px; border: 1px solid rgba(52, 211, 153, 0.55); background: rgba(52, 211, 153, 0.14); color: #fff; font-weight: 900; font-size: 11px; cursor: pointer; font-family: inherit; }
+.perk-count { background: #34d399; color: #052e1a; border-radius: 99px; padding: 0 8px; font-weight: 900; }
+
 .support-section { display: flex; flex-direction: column; gap: 6px; background: #090d14; padding: 8px 10px; border-radius: 11px; border: 1px solid var(--line-soft); }
 .support-hint { font-size: 10px; color: var(--muted); line-height: 1.5; }
 .support-hint strong { color: var(--green); }

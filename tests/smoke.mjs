@@ -157,6 +157,18 @@ check('sudden death halves structures', modes.getMode('sudden').structHpMult < 1
 check('unknown mode falls back to aram', modes.getMode('nope').id === 'aram');
 check('blitz has kill target', modes.getMode('blitz').killTarget === 25);
 
+// 5b. Abilities (2nd slot) + perks
+const abil = await import('../src/game/abilities.js');
+check('ROLE_SECOND maps valid abilities', Object.values(abilities.ROLE_SECOND).every((id) => abilities.ABILITIES[id]));
+check('PERKS defined', abilities.PERKS.length >= 3);
+const perkChamp = { dead: false, perkPoints: 1, x: 0, z: 0, ad: 100, ap: 50, maxHp: 1000, hp: 500, armor: 20, as: 1.0 };
+const perkRes = abil.castPerk(perkChamp);
+check('castPerk consumes a point', perkRes.ok && perkChamp.perkPoints === 0);
+const slot2Champ = { dead: false, x: 0, z: 0, armor: 20, hp: 100, maxHp: 200, shieldTimer: 0, ability2: 'fortify', ability2Timer: 0 };
+const slot2Res = abil.castAbility(slot2Champ, 2);
+check('castAbility slot 2 works', slot2Res.ok && slot2Champ.ability2Timer > 0);
+check('ability2 on cooldown blocked', abil.castAbility(slot2Champ, 2).ok === false);
+
 // 6. Combat / AI math + level cap
 const combat = await import('../src/game/combat.js');
 check('effectiveAttackInterval positive', combat.effectiveAttackInterval({ as: 0.9, asBonus: 0 }) > 0);

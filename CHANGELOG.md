@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](https://semver.org/).
 
+## [0.10.0] — Batch 2: Draft & deeper management
+
+### Added
+- **Draft / ban phase** before each match — ban up to 2 champions from the enemy pool.
+- **Secondary ability** for every champion (role-based, lower cooldown) with its own button.
+- **Level-up perks** — blue champions earn a perk point per level; tap to take a stat boost.
+
+## [0.9.0] — Batch 1: Performance, Difficulty & Stats
+
+### Added
+- **Performance:** projectile & minion mesh pooling, cached label DOM refs (less GC/DOM churn).
+- **Difficulty** setting (Easy / Normal / Hard) scaling the enemy squad.
+- **Match History + Stats screen** — career totals, per-champion KDA/win-rate, recent matches.
+
 ## [0.8.0] — Phase 6: Cloud / transfer & ops
 
 ### Added

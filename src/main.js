@@ -18,6 +18,7 @@ import { refreshHome, bindMenu, renderModeList, renderRoster } from './ui/menu.j
 import { bindSquad, getSelectedSquad, renderSquadSelectionGrid } from './ui/squad.js';
 import { renderMissions, bindMissions } from './ui/missions.js';
 import { renderStats } from './ui/stats.js';
+import { openDraft, bindDraft } from './ui/draft.js';
 import { ensureDaily } from './core/missions.js';
 import { updateManagerDashboardUI } from './ui/hud.js';
 import { bindCommandSheet, closeCommandSheet, toggleMacro, selectChampion } from './ui/command-sheet.js';
@@ -112,7 +113,9 @@ function bindGameControls() {
     saveProfile(state.profile);
   });
 
-  document.getElementById('btn-start-match')?.addEventListener('click', startMatch);
+  document.getElementById('btn-start-match')?.addEventListener('click', () => { openDraft(); showScreen('screen-draft'); });
+  document.getElementById('btn-draft-back')?.addEventListener('click', () => showScreen('screen-squad'));
+  document.getElementById('btn-draft-fight')?.addEventListener('click', startMatch);
   document.getElementById('btn-go-home')?.addEventListener('click', goHome);
   document.getElementById('btn-go-replay')?.addEventListener('click', restartMatch);
   document.getElementById('btn-go-squad')?.addEventListener('click', () => {
@@ -202,6 +205,7 @@ function boot() {
   bindCommandSheet();
   bindGameControls();
   bindMissions();
+  bindDraft();
   bindTutorial();
   setupCanvasInput();
 

@@ -3,6 +3,7 @@ import { CONFIG } from '../config.js';
 import { CHAMPION_POOL } from '../data/champions.js';
 import { getMode } from '../data/modes.js';
 import { getDifficulty } from '../data/difficulty.js';
+import { ROLE_SECOND } from '../data/abilities.js';
 import { lanePosFromS, clamp } from '../utils.js';
 import { createStructureMesh, createChampionMesh, createMinionMesh, clearThreeGroup } from '../three/meshes.js';
 import { setCameraPreset } from '../three/camera.js';
@@ -145,6 +146,9 @@ export function createChampionInstance(base, team, slotIndex, startS, lateralOff
     shieldTimer: 0,
     ability: base.ability,
     abilityTimer: 0,
+    ability2: ROLE_SECOND[base.role],
+    ability2Timer: 0,
+    perkPoints: 0,
     asBonus: 0,
     asBonusTimer: 0,
     dead: false,

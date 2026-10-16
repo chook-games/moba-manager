@@ -143,9 +143,15 @@ await ev(`document.getElementById('btn-home-play').click()`); await sleep(200);
 check('mode screen + 4 modes', await ev(`document.querySelectorAll('.mode-card').length === 4`));
 await ev(`document.querySelector('.mode-card:not(.is-locked)').click()`); await sleep(200);
 await ev(`document.getElementById('btn-squad-auto').click()`); await sleep(150);
-await ev(`document.getElementById('btn-start-match').click()`); await sleep(3000);
+await ev(`document.getElementById('btn-start-match').click()`); await sleep(200);
+check('draft screen opens', !(await ev(`document.getElementById('screen-draft').classList.contains('hidden')`)));
+check('draft grid rendered', (await ev(`document.querySelectorAll('#draft-grid [data-ban]').length`)) > 0);
+await ev(`document.querySelector('#draft-grid [data-ban]').click()`); await sleep(60);
+check('a ban can be selected', (await ev(`document.querySelector('#draft-grid .is-banned') ? true : false`)));
+await ev(`document.getElementById('btn-draft-fight').click()`); await sleep(3200);
 
 check('game screen visible', await ev(`!document.getElementById('screen-game').classList.contains('hidden')`));
+check('second ability button present', await ev(`!!document.getElementById('btn-ability2')`));
 check('5 squad cards', await ev(`document.querySelectorAll('#squad-cards-row .squad-card').length === 5`));
 check('starts zoomed out (0.8x)', await ev(`document.getElementById('zoom-label').textContent === '0.8x'`));
 check('map preset active', await ev(`document.getElementById('cam-preset-0').classList.contains('is-active')`));

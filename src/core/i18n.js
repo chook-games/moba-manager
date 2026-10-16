@@ -76,6 +76,12 @@ const DICT = {
     'squad.start': '▶ START GAME',
     'squad.tapHint': 'Tap champions below to build your team…',
 
+    'draft.title': 'DRAFT',
+    'draft.hint': 'Ban enemy champions',
+    'draft.bansLeft': 'Bans left',
+    'draft.fight': '⚔️ FIGHT',
+    'perk.tag': '⚡ LEVEL PERK',
+
     'roster.title': 'CHAMPIONS',
     'roster.sub': 'Unlock with Gold',
     'roster.owned': '✓ Owned',
@@ -289,6 +295,12 @@ const DICT = {
     'squad.selectMore': 'ΔΙΑΛΕΞΕ {n} ΑΚΟΜΗ',
     'squad.start': '▶ ΕΝΑΡΞΗ',
     'squad.tapHint': 'Πάτα ήρωες παρακάτω για να φτιάξεις την ομάδα…',
+
+    'draft.title': 'DRAFT',
+    'draft.hint': 'Απόκλεισε αντίπαλους ήρωες',
+    'draft.bansLeft': 'Αποκλεισμοί',
+    'draft.fight': '⚔️ ΜΑΧΗ',
+    'perk.tag': '⚡ PERK ΕΠΙΠΕΔΟΥ',
 
     'roster.title': 'ΗΡΩΕΣ',
     'roster.sub': 'Ξεκλείδωμα με Χρυσό',

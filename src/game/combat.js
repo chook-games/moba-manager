@@ -15,6 +15,7 @@ export function addChampionXp(c, amount) {
     c.hp = Math.min(c.maxHp, c.hp + 85);
     c.ad += 4;
     c.armor += 2;
+    if (c.team === 'blue') c.perkPoints = (c.perkPoints || 0) + 1;
     needed = c.level * 110;
   }
 }

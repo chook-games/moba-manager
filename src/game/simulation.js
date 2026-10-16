@@ -5,7 +5,7 @@ import { getMode } from '../data/modes.js';
 import { distXZ, lanePosFromS, pickRandom } from '../utils.js';
 import { spawnMinionWave, releaseMinionMesh } from './match.js';
 import { updateChampionAI, getAttackableTargets, moveTowardsPoint, engageTarget } from './ai.js';
-import { spawnProjectile, dealDamage, applyItem, releaseProjectile } from './combat.js';
+import { spawnProjectile, dealDamage, applyItem, releaseProjectile, addChampionXp } from './combat.js';
 import { updateManagerDashboardUI } from '../ui/hud.js';
 import { endMatch } from '../ui/gameover.js';
 import { spawnImpact } from './feedback.js';
@@ -22,7 +22,7 @@ export function updateSimulation(dt) {
   const allChamps = [...state.blueChampions, ...state.redChampions];
   allChamps.forEach((c) => {
     c.gold += simDt * CONFIG.PASSIVE_GOLD_PER_SEC;
-    addPassiveXp(c, simDt * CONFIG.PASSIVE_XP_PER_SEC);
+    addChampionXp(c, simDt * CONFIG.PASSIVE_XP_PER_SEC);
   });
 
   state.redChampions.forEach((rc) => {
@@ -153,17 +153,4 @@ function cleanupDeadMinions() {
   }
 }
 
-function addPassiveXp(c, amount) {
-  if (c.level >= CONFIG.MAX_LEVEL) return;
-  c.xp += amount;
-  let needed = c.level * 110;
-  while (c.xp >= needed && c.level < CONFIG.MAX_LEVEL) {
-    c.xp -= needed;
-    c.level++;
-    c.maxHp += 85;
-    c.hp = Math.min(c.maxHp, c.hp + 85);
-    c.ad += 4;
-    c.armor += 2;
-    needed = c.level * 110;
-  }
-}
+
